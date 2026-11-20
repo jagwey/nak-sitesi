@@ -156,3 +156,4 @@
 ## 2026-11-20 — Vitrin okunabilirliği ve önizleme kataloğu
 
 - [x] Ana başlıkta görselden nakışa çevirme ve isteğe özel parça, Inter gövde (18px), altın satın alma düğmesi, kumaş önizlemesi ve 32 özgün önizleme deseni (A–Z + 6 motif). Dosyalar pyembroidery VP3/PES/DST/JEF. Satışa kapalı; kumaş provası yok. Canlıya deploy edilmedi.
+- [x] Aynı iyileştirmeler statik `storefront/` vitrinine taşındı. Shopier bandı site içi sepet indirimini vaat etmez. Deploy edilmedi.

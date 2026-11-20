@@ -1,5 +1,6 @@
 import { copyFile, mkdir } from "node:fs/promises";
 import { CATEGORIES, CURATED_COLLECTIONS } from "../src/data/categories";
+import { OPEN_LICENSE_CATALOG } from "../src/data/open-license-catalog";
 import { PRODUCTS } from "../src/data/products";
 
 const images = new Set([
@@ -17,6 +18,14 @@ async function stageImages() {
       throw new Error(`Vitrin görseli geçersiz: ${image}`);
     }
     await copyFile(`public${image}`, `storefront/out${image}`);
+  }
+
+  await mkdir("storefront/out/images/open-license", { recursive: true });
+  for (const design of OPEN_LICENSE_CATALOG) {
+    if (!/^\/images\/open-license\/[a-z0-9-]+\.webp$/.test(design.preview)) {
+      throw new Error(`Önizleme görseli geçersiz: ${design.preview}`);
+    }
+    await copyFile(`public${design.preview}`, `storefront/out${design.preview}`);
   }
 }
 
