@@ -189,7 +189,7 @@ try {
     '$COMPOSE run --rm tools npm run search:reindex'
     '$COMPOSE up -d --wait web'
     '$COMPOSE up -d caddy'
-    'sudo docker stats --no-stream --format "table {{.Name}}\t{{.MemUsage}}\t{{.MemPerc}}"'
+    'sudo docker stats --no-stream'
   ) -join "`n")
   ssh @SshArgs $SshTarget $remoteUp
   if ($LASTEXITCODE -ne 0) { throw "Sunucu servisleri başlatılamadı" }

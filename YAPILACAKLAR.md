@@ -32,7 +32,9 @@
 - [x] Chrome'da Oracle Cloud hesabına erişim ve ücretsiz sunucu formunun hazırlanması
 - [x] Ücretsiz disk kotası, kullanıcı onayı ve tam mağaza için Cloudflare yönlendirme yapılandırması
 - [x] Oracle Always Free `VM.Standard.E2.1.Micro` (1 GB RAM) bellek provası (~307 MiB toplam, OOM yok) ve tek komutluk dağıtım kiti (`deploy/oracle/*`, `scripts/deploy-oracle.ps1`)
-- [ ] Oracle sunucusunun (`VM.Standard.E2.1.Micro` veya `A1.Flex`) açılması ve `scripts/deploy-oracle.ps1` ile tam mağazanın mevcut Cloudflare adresinden yayımlanması
+- [x] Oracle sunucusunun (`92.5.103.221`, `VM.Standard.E2.1.Micro`) kurulumu, GHCR imaj yayını (`build-images.yml`), Caddy HTTPS (`92-5-103-221.sslip.io`) ve tam mağazanın `https://nakis-vitrin.nakis-sitesi.workers.dev/` adresinden canlıya alınması (`bf633ab2-2527-49b8-be9e-06a4d2f5f726`)
+- [ ] Canlı ortamda sepet çerezi + üyelik/giriş + demo checkout engelinin uçtan uca tarayıcı testi ve ilk `SUPER_ADMIN` yönetici hesabının sunucuda oluşturulması (`npm run admin:create`)
+- [ ] Canlı S3 uyumlu nesne depolama (private + public kova — ör. Oracle Object Storage veya Cloudflare R2) bağlantısı (şu an `.env.production` içinde `S3_ENDPOINT=https://s3.invalid` yer tutucu)
 - [ ] Canlı e-posta doğrulaması ve parola sıfırlama için SMTP göndereni ayarla
 - [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
 - [ ] Canlı vitrinde kişiye özel talepler için işletmenin doğrulanmış iletişim kanalı
