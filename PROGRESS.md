@@ -127,3 +127,4 @@
 - [x] Tülay Birer ve Duhanedoku VP3 referanslarına göre yeni desenlerin dikiş kalitesi, önizleme ve teslim kontrolü kuralları `AGENTS.md`'ye eklendi.
 - [x] Filistin Bayrağı'nın 185 TL ürün kaydı ve tek ürünlük VP3/PES/DST Shopier ZIP'i kontrol edildi. Satış bağlantısını mağaza sahibi ekleyecek. Diğer 11 desen görünür, bağlantısız kalacak.
 - [x] Tip kontrolü, 125/125 Vitest ve üretim derlemesi başarılı. Ana sayfa testi demo ve taslak kapaklarının atlandığını ve gerçek ürünlerin vitrin sekmelerinde kaldığını doğruluyor.
+- [x] `d66cd9c` Oracle'a dağıtıldı. Canlı mağazada 390 ve 1440 px genişlikte beş kategori kapağının ürün görsellerinden yüklendiği ve Filistin Bayrağı kartının doğru ürünü açtığı doğrulandı. Katalogda 12 aktif desen, 36 önizleme ve sıfır satış bağlantısı var. Shopier ZIP'indeki üç makine dosyası yeniden okundu, VP3 ölçüsü 83,8 × 41,8 mm. Fiziksel dikiş provası yapılmadı.

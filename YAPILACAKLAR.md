@@ -51,7 +51,7 @@
 - [x] Shopier bağlantısı alanı ve satın alma düğmesi olan sürüm canlıya alındı.
 - [x] Ana sayfanın kategori kapakları aktif katalogdan besleniyor ve Filistin Bayrağı öne çıkarılıyor.
 - [x] Yeni VP3'ler için yoğun saten, katmanlı dolgu ve dikiş önizlemesi kuralları eklendi.
-- [ ] Güncellenen ana sayfayı canlıya al ve kategori kapaklarını masaüstü/mobil doğrula.
+- [x] Güncellenen ana sayfa canlıya alındı. Beş kategori kapağı ve Filistin Bayrağı kartı masaüstünde ve mobilde doğrulandı.
 
 ## Açık küçük kusurlar (Phase 2'den)
 - [x] Galeri yakınlaştırma düğmesi fotoğrafın altında ve 390/1440 px genişlikte klavyeyle çalışıyor
