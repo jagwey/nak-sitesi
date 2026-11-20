@@ -137,3 +137,9 @@
 - [x] `612d506` Oracle'a dağıtıldı, Caddy doğrulandı ve Worker `f7fd3fdc` canlıya alındı. Açık ürün görselleri ve anonim ana sayfa HTML yanıtı Cloudflare önbelleğinden döndü. Ana sayfa önbelleği iki dakika geçerli. Oturum, sepet, sorgulu HTML ve gezinme verisi ayrı kaldı.
 - [x] Aynı kısıtlı mobil bağlantıda üç açılışın ortanca ana görsel süresi önce 6,3 sn, Cloudflare önbelleği doluyken 4,2 sn. Ana sayfada ortanca otomatik Next.js gezinme isteği 12'den sıfıra indi. Sayfanın ilk kopyası sunucuya bağlı, iyileştirmeden sonra önbelleksiz ölçümlerde dalgalanma gözlendi.
 - [x] Üretim derlemesi, tip kontrolü ve 156 Vitest testi başarılı. Canlı vitrinde masaüstü ve mobilde güncel kategori kapakları, Filistin Bayrağı ürün yolu ve 12 desenin 36 önizlemesi doğrulandı. Mobilde VP3 filtresi, fiyat sıralaması ve galeri yakınlaştırması tarayıcıda çalıştı. Shopier bağlantısı eklenene kadar ürün satışa hazırlık durumunda.
+
+## 2026-11-20 — GitHub devri
+
+- [x] Proje `jagwey/nak-sitesi` deposunun `main` dalında. Devralırken `AGENTS.md`, `DEVIR.md`, `YAPILACAKLAR.md` ve bu kaydı oku. Yerel Next.js uygulaması `npm run dev` ile 3000 numaralı bağlantı noktasında açılır. PostgreSQL, MinIO ve Mailpit için `npm run db:up` kullanılır.
+- [x] Canlı adres `https://nakis-vitrin.nakis-sitesi.workers.dev/`. Cloudflare Worker, Oracle üzerindeki Caddy ve Docker uygulamasına yönlendirir. `.github/workflows/build-images.yml` web ve araç imajlarını GitHub Container Registry'ye yollar. Canlı yapı şu anda `612d506` uygulama imajı ve `f7fd3fdc` Worker sürümü. İşletim ayrıntıları `DEPLOYMENT.md` içinde.
+- [x] Canlı ürün kayıtları PostgreSQL'de, önizlemeler açık MinIO kovasında, VP3/PES/DST dosyaları özel MinIO kovasında. Depo uygulama, şema, araçlar ve dokümanları içerir. Canlı veritabanı, kullanıcı verisi, ücretli dosyalar ve ortam sırları GitHub'a konulmaz. Mevcut Shopier paketi bilgisayardaki `Downloads/Nakış Sitesi - Shopier` klasöründe.
