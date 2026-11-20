@@ -28,7 +28,7 @@
 - [ ] Gerçek ürünler: fotoğraf, fiyat, yalnız gerçekten var olan formatlar (demo ürünler `isDemo`)
 
 ## Açık küçük kusurlar (Phase 2'den)
-- [ ] Galeri yakınlaştır düğmesi fotoğraf üstünde
+- [x] Galeri yakınlaştırma düğmesi fotoğrafın altında ve 390/1440 px genişlikte klavyeyle çalışıyor
 - [ ] Ürün kartı tür satırı mobilde kayıyor
 
 ## Nakış dosyaları (ayrı iş, `Belgeler\ChatGPT\Nakış desen üretimi\`)

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
 interface GalleryImage {
   url: string;
@@ -46,27 +46,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row-reverse">
       {/* Main Image Stage with Interactive Stitch Zoom */}
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <div
           onMouseMove={handleMouseMove}
-          onMouseLeave={() => setZoomed(false)}
-          onClick={() => setZoomed((z) => !z)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setZoomed((z) => !z);
-            }
-          }}
-          aria-label={
-            zoomed
-              ? `${productName} yakınlaştırmayı kapat`
-              : `${productName} dikiş detayını yakınlaştır`
-          }
-          className={`relative aspect-[3/4] w-full overflow-hidden bg-linen ${
-            zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
-          }`}
+          className="relative aspect-[3/4] w-full overflow-hidden bg-linen"
         >
           <Image
             src={current.url}
@@ -81,33 +64,12 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             className="object-cover transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
           />
 
-          {/* Zoom indicator button */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute bottom-3.5 right-3.5 inline-flex items-center gap-1.5 bg-ivory/90 px-3 py-1.5 text-[0.8125rem] font-medium text-ink backdrop-blur-[2px]"
-          >
-            {zoomed ? (
-              <>
-                <ZoomOut className="h-3.5 w-3.5" />
-                Uzaklaştır
-              </>
-            ) : (
-              <>
-                <ZoomIn className="h-3.5 w-3.5" />
-                Dikişi yakınlaştır
-              </>
-            )}
-          </span>
-
           {/* Mobile / multi-image prev-next controls */}
           {images.length > 1 && (
             <>
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePrev();
-                }}
+                onClick={handlePrev}
                 aria-label="Önceki görsel"
                 className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center bg-ivory/85 text-ink transition-colors duration-200 hover:bg-ivory"
               >
@@ -115,10 +77,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               </button>
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleNext();
-                }}
+                onClick={handleNext}
                 aria-label="Sonraki görsel"
                 className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center bg-ivory/85 text-ink transition-colors duration-200 hover:bg-ivory"
               >
@@ -128,12 +87,27 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           )}
         </div>
 
-        <p className="mt-2.5 text-[0.875rem] text-umber">{current.caption}</p>
+        <div className="mt-2.5 flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+          <p className="py-2.5 text-[0.875rem] text-umber">{current.caption}</p>
+          <button
+            type="button"
+            aria-label={`Dikişi yakınlaştır: ${productName}`}
+            aria-pressed={zoomed}
+            onClick={() => {
+              setOrigin({ x: 50, y: 50 });
+              setZoomed((value) => !value);
+            }}
+            className="inline-flex min-h-11 items-center gap-2 border border-hairline px-3 text-[0.875rem] font-medium text-ink transition-colors hover:border-cocoa aria-pressed:border-cocoa aria-pressed:bg-cocoa aria-pressed:text-ivory"
+          >
+            <ZoomIn aria-hidden="true" className="h-4 w-4" />
+            Dikişi yakınlaştır
+          </button>
+        </div>
       </div>
 
       {/* Thumbnails (vertical rail on lg, horizontal strip on mobile) */}
       {images.length > 1 && (
-        <div className="flex gap-3 lg:w-20 lg:flex-col">
+        <div className="flex flex-wrap gap-3 lg:w-20 lg:flex-col">
           {images.map((img, idx) => {
             const active = idx === activeIndex;
             return (
