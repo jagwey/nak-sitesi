@@ -5,6 +5,7 @@ import { CATEGORIES, CURATED_COLLECTIONS } from "@/data/categories";
 import { DEFAULT_FILTERS } from "@/lib/search";
 import { getHomepageData, getProductsBySlugs, searchCatalog } from "@/server/modules/catalog";
 import { HomeMonogramTeaser } from "@/components/custom/LiveMonogramPreview";
+import { DEFAULT_HERO_TITLE, HomeHero } from "@/components/home/HomeHero";
 import { HomeShowcaseTabs } from "@/components/home/HomeClient";
 import { formatTRY } from "@/lib/format";
 import { getSiteSettings } from "@/server/modules/settings/service";
@@ -67,84 +68,49 @@ export default async function HomePage() {
   return (
     <>
       {/* 1. HERO */}
-      <section className="relative w-full overflow-hidden bg-[#F2EEE5] lg:flex lg:min-h-[82svh] lg:max-h-[860px] lg:items-center">
-        <div className="pointer-events-none relative hidden lg:block lg:absolute lg:inset-0">
-          <Image
-            src="/images/hero-atelier-linen.webp"
-            alt="Doğal ham keten üzerinde ahşap kasnakta botanik makine nakışı, pirinç makas ve ipek iplik makaraları"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-right"
+      <HomeHero
+        title={site?.heroTitle || DEFAULT_HERO_TITLE}
+        description={site?.heroText || `${FORMAT_LIST} formatlarında indirilebilir desenler; kişiye özel işlemeli havlu ve keten ürünler.`}
+      >
+        <form
+          action="/koleksiyon"
+          method="get"
+          role="search"
+          className="mt-7 flex max-w-[560px] items-stretch"
+        >
+          <label htmlFor="hero-arama" className="sr-only">
+            Desen veya ürün ara
+          </label>
+          <input
+            id="hero-arama"
+            type="search"
+            name="q"
+            autoComplete="off"
+            placeholder="Desen, format veya makine ara"
+            className="h-12 min-w-0 flex-1 border border-r-0 border-hairline-strong bg-white px-4 text-[1rem] text-ink placeholder:text-stone focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
           />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-[#F3EFE6]/90 via-[#F3EFE6]/40 to-transparent"
-          />
-        </div>
+          <button
+            type="submit"
+            className="inline-flex h-12 min-w-[44px] items-center justify-center gap-2 bg-cocoa px-5 text-[0.9375rem] font-medium text-[#FAF8F3] transition-colors duration-200 hover:bg-cocoa-hover"
+          >
+            <Search className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+            Ara
+          </button>
+        </form>
 
-        <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 pb-8 pt-[104px] sm:px-6 lg:px-10 lg:py-24">
-          <div className="max-w-[600px]">
-            <h1 className="font-display text-[clamp(2.4rem,4.8vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-ink">
-              {site?.heroTitle || "Nakış makinesi desenleri ve el işi tekstiller"}
-            </h1>
-
-            <p className="mt-5 max-w-[52ch] text-[1.0625rem] leading-relaxed text-umber">
-              {site?.heroText || `${FORMAT_LIST} formatlarında indirilebilir desenler; kişiye özel işlemeli havlu ve keten ürünler.`}
-            </p>
-
-            <form
-              action="/koleksiyon"
-              method="get"
-              role="search"
-              className="mt-7 flex max-w-[560px] items-stretch"
-            >
-              <label htmlFor="hero-arama" className="sr-only">
-                Desen veya ürün ara
-              </label>
-              <input
-                id="hero-arama"
-                type="search"
-                name="q"
-                autoComplete="off"
-                placeholder="Desen, format veya makine ara"
-                className="h-12 min-w-0 flex-1 border border-r-0 border-hairline-strong bg-white px-4 text-[1rem] text-ink placeholder:text-stone focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-              />
-              <button
-                type="submit"
-                className="inline-flex h-12 min-w-[44px] items-center justify-center gap-2 bg-cocoa px-5 text-[0.9375rem] font-medium text-[#FAF8F3] transition-colors duration-200 hover:bg-cocoa-hover"
+        <ul className="mt-4 flex flex-wrap gap-2" aria-label="Hızlı aramalar">
+          {QUICK_CHIPS.map((chip) => (
+            <li key={chip.label}>
+              <Link
+                href={chip.href}
+                className="inline-flex min-h-[44px] items-center rounded-full border border-hairline-strong bg-white/80 px-4 text-[0.875rem] font-medium text-ink transition-colors duration-200 hover:border-gold hover:text-gold-text"
               >
-                <Search className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
-                Ara
-              </button>
-            </form>
-
-            <ul className="mt-4 flex flex-wrap gap-2" aria-label="Hızlı aramalar">
-              {QUICK_CHIPS.map((chip) => (
-                <li key={chip.label}>
-                  <Link
-                    href={chip.href}
-                    className="inline-flex min-h-[44px] items-center rounded-full border border-hairline-strong bg-white/80 px-4 text-[0.875rem] font-medium text-ink transition-colors duration-200 hover:border-gold hover:text-gold-text"
-                  >
-                    {chip.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="relative aspect-[16/11] w-full overflow-hidden lg:hidden">
-          <Image
-            src="/images/hero-atelier-linen.webp"
-            alt="Doğal ham keten üzerinde ahşap kasnakta botanik makine nakışı, pirinç makas ve ipek iplik makaraları"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[78%_center]"
-          />
-        </div>
-      </section>
+                {chip.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </HomeHero>
 
       {/* 2. ÜÇ GİRİŞ YOLU */}
       <section

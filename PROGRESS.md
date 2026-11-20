@@ -86,3 +86,6 @@
 - [x] API JSON yanıtları ortak serileştirmeye taşındı. Özel sipariş testinde başarı/hata başlıkları ve hata gövdesi doğrulandı. Lint/test 100/100/build başarılı.
 - [x] Üretim Docker imajı, sağlık kontrolü, robots.txt, site haritası ve dağıtım rehberi tamamlandı. Temiz PostgreSQL'de migration, demo ürünsüz seed, yönetici, arama ve stok işi doğrulandı. Konteyner sağlık 200/503, SEO uçları, görsel optimizasyonu ve Python kontrolleri geçti. Lint/test 102/102/build başarılı.
 - [x] Mağaza adı, logo, işletme sahibi ve iletişim tek Ayarlar kaydına bağlandı. Üst ve alt bilgi, sayfa başlıkları ve e-posta gönderen adı aynı ayarı okuyor. Lint, test 103/103, build, E2E 12/12 ve son üretim imajı kontrolleri başarılı.
+
+## 2026-11-20 — Shopier vitrini
+- [x] Mevcut ana sayfa görseli ve tasarım sistemiyle Cloudflare Pages için bağımsız vitrin derlemesi. Demo ürünler dosyalara alınmadı. Shopier bağlantısı, görsel yolu ve kuruş fiyatı derlemede doğrulanıyor. Lint, test 110/110, ana uygulama ve vitrin derlemeleri başarılı. Yerel Pages önizlemesi 390/1440 px, görseller, font, gezinti ve güvenlik başlıkları kontrol edildi.

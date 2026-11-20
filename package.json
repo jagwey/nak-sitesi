@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:storefront": "next build storefront",
     "start": "next start",
     "lint": "next typegen && tsc --noEmit",
     "test": "node --no-warnings tests/search.test.ts && vitest run",

@@ -1,0 +1,4 @@
+@import "../../src/app/globals.css";
+
+@source "../";
+@source "../../src/components/home/HomeHero.tsx";

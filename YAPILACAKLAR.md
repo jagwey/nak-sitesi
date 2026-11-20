@@ -25,6 +25,9 @@
 - [x] Sepet, sipariş, ödeme ve ayar modüllerinin içe aktarma döngüleri giderildi
 - [x] API JSON yanıtları ortak yardımcıya taşındı
 - [x] Üretim Docker imajı, sağlık kontrolü, robots.txt, sitemap.xml ve dağıtım rehberi
+- [x] Ücretsiz Cloudflare Pages için Shopier bağlantılı vitrin derlemesi
+- [ ] Cloudflare Pages vitrini yayını ve HTTPS kontrolü — Cloudflare hesabı bağlantısı
+- [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
 - [x] Mağaza adı, logo, işletme sahibi ve iletişim ayarları tek kayıtta; güncellemeler vitrinde, başlıklarda ve e-postada doğrulandı
 - [x] GitHub: `git init`, `.gitignore` (node_modules, .next, .env*, tsconfig.tsbuildinfo), sır kontrolü, ilk commit `main`, push → https://github.com/jagwey/nak-sitesi
 - [ ] Gerçek ödeme sağlayıcısı (iyzico/PayTR) — müşterinin hesap bilgileri gerekli

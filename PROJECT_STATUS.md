@@ -7,6 +7,7 @@
 - **Canlıya hazır değil:** gerçek ödeme, gerçek ürün/dosya, yasal metinler ve altyapı bilgileri bekleniyor.
 
 ## Tamamlananlar
+- Shopier ödemeli vitrin için bağımsız statik derleme (`npm run build:storefront`). Ücretsiz Cloudflare Pages yayını Cloudflare hesap erişimini, satış bağlantıları gerçek ürünleri bekliyor.
 - Docker (Postgres 17, MinIO, Mailpit), Prisma şema + migration, seed.
 - Canlı kullanım için Docker imajı, PostgreSQL sağlık kontrolü, robots.txt, site haritası ve demo ürünsüz referans seed. Kurulum adımları `DEPLOYMENT.md` dosyasında.
 - Kayıt/giriş/e-posta doğrulama/parola sıfırlama, roller ve izinler (RBAC), oturumlar.
