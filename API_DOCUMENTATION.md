@@ -64,6 +64,8 @@ Roller: SUPER_ADMIN (hepsi), ADMIN (`user:write` hariç hepsi), PRODUCT_MANAGER 
 | `GET /api/categories` | none | — | |
 | `GET /api/collections` | none | — | |
 
+Ürün görsellerinde `images[].url` tam boy önizlemeyi verir. Yükleme sırasında küçük önizleme üretilmişse `images[].thumbnailUrl` da döner.
+
 Arama motoru: Postgres (ILIKE + `pg_trgm` + `unaccent`); `SearchEngine` arayüzü Meilisearch gibi bir motora geçiş noktasıdır.
 
 ## 3. Sepet ve ödeme akışı

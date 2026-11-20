@@ -39,12 +39,22 @@ describe("storefront edge caching", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it("caches a public image with the storage server's Vary header for a request without Origin", async () => {
+    const { put, fetch, ctx } = setup();
+    fetch.mockResolvedValue(new Response("image", {
+      headers: { "cache-control": "public, max-age=31536000, immutable", vary: "Origin, Accept-Encoding" },
+    }));
+    await proxy.fetch(new Request(storefront + thumbnail), env, ctx);
+    expect(put).toHaveBeenCalledOnce();
+  });
+
   it.each([
     ["/hesabim", {}],
     ["/api/cart", {}],
     ["/nakis-private/embroidery/file.vp3?signature=private", {}],
     [thumbnail + "?v=1", {}],
     [thumbnail, { headers: { range: "bytes=0-99" } }],
+    [thumbnail, { headers: { origin: "https://other.example" } }],
     [asset, { headers: { authorization: "Bearer test" } }],
   ] as const)("passes through %s", async (path, init) => {
     const { match, put, fetch, ctx } = setup();
@@ -62,6 +72,71 @@ describe("storefront edge caching", () => {
     const { put, fetch, ctx } = setup();
     fetch.mockResolvedValue(new Response("uncached", { headers: new Headers(Object.entries(headers)) }));
     await proxy.fetch(new Request(storefront + asset), env, ctx);
+    expect(put).not.toHaveBeenCalled();
+  });
+});
+
+describe("anonymous homepage edge caching", () => {
+  const key = storefront + "/?edge-public-home=v1";
+  const htmlRequest = { accept: "text/html,application/xhtml+xml" };
+  const homeHeaders = {
+    "cache-control": "private, no-store",
+    "content-type": "text/html; charset=utf-8",
+    "x-nakis-edge-cache": "anonymous-home",
+    vary: "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+  };
+
+  it("stores opted-in anonymous HTML for two minutes and keeps the browser response private", async () => {
+    const { fetch, put, ctx } = setup();
+    fetch.mockResolvedValue(new Response("home", { headers: homeHeaders }));
+    const request = new Request(storefront, { headers: htmlRequest });
+    const result = await proxy.fetch(request, env, ctx);
+    expect(put).toHaveBeenCalledOnce();
+    expect(put.mock.calls[0][0]).toBe(key);
+    expect(put.mock.calls[0][1].headers.get("cache-control")).toBe("public, max-age=120");
+    expect(result.headers.get("cache-control")).toBe("private, no-store");
+  });
+
+  it("serves cached public HTML without contacting the origin or sending a public browser cache directive", async () => {
+    const { fetch, match, ctx } = setup();
+    match.mockResolvedValue(new Response("cached home", { headers: homeHeaders }));
+    const result = await proxy.fetch(new Request(storefront, { headers: htmlRequest }), env, ctx);
+    expect(match).toHaveBeenCalledWith(key);
+    expect(result.headers.get("x-nakis-edge-cache")).toBe("HIT");
+    expect(result.headers.get("cache-control")).toBe("private, no-store");
+    expect(await result.text()).toBe("cached home");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["/", { cookie: "session=user" }],
+    ["/", { authorization: "Bearer user" }],
+    ["/", { rsc: "1" }],
+    ["/", { "next-router-state-tree": "state" }],
+    ["/", { "next-url": "/koleksiyon" }],
+    ["/", { "cache-control": "no-cache" }],
+    ["/", { accept: "*/*" }],
+    ["/?_rsc=abc", {}],
+    ["/?q=search", {}],
+    ["/koleksiyon", {}],
+  ] as const)("passes through personalized, dynamic or non-HTML requests (%s, %j)", async (path, headers) => {
+    const { match, put, fetch, ctx } = setup();
+    fetch.mockResolvedValue(new Response("home", { headers: homeHeaders }));
+    await proxy.fetch(new Request(storefront + path, { headers: { ...htmlRequest, ...headers } }), env, ctx);
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(match).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { "x-nakis-edge-cache": "" },
+    { "set-cookie": "session=user" },
+    { vary: "Cookie" },
+    { "content-type": "text/x-component" },
+  ] as Record<string, string>[])("skips non-opted-in or potentially personalized replies (%j)", async (headers) => {
+    const { fetch, put, ctx } = setup();
+    fetch.mockResolvedValue(new Response("home", { headers: { ...homeHeaders, ...headers } }));
+    await proxy.fetch(new Request(storefront, { headers: htmlRequest }), env, ctx);
     expect(put).not.toHaveBeenCalled();
   });
 });

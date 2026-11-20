@@ -1,6 +1,14 @@
 {$NAKIS_ORIGIN_HOST} {
 	@storefront header Nakis-Origin-Token {$NAKIS_ORIGIN_TOKEN}
 	handle @storefront {
+		@anonymous_home {
+			method GET
+			path /
+			header !Cookie
+			header !Authorization
+		}
+		header @anonymous_home X-Nakis-Edge-Cache anonymous-home
+
 		@public_media {
 			method GET HEAD
 			path_regexp media ^/images/((?:products|categories|collections)/[a-f0-9-]{36}(?:-t)?\.webp)$

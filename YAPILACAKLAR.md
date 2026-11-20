@@ -53,6 +53,7 @@
 - [x] Yeni VP3'ler için yoğun saten, katmanlı dolgu ve dikiş önizlemesi kuralları eklendi.
 - [x] Güncellenen ana sayfa canlıya alındı. Beş kategori kapağı ve Filistin Bayrağı kartı masaüstünde ve mobilde doğrulandı.
 - [x] Vitrin görsel boyutları, bekleyen filtre durumu, gereksiz ön yüklemeler ve açık dosya önbelleği iyileştirildi. Shopier düğmesi fiyatla hizalandı, kampanya gösterimi satın alınabilen desen sayısına bağlandı.
+- [x] Canlı mağazada küçük görselleri, tarayıcıya özel verileri önbellekten ayıran iki dakikalık anonim ana sayfa önbelleğini ve mobil açılış süresini doğrula.
 - [ ] En az üç desen Shopier’de satışa açıldığında gerçek sepet indiriminin ödeme adımında uygulandığını doğrula ve öne çıkan duyuruya ekle.
 
 ## Açık küçük kusurlar (Phase 2'den)

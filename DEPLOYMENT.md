@@ -38,7 +38,9 @@ Shopier akışı için `npm run build:storefront` komutu `storefront/out` dizini
 2. `npx wrangler@4.85.0 versions upload --config deploy/cloudflare/wrangler.jsonc --var NAKIS_ORIGIN:https://<sunucu-adı> --secrets-file <erişimi-kısıtlı-dosya>` ile yeni Worker sürümünü hazırlayın. Sırlar dosyası `NAKIS_ORIGIN_TOKEN` içermeli ve depo dışında olmalı. Sunucunun TLS adresi Worker'dan farklı olmalı. Yükleme mevcut yayını değiştirmez.
 3. `npx wrangler@4.85.0 versions deploy <yeni-sürüm>@100% --config deploy/cloudflare/wrangler.jsonc` ile trafiği yönlendirin. Canlı adreste kayıt, oturum, filtre ve sepeti tekrar deneyin. Gerekirse `npx wrangler@4.85.0 rollback <önceki-sürüm> --config deploy/cloudflare/wrangler.jsonc` ile önceki yayına dönün.
 
-Worker, yalnızca herkese açık değişmez WebP dosyalarını ve sürümlenmiş Next.js varlıklarını Cloudflare üzerinde 24 saate kadar saklar. Bir varlığı iki kez normal GET ile çağırarak `X-Nakis-Asset-Cache: HIT` başlığını kontrol edin. HTML, API, oturum ve korumalı indirme istekleri her seferinde sunucuya iletilir.
+Worker, herkese açık değişmez WebP dosyalarını ve sürümlenmiş Next.js varlıklarını Cloudflare üzerinde 24 saate kadar saklar. Bir varlığı iki kez normal GET ile çağırarak `X-Nakis-Asset-Cache: HIT` başlığını kontrol edin.
+
+Caddy ve Worker, yalnızca oturum ve sorgu parametresi içermeyen ana sayfa HTML isteği için iki dakikalık ortak önbelleğe izin verir. İki normal `Accept: text/html` GET isteğinin ikincisinde `X-Nakis-Edge-Cache: HIT` ve tarayıcıya dönük `Cache-Control: private, no-store` başlıklarını doğrulayın. Yeni fiyat ve kampanya bilgisi anonim ana sayfada iki dakika gecikebilir. Diğer sayfalar, API, oturum, Next.js gezinme verisi ve korumalı indirmeler sunucuya iletilir. Ana sayfanın sunucuda kişiselleştirilmesi gerekirse önce Caddy işaretini kaldırın ve Worker'ın ana sayfa önbelleğini devre dışı bırakın.
 
 ### Oracle Always Free (`VM.Standard.E2.1.Micro`, 1 GB RAM) kurulumu
 

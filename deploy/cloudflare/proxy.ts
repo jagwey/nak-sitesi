@@ -10,20 +10,39 @@ interface WorkerContext {
 const publicMediaPath = /^\/images\/(?:products|categories|collections)\/[a-f0-9-]{36}(?:-t)?\.webp$/;
 const nextAssetPath = /^\/_next\/static\/(?:chunks|media)\/[a-zA-Z0-9_.~-]+\.(?:js|css|woff2|webp)$/;
 const passThroughHeaders = ["authorization", "range", "if-none-match", "if-modified-since", "if-match", "if-unmodified-since", "cache-control", "pragma"];
+const routerVaryHeaders = ["rsc", "next-router-state-tree", "next-router-prefetch", "next-router-segment-prefetch"];
+const homepagePrivateHeaders = ["cookie", "origin", "next-url", ...routerVaryHeaders];
 
-function edgeCacheFor(request: Request, url: URL) {
+function edgeCacheKind(request: Request, url: URL) {
   if (request.method !== "GET" || url.search || passThroughHeaders.some((header) => request.headers.has(header))) {
     return undefined;
   }
-  if (!publicMediaPath.test(url.pathname) && !nextAssetPath.test(url.pathname)) return undefined;
-  return (caches as CacheStorage & { default: Cache }).default;
+  if (nextAssetPath.test(url.pathname) || (publicMediaPath.test(url.pathname) && !request.headers.has("origin"))) {
+    return "asset";
+  }
+  if (url.pathname === "/" && request.headers.get("accept")?.includes("text/html") &&
+      !homepagePrivateHeaders.some((header) => request.headers.has(header))) {
+    return "home";
+  }
+  return undefined;
 }
 
-function isPublicImmutable(response: Response): boolean {
-  const directives = response.headers.get("cache-control")?.toLowerCase().split(",").map((value) => value.trim()) ?? [];
-  const vary = response.headers.get("vary")?.toLowerCase().trim();
+function varyHeaders(response: Response): string[] {
+  return response.headers.get("vary")?.toLowerCase().split(",").map((value) => value.trim()) ?? [];
+}
+
+function isAnonymousHome(response: Response): boolean {
   return response.status === 200 && !response.headers.has("set-cookie") &&
-    (!vary || vary === "accept-encoding") && directives.includes("public") &&
+    response.headers.get("x-nakis-edge-cache") === "anonymous-home" &&
+    response.headers.get("content-type")?.startsWith("text/html") === true &&
+    varyHeaders(response).every((value) => value === "accept-encoding" || routerVaryHeaders.includes(value));
+}
+
+function isPublicImmutable(response: Response, allowOriginVary: boolean): boolean {
+  const directives = response.headers.get("cache-control")?.toLowerCase().split(",").map((value) => value.trim()) ?? [];
+  return response.status === 200 && !response.headers.has("set-cookie") &&
+    varyHeaders(response).every((value) => value === "accept-encoding" || (allowOriginVary && value === "origin")) &&
+    directives.includes("public") &&
     directives.includes("immutable") && !directives.some((value) => /^(?:private|no-cache|no-store)(?:=|$)/.test(value));
 }
 
@@ -49,12 +68,19 @@ export default {
     target.search = publicUrl.search;
 
     const headers = new Headers(request.headers);
-    const edgeCache = edgeCacheFor(request, publicUrl);
+    const cacheKind = edgeCacheKind(request, publicUrl);
+    const edgeCache = cacheKind ? (caches as CacheStorage & { default: Cache }).default : undefined;
+    const cacheKey = cacheKind === "home" ? new URL("/?edge-public-home=v1", publicUrl).href : publicUrl.href;
     if (edgeCache) {
-      const hit = await edgeCache.match(publicUrl.href).catch(() => undefined);
+      const hit = await edgeCache.match(cacheKey).catch(() => undefined);
       if (hit) {
         const result = new Response(hit.body, hit);
-        result.headers.set("x-nakis-asset-cache", "HIT");
+        if (cacheKind === "home") {
+          result.headers.set("cache-control", "private, no-store");
+          result.headers.set("x-nakis-edge-cache", "HIT");
+        } else {
+          result.headers.set("x-nakis-asset-cache", "HIT");
+        }
         return result;
       }
       headers.delete("cookie");
@@ -73,11 +99,15 @@ export default {
       return unavailable(502);
     }
 
-    if (edgeCache && isPublicImmutable(response)) {
+    if (edgeCache && (cacheKind === "home"
+      ? isAnonymousHome(response)
+      : isPublicImmutable(response, publicMediaPath.test(publicUrl.pathname)))) {
       const copy = response.clone();
       const cacheable = new Response(copy.body, copy);
-      cacheable.headers.set("cache-control", `${response.headers.get("cache-control")}, s-maxage=86400`);
-      ctx.waitUntil(edgeCache.put(publicUrl.href, cacheable).catch(() => undefined));
+      cacheable.headers.set("cache-control", cacheKind === "home"
+        ? "public, max-age=120"
+        : `${response.headers.get("cache-control")}, s-maxage=86400`);
+      ctx.waitUntil(edgeCache.put(cacheKey, cacheable).catch(() => undefined));
     }
 
     const location = response.headers.get("location");
