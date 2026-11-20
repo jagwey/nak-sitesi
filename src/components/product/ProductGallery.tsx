@@ -1,17 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import type { Product } from "@/data/products";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
-interface GalleryImage {
-  url: string;
-  alt: string;
-  caption: string;
-}
-
 interface ProductGalleryProps {
-  images: GalleryImage[];
+  images: Product["images"];
   productName: string;
 }
 
@@ -55,7 +50,9 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             src={current.url}
             alt={current.alt}
             fill
-            priority
+            loading="eager"
+            fetchPriority={activeIndex === 0 ? "high" : "auto"}
+            unoptimized={Boolean(current.thumbnailUrl)}
             sizes="(max-width: 1024px) 100vw, 52vw"
             style={{
               transformOrigin: `${origin.x}% ${origin.y}%`,
@@ -127,7 +124,8 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 }`}
               >
                 <Image
-                  src={img.url}
+                  src={img.thumbnailUrl ?? img.url}
+                  unoptimized={Boolean(img.thumbnailUrl)}
                   alt={img.alt}
                   fill
                   sizes="80px"

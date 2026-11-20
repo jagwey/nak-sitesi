@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
@@ -15,7 +16,9 @@ interface ProductCardProps {
 export function ProductCard({ product, priority = false }: ProductCardProps) {
   const { isFavorite, toggleFavorite } = useStore();
   const fav = isFavorite(product.id);
+  const image = product.images[0];
   const secondImage = product.images[1];
+  const [showPreview, setShowPreview] = useState(false);
   const discount = product.compareAtPriceKurus
     ? calculateDiscountPercent(product.compareAtPriceKurus, product.priceKurus)
     : 0;
@@ -37,24 +40,30 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-linen">
         <Link
           href={`/urun/${product.slug}`}
+          prefetch={false}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "mouse" && secondImage) setShowPreview(true);
+          }}
           className="block h-full w-full"
           aria-label={product.name}
         >
           <Image
-            src={product.images[0].url}
-            alt={product.images[0].alt}
+            src={image.thumbnailUrl ?? image.url}
+            unoptimized={Boolean(image.thumbnailUrl)}
+            alt={image.alt}
             fill
-            priority={priority}
+            loading={priority ? "eager" : "lazy"}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.025]"
+            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.025]"
           />
-          {secondImage && (
+          {showPreview && secondImage && (
             <Image
-              src={secondImage.url}
-              alt={secondImage.alt}
+              src={secondImage.thumbnailUrl ?? secondImage.url}
+              unoptimized={Boolean(secondImage.thumbnailUrl)}
+              alt=""
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100"
+              className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             />
           )}
         </Link>
@@ -84,6 +93,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           <h3 className="line-clamp-2 min-h-[2lh] break-words font-display text-[1.2rem] leading-snug text-ink sm:line-clamp-none sm:min-h-0">
             <Link
               href={`/urun/${product.slug}`}
+              prefetch={false}
               className="transition-colors duration-200 hover:text-gold-text"
             >
               {product.name}

@@ -7,7 +7,7 @@ import { GET as related } from "@/app/api/products/[slug]/related/route";
 import { GET as cats } from "@/app/api/categories/route";
 import { GET as suggest } from "@/app/api/search/suggest/route";
 import { db } from "@/server/db";
-import { getHomepageData } from "@/server/modules/catalog";
+import { getAvailableEmbroideryOffers, getHomepageData } from "@/server/modules/catalog";
 
 const names = (j: { items: { name: string }[] }) => j.items.map((p) => p.name).sort();
 const get = async (q: string) => (await call(list, "GET", `/api/products${q}`)).json();
@@ -24,19 +24,38 @@ describe("catalog API", () => {
     });
     await db.productImage.createMany({ data: [
       { productId: rose.id, url: "/rose-detail.webp", sort: 1 },
-      { productId: rose.id, url: "/rose.webp", alt: "Gül dikişi", sort: 0 },
+      { productId: rose.id, url: "/images/products/rose.webp", storageKey: "products/rose.webp", alt: "Gül dikişi", sort: 0 },
       { productId: cicek.id, url: "/demo.webp" },
       { productId: draft.id, url: "/draft.webp" },
     ] });
 
     const { categories, tabs } = await getHomepageData();
+    const cover = { url: "/images/products/rose.webp", thumbnailUrl: "/images/products/rose-t.webp", alt: "Gül dikişi" };
     expect(categories).toEqual([
-      { slug: "dijital-nakis-desenleri", name: "Dijital Nakış Desenleri", productCount: 2, image: { url: "/rose.webp", alt: "Gül dikişi" } },
-      { slug: "cicek-ve-botanik", name: "Çiçek ve Botanik", productCount: 1, image: { url: "/rose.webp", alt: "Gül dikişi" } },
+      { slug: "dijital-nakis-desenleri", name: "Dijital Nakış Desenleri", productCount: 2, image: cover },
+      { slug: "cicek-ve-botanik", name: "Çiçek ve Botanik", productCount: 1, image: cover },
     ]);
     expect(names({ items: tabs.new })).toEqual(["Gül Motifi"]);
+    expect(tabs.new[0].images).toEqual([
+      { ...cover, caption: "" },
+      { url: "/rose-detail.webp", alt: "", caption: "" },
+    ]);
     expect(names({ items: tabs.digital })).toEqual(["Gül Motifi", "Monogram M"]);
     expect(names({ items: tabs.physical })).toEqual(["Keten Havlu"]);
+  });
+
+  it("promotes only tiers supported by purchasable designs in the store checkout", async () => {
+    const { rose, cicek, mono, draft, archived, fmt } = await seedCatalog();
+    await db.digitalFile.createMany({
+      data: [rose, cicek, mono, draft, archived].map(({ id }) => ({
+        productId: id, formatId: fmt.VP3, storageKey: `embroidery/${id}.vp3`,
+        originalName: "desen.vp3", sizeBytes: 100, sha256: "a".repeat(64),
+      })),
+    });
+    expect(await getAvailableEmbroideryOffers()).toEqual([{ minDesigns: 3, percent: 10 }]);
+
+    await db.product.update({ where: { id: mono.id }, data: { shopierUrl: "https://www.shopier.com/123456" } });
+    expect(await getAvailableEmbroideryOffers()).toEqual([]);
   });
 
   it("lists only ACTIVE products", async () => {

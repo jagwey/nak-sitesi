@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, Link2, Search, SlidersHorizontal, X } from "lucide-react";
@@ -12,13 +12,14 @@ import {
   serializeFiltersToParams,
   type CatalogFilterState,
 } from "@/lib/search";
-import { embroideryOfferText } from "@/lib/embroidery-offer";
+import type { EmbroideryOfferTier } from "@/lib/embroidery-offer";
 import { useStore } from "@/lib/store";
 import type { Product } from "@/data/products";
 import type { Facets } from "@/server/modules/search/types";
 import type { SearchSuggestion } from "@/lib/search";
 import { FilterSidebar } from "./FilterSidebar";
 import { ProductCard } from "./ProductCard";
+import { EmbroideryOffer } from "./EmbroideryOffer";
 
 interface CatalogClientProps {
   products: Product[];
@@ -27,12 +28,14 @@ interface CatalogClientProps {
   pageSize: number;
   facets: Facets;
   emptySuggestions: SearchSuggestion[];
+  offers: EmbroideryOfferTier[];
 }
 
-export function CatalogClient({ products, total, page, pageSize, facets, emptySuggestions }: CatalogClientProps) {
+export function CatalogClient({ products, total, page, pageSize, facets, emptySuggestions, offers }: CatalogClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addRecentSearch, checkoutOpen } = useStore();
+  const { addRecentSearch } = useStore();
+  const [isUpdating, startTransition] = useTransition();
 
   const filters = useMemo(
     () => parseFiltersFromParams(searchParams),
@@ -85,14 +88,20 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
     };
   }, [mobileFilterOpen]);
 
+  const navigateToFilters = useCallback(
+    (next: CatalogFilterState) => {
+      const query = serializeFiltersToParams(next).toString();
+      startTransition(() => router.replace(query ? `/koleksiyon?${query}` : "/koleksiyon", { scroll: false }));
+    },
+    [router]
+  );
+
   const updateFilters = useCallback(
     (patch: Partial<CatalogFilterState>) => {
-      const next: CatalogFilterState = { ...filters, ...patch };
-      const params = serializeFiltersToParams(next);
-      const qs = params.toString();
-      router.replace(qs ? `/koleksiyon?${qs}` : "/koleksiyon", { scroll: false });
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      navigateToFilters({ ...filters, q: searchInput, ...patch });
     },
-    [filters, router]
+    [filters, navigateToFilters, searchInput]
   );
 
   // Search is server-side now: wait for a pause in typing before navigating.
@@ -103,11 +112,10 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
     (q: string) => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
-        const qs = serializeFiltersToParams({ ...filtersRef.current, q }).toString();
-        router.replace(qs ? `/koleksiyon?${qs}` : "/koleksiyon", { scroll: false });
+        navigateToFilters({ ...filtersRef.current, q });
       }, 250);
     },
-    [router]
+    [navigateToFilters]
   );
   useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current); }, []);
 
@@ -119,9 +127,10 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
   };
 
   const resetFilters = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     setSearchInput("");
-    router.replace("/koleksiyon", { scroll: false });
-  }, [router]);
+    navigateToFilters(DEFAULT_FILTERS);
+  }, [navigateToFilters]);
 
   const activeCategory = CATEGORIES.find((c) => c.slug === filters.kategori);
 
@@ -244,7 +253,7 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
       {/* Header & Inline Live Search */}
       <div className="border-b border-hairline pb-8">
         <nav aria-label="Sayfa yolu" className="mb-4 text-[0.875rem] text-umber">
-          <Link href="/" className="hover:text-ink">
+          <Link prefetch={false} href="/" className="hover:text-ink">
             Ana Sayfa
           </Link>
           <span className="mx-2 text-stone">/</span>
@@ -300,12 +309,10 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
             <p>{filters.kategori === "baski-tasarimlari"
               ? "Tekstil baskısı talebinizi ölçü, adet ve referans görselle iletebilirsiniz."
               : "İşlemeli tekstil için kumaşı, ölçüyü ve adedi belirterek teklif isteyebilirsiniz."}</p>
-            <Link href={filters.kategori === "baski-tasarimlari" ? "/kisiye-ozel?talep=baski" : "/kisiye-ozel"} className="mt-2 inline-block font-medium text-cocoa underline">Kişiye özel teklif iste</Link>
+            <Link prefetch={false} href={filters.kategori === "baski-tasarimlari" ? "/kisiye-ozel?talep=baski" : "/kisiye-ozel"} className="mt-2 inline-block font-medium text-cocoa underline">Kişiye özel teklif iste</Link>
           </div>
-        ) : checkoutOpen && products.some((product) => product.type === "digital" && !product.isDemo) && !products.some((product) => product.shopierUrl) && (
-          <p className="mt-5 text-[0.9375rem] text-umber">
-            {embroideryOfferText}
-          </p>
+        ) : offers.length > 0 && products.some((product) => product.type === "digital" && !product.isDemo && !product.shopierUrl) && (
+          <div className="mt-5"><EmbroideryOffer tiers={offers} /></div>
         )}
 
         {/* Example quick search controls */}
@@ -358,11 +365,10 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
             <span className="tabular-nums">({activeTokens.length})</span>
           </button>
 
-          <p className="text-[0.875rem] text-umber">
-            <span className="tabular-nums font-medium text-ink">
-              {total}
-            </span>{" "}
-            ürün gösteriliyor
+          <p role="status" className="text-[0.875rem] text-umber">
+            {isUpdating ? "Sonuçlar güncelleniyor…" : (
+              <><span className="tabular-nums font-medium text-ink">{total}</span> ürün gösteriliyor</>
+            )}
           </p>
         </div>
 
@@ -461,7 +467,7 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
               {total > pageSize && (
                 <nav aria-label="Sayfalar" className="mt-12 flex items-center justify-between border-t border-hairline pt-6 text-[0.9375rem]">
                   {page > 1 ? (
-                    <Link href={pageHref(page - 1)} rel="prev" className="min-h-11 py-2 font-medium text-cocoa underline-offset-4 hover:text-gold-text hover:underline">
+                    <Link prefetch={false} href={pageHref(page - 1)} rel="prev" className="min-h-11 py-2 font-medium text-cocoa underline-offset-4 hover:text-gold-text hover:underline">
                       Önceki
                     </Link>
                   ) : (
@@ -471,7 +477,7 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
                     Sayfa {page} / {Math.ceil(total / pageSize)}
                   </span>
                   {page * pageSize < total ? (
-                    <Link href={pageHref(page + 1)} rel="next" className="min-h-11 py-2 font-medium text-cocoa underline-offset-4 hover:text-gold-text hover:underline">
+                    <Link prefetch={false} href={pageHref(page + 1)} rel="next" className="min-h-11 py-2 font-medium text-cocoa underline-offset-4 hover:text-gold-text hover:underline">
                       Sonraki
                     </Link>
                   ) : (
@@ -499,6 +505,7 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
                   Filtreleri temizle
                 </button>
                 <Link
+                  prefetch={false}
                   href="/kisiye-ozel"
                   className="inline-flex h-11 items-center border border-cocoa px-6 text-[0.875rem] font-medium text-cocoa transition-colors duration-200 hover:bg-cocoa hover:text-[#FAF8F3]"
                 >
@@ -523,6 +530,7 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
                   ].map((l) => (
                     <li key={l.href}>
                       <Link
+                        prefetch={false}
                         href={l.href}
                         className="inline-flex min-h-11 items-center rounded-full border border-hairline-strong px-4 text-[0.875rem] text-ink transition-colors duration-200 hover:border-cocoa hover:bg-linen/60"
                       >

@@ -6,7 +6,8 @@ import { getStorage, newObjectKey, safeDownloadName } from "../storage";
 import { processImageUpload, validateEmbroideryFile } from "../uploads";
 import { parseEmbroideryBuffer } from "../embroidery";
 import { reindexProducts } from "../search";
-import { thumbKey, type Actor } from "./products";
+import { imageThumbnailPath } from "@/lib/product-image";
+import type { Actor } from "./products";
 import { Prisma } from "@/generated/prisma/client";
 
 async function fileBuffer(file: File): Promise<Buffer> {
@@ -20,7 +21,7 @@ export async function uploadPublicImage(file: File, prefix: string) {
   const st = getStorage();
   const key = `${newObjectKey("webp", prefix)}`;
   await st.putObject({ bucket: "public", key, body: out.main, contentType: "image/webp" });
-  await st.putObject({ bucket: "public", key: thumbKey(key), body: out.thumb, contentType: "image/webp" });
+  await st.putObject({ bucket: "public", key: imageThumbnailPath(key), body: out.thumb, contentType: "image/webp" });
   return { key, url: st.publicUrl(key), width: out.width, height: out.height };
 }
 
@@ -38,7 +39,7 @@ export async function addProductImage(productId: string, file: File, alt: string
     });
     return { id: img.id, url: img.url, alt: img.alt, sort: img.sort, uploaded: true };
   } catch (e) {
-    await Promise.allSettled([st().deleteObject({ bucket: "public", key: up.key }), st().deleteObject({ bucket: "public", key: thumbKey(up.key) })]);
+    await Promise.allSettled([st().deleteObject({ bucket: "public", key: up.key }), st().deleteObject({ bucket: "public", key: imageThumbnailPath(up.key) })]);
     throw e;
   }
 }
@@ -63,7 +64,7 @@ export async function deleteProductImage(productId: string, imageId: string, act
     await tx.productImage.delete({ where: { id: imageId } });
     await writeAudit({ actorUserId: actor.id, action: "product.image_delete", entity: "Product", entityId: productId, diff: { imageId }, ip: actor.ip }, tx);
   });
-  if (img.storageKey) await Promise.allSettled([st().deleteObject({ bucket: "public", key: img.storageKey }), st().deleteObject({ bucket: "public", key: thumbKey(img.storageKey) })]);
+  if (img.storageKey) await Promise.allSettled([st().deleteObject({ bucket: "public", key: img.storageKey }), st().deleteObject({ bucket: "public", key: imageThumbnailPath(img.storageKey) })]);
   return { ok: true };
 }
 

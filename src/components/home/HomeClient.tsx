@@ -86,7 +86,7 @@ export function HomeShowcaseTabs({
       {products.length === 0 && (activeTab === "fiziksel" || activeTab === "kisisel") && (
         <div className="mt-8 text-[0.9375rem] text-umber">
           <p>İşlemeli tekstil için yüzey, ölçü ve adet bilgisiyle teklif isteyebilirsiniz.</p>
-          <Link href="/kisiye-ozel" className="mt-2 inline-block font-medium text-cocoa underline">Kişiye özel teklif iste</Link>
+          <Link prefetch={false} href="/kisiye-ozel" className="mt-2 inline-block font-medium text-cocoa underline">Kişiye özel teklif iste</Link>
         </div>
       )}
 
@@ -98,6 +98,7 @@ export function HomeShowcaseTabs({
 
       <div className="mt-10 flex justify-end">
         <Link
+          prefetch={false}
           href={currentTab.href}
           className="inline-flex items-center gap-2 text-[0.9375rem] font-medium text-cocoa underline-offset-4 transition-colors duration-200 hover:text-gold-text hover:underline"
         >

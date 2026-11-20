@@ -1,5 +1,6 @@
 import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
+import { publicImageThumbnail } from "@/lib/product-image";
 import type {
   EmbroideryMetadata,
   EmbroideryFormat,
@@ -15,7 +16,7 @@ import type {
 export const productInclude = {
   category: { select: { slug: true, name: true } },
   tags: { select: { tag: { select: { name: true } } } },
-  images: { orderBy: { sort: "asc" }, select: { url: true, alt: true, caption: true } },
+  images: { orderBy: { sort: "asc" }, select: { url: true, storageKey: true, alt: true, caption: true } },
   formats: { select: { format: { select: { code: true, sort: true } } } },
   embroidery: { include: { hoopSize: { select: { label: true } } } },
   digitalFiles: {
@@ -76,7 +77,12 @@ export function toProductDto(row: ProductRow, brandsByFormat: BrandsByFormat): P
     personalizable: row.personalizable,
     usageAreas: row.usageAreas as UsageArea[],
     tags: row.tags.map((t) => t.tag.name).filter((n) => n !== "demo"),
-    images: row.images.map((i) => ({ url: i.url, alt: i.alt ?? "", caption: i.caption ?? "" })),
+    images: row.images.map((i) => ({
+      url: i.url,
+      alt: i.alt ?? "",
+      caption: i.caption ?? "",
+      ...publicImageThumbnail(i.url, i.storageKey),
+    })),
     description: row.description ?? "",
     highlights: row.highlights,
     isDemo: row.isDemo,

@@ -103,6 +103,7 @@ export interface Product {
   tags: string[];
   images: {
     url: string;
+    thumbnailUrl?: string;
     alt: string;
     caption: string;
   }[];

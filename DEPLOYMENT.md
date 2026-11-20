@@ -38,6 +38,8 @@ Shopier akışı için `npm run build:storefront` komutu `storefront/out` dizini
 2. `npx wrangler@4.85.0 versions upload --config deploy/cloudflare/wrangler.jsonc --var NAKIS_ORIGIN:https://<sunucu-adı> --secrets-file <erişimi-kısıtlı-dosya>` ile yeni Worker sürümünü hazırlayın. Sırlar dosyası `NAKIS_ORIGIN_TOKEN` içermeli ve depo dışında olmalı. Sunucunun TLS adresi Worker'dan farklı olmalı. Yükleme mevcut yayını değiştirmez.
 3. `npx wrangler@4.85.0 versions deploy <yeni-sürüm>@100% --config deploy/cloudflare/wrangler.jsonc` ile trafiği yönlendirin. Canlı adreste kayıt, oturum, filtre ve sepeti tekrar deneyin. Gerekirse `npx wrangler@4.85.0 rollback <önceki-sürüm> --config deploy/cloudflare/wrangler.jsonc` ile önceki yayına dönün.
 
+Worker, yalnızca herkese açık değişmez WebP dosyalarını ve sürümlenmiş Next.js varlıklarını Cloudflare üzerinde 24 saate kadar saklar. Bir varlığı iki kez normal GET ile çağırarak `X-Nakis-Asset-Cache: HIT` başlığını kontrol edin. HTML, API, oturum ve korumalı indirme istekleri her seferinde sunucuya iletilir.
+
 ### Oracle Always Free (`VM.Standard.E2.1.Micro`, 1 GB RAM) kurulumu
 
 Frankfurt'ta `VM.Standard.A1.Flex` (Arm) kapasitesi doluyken tam mağaza Oracle'ın diğer Always Free şekli olan **`VM.Standard.E2.1.Micro`** (1 GB RAM, AMD x86_64, 47 GB SSD) üzerinde çalışacak şekilde doğrulandı:

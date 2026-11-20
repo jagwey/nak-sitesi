@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Search } from "lucide-react";
-import { findPublicProductBySlug, getHomepageData } from "@/server/modules/catalog";
+import { findPublicProductBySlug, getAvailableEmbroideryOffers, getHomepageData } from "@/server/modules/catalog";
 import { HomeMonogramTeaser } from "@/components/custom/LiveMonogramPreview";
 import { DEFAULT_HERO_TITLE, HomeHero } from "@/components/home/HomeHero";
+import { EmbroideryOffer } from "@/components/catalog/EmbroideryOffer";
 import { HomeShowcaseTabs } from "@/components/home/HomeClient";
 import { formatTRY } from "@/lib/format";
 import { getSiteSettings } from "@/server/modules/settings/service";
@@ -39,10 +40,11 @@ const PATHS = [
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [site, home, flag] = await Promise.all([
+  const [site, home, flag, offers] = await Promise.all([
     getSiteSettings().catch(() => null),
     getHomepageData(),
     findPublicProductBySlug("filistin-bayragi"),
+    getAvailableEmbroideryOffers(),
   ]);
   const flagImage = flag?.images[0];
 
@@ -83,6 +85,7 @@ export default async function HomePage() {
           {QUICK_CHIPS.map((chip) => (
             <li key={chip.label}>
               <Link
+                prefetch={false}
                 href={chip.href}
                 className="inline-flex min-h-[44px] items-center rounded-full border border-hairline-strong bg-white/80 px-4 text-[0.875rem] font-medium text-ink transition-colors duration-200 hover:border-gold hover:text-gold-text"
               >
@@ -101,7 +104,7 @@ export default async function HomePage() {
         <ul className="grid grid-cols-1 gap-x-8 gap-y-2 md:grid-cols-3">
           {PATHS.map((path) => (
             <li key={path.title} className="border-t border-cocoa">
-              <Link href={path.href} className="group block min-h-[44px] py-5">
+              <Link prefetch={false} href={path.href} className="group block min-h-[44px] py-5">
                 <span className="flex items-center justify-between gap-3">
                   <span className="font-display text-[1.6rem] leading-tight text-ink transition-colors duration-200 group-hover:text-gold-text">
                     {path.title}
@@ -119,6 +122,71 @@ export default async function HomePage() {
         </ul>
       </section>
 
+      {offers.length > 0 && (
+        <div className="mx-auto max-w-[1440px] px-4 pt-6 sm:px-6 lg:px-10">
+          <EmbroideryOffer tiers={offers} />
+        </div>
+      )}
+
+      {flag && !flag.isDemo && flagImage && (
+        <section
+          aria-labelledby="filistin-bayragi-baslik"
+          className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
+        >
+          <div className="grid items-center gap-8 md:grid-cols-2 lg:gap-16">
+            <Link
+              prefetch={false}
+              href={`/urun/${flag.slug}`}
+              className="relative block aspect-[4/3] overflow-hidden bg-linen"
+            >
+              <Image
+                src={flagImage.url}
+                unoptimized={Boolean(flagImage.thumbnailUrl)}
+                alt={flagImage.alt || flag.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </Link>
+            <div>
+              <h2
+                id="filistin-bayragi-baslik"
+                className="font-display text-[clamp(1.9rem,3vw,2.75rem)] leading-[1.08] text-ink"
+              >
+                {flag.name}
+              </h2>
+              <p className="mt-3 max-w-[50ch] text-[1rem] leading-relaxed text-umber">
+                {flag.subtitle || flag.description}
+              </p>
+              <p className="mt-5 tabular-nums text-[1.125rem] font-semibold text-ink">{formatTRY(flag.priceKurus)}</p>
+              {flag.embroidery?.formatsVerified && (
+                <p className="mt-1 text-[0.9375rem] text-umber">{flag.embroidery.formats.join(" · ")} dijital dosyaları</p>
+              )}
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+                {flag.shopierUrl && (
+                  <a
+                    href={flag.shopierUrl}
+                    className="inline-flex min-h-11 items-center bg-espresso px-5 text-[0.9375rem] font-semibold text-ivory transition-colors hover:bg-cocoa"
+                  >
+                    Shopier’den Satın Al
+                  </a>
+                )}
+                <Link
+                  prefetch={false}
+                  href={`/urun/${flag.slug}`}
+                  className={flag.shopierUrl
+                    ? "inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-cocoa underline underline-offset-4"
+                    : "inline-flex min-h-11 items-center gap-2 bg-cocoa px-5 text-[0.9375rem] font-medium text-ivory transition-colors hover:bg-cocoa-hover"}
+                >
+                  Deseni incele
+                  <ArrowRight className="h-4 w-4" strokeWidth={1.6} aria-hidden="true" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {home.categories.length > 0 && (
         <section
           aria-labelledby="kategoriler-baslik"
@@ -132,6 +200,7 @@ export default async function HomePage() {
               Kategoriler
             </h2>
             <Link
+              prefetch={false}
               href="/koleksiyon"
               className="inline-flex min-h-[44px] items-center gap-2 text-[0.9375rem] font-medium text-cocoa underline-offset-4 transition-colors duration-200 hover:text-gold-text hover:underline"
             >
@@ -143,10 +212,11 @@ export default async function HomePage() {
           <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-5">
             {home.categories.map((category) => (
               <li key={category.slug}>
-                <Link href={`/koleksiyon?kategori=${category.slug}`} className="group block">
+                <Link prefetch={false} href={`/koleksiyon?kategori=${category.slug}`} className="group block">
                   <div className="relative aspect-square w-full overflow-hidden bg-linen">
                     <Image
-                      src={category.image.url}
+                      src={category.image.thumbnailUrl ?? category.image.url}
+                      unoptimized={Boolean(category.image.thumbnailUrl)}
                       alt={category.image.alt}
                       fill
                       sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, (max-width: 1440px) 20vw, 272px"
@@ -170,47 +240,6 @@ export default async function HomePage() {
       <div className="border-y border-hairline bg-linen/45">
         <HomeShowcaseTabs tabs={home.tabs} />
       </div>
-
-      {flag && !flag.isDemo && flagImage && (
-        <section
-          aria-labelledby="filistin-bayragi-baslik"
-          className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
-        >
-          <div className="grid items-center gap-8 md:grid-cols-2 lg:gap-16">
-            <Link
-              href={`/urun/${flag.slug}`}
-              className="relative block aspect-[4/3] overflow-hidden bg-linen"
-            >
-              <Image
-                src={flagImage.url}
-                alt={flagImage.alt || flag.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </Link>
-            <div>
-              <h2
-                id="filistin-bayragi-baslik"
-                className="font-display text-[clamp(1.9rem,3vw,2.75rem)] leading-[1.08] text-ink"
-              >
-                {flag.name}
-              </h2>
-              <p className="mt-3 max-w-[50ch] text-[1rem] leading-relaxed text-umber">
-                {flag.subtitle || flag.description}
-              </p>
-              <p className="mt-5 tabular-nums text-[1.125rem] font-semibold text-ink">{formatTRY(flag.priceKurus)}</p>
-              <Link
-                href={`/urun/${flag.slug}`}
-                className="mt-5 inline-flex min-h-[44px] items-center gap-2 bg-cocoa px-5 text-[0.9375rem] font-medium text-[#FAF8F3] transition-colors duration-200 hover:bg-cocoa-hover"
-              >
-                Deseni incele
-                <ArrowRight className="h-4 w-4" strokeWidth={1.6} aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* 6. CANLI MONOGRAM ÖNİZLEME STÜDYOSU TEASER */}
       <section
@@ -277,6 +306,7 @@ export default async function HomePage() {
 
             <div className="pt-2">
               <Link
+                prefetch={false}
                 href="/kisiye-ozel"
                 className="inline-flex min-h-[44px] items-center gap-2 text-[0.9375rem] font-medium text-cocoa underline-offset-4 transition-colors duration-200 hover:text-gold-text hover:underline"
               >

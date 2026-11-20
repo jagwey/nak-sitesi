@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { CatalogClient } from "@/components/catalog/CatalogClient";
 import { parseFiltersFromParams } from "@/lib/search";
-import { getSuggestions, searchCatalog } from "@/server/modules/catalog";
+import { getAvailableEmbroideryOffers, getSuggestions, searchCatalog } from "@/server/modules/catalog";
 import { DEFAULT_PAGE_SIZE } from "@/server/modules/search/types";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +24,10 @@ export default async function KoleksiyonPage({
   const filters = parseFiltersFromParams(sp);
   const rawPage = Number(Array.isArray(sp.page) ? sp.page[0] : sp.page);
   const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
-  const result = await searchCatalog(filters, { page, pageSize: DEFAULT_PAGE_SIZE, facets: true });
+  const [result, offers] = await Promise.all([
+    searchCatalog(filters, { page, pageSize: DEFAULT_PAGE_SIZE, facets: true }),
+    filters.tur === "physical" ? [] : getAvailableEmbroideryOffers(),
+  ]);
   const emptySuggestions =
     result.total === 0 && filters.q.trim() ? await getSuggestions(filters.q, 6) : [];
 
@@ -43,6 +46,7 @@ export default async function KoleksiyonPage({
         pageSize={result.pageSize}
         facets={result.facets!}
         emptySuggestions={emptySuggestions}
+        offers={offers}
       />
     </Suspense>
   );

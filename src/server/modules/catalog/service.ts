@@ -5,6 +5,9 @@ import { CATEGORIES, type CategoryItem, type CuratedCollection } from "@/data/ca
 import type { Product } from "@/data/products";
 import type { Prisma } from "@/generated/prisma/client";
 import type { CatalogFilterState, SearchSuggestion } from "@/lib/search";
+import { publicImageThumbnail } from "@/lib/product-image";
+import { EMBROIDERY_OFFER } from "@/lib/embroidery-offer";
+import { isStoreCheckoutOpen } from "@/server/env";
 import { getSearchEngine, DEFAULT_PAGE_SIZE, type Facets } from "../search";
 import { productInclude, toProductDto, type BrandsByFormat, type ProductRow } from "./dto";
 
@@ -150,13 +153,28 @@ export async function getCollections(): Promise<CuratedCollection[]> {
 }
 
 export interface HomepageData {
-  categories: { slug: string; name: string; productCount: number; image: { url: string; alt: string } }[];
+  categories: { slug: string; name: string; productCount: number; image: { url: string; alt: string; thumbnailUrl?: string } }[];
   tabs: { new: Product[]; digital: Product[]; physical: Product[]; personalizable: Product[] };
 }
 
 const liveProduct = { status: "ACTIVE", isDemo: false } satisfies Prisma.ProductWhereInput;
 const digitalTypes = ["DIGITAL_EMBROIDERY", "DIGITAL_PRINT", "BUNDLE"] satisfies Prisma.EnumProductTypeFilter["in"];
 const homepageOrder = [{ isFeatured: "desc" }, { createdAt: "asc" }, { sku: "asc" }] satisfies Prisma.ProductOrderByWithRelationInput[];
+
+export async function getAvailableEmbroideryOffers() {
+  if (!isStoreCheckoutOpen()) return [];
+  const products = await db.product.findMany({
+    where: {
+      ...liveProduct,
+      type: "DIGITAL_EMBROIDERY",
+      shopierUrl: null,
+      digitalFiles: { some: { isCurrent: true, status: "ACTIVE" } },
+    },
+    take: EMBROIDERY_OFFER[0].minDesigns,
+    select: { id: true },
+  });
+  return EMBROIDERY_OFFER.filter(({ minDesigns }) => products.length >= minDesigns).reverse();
+}
 
 async function getHomepageCategories(): Promise<HomepageData["categories"]> {
   const categories = await db.category.findMany({
@@ -179,7 +197,7 @@ async function getHomepageCategories(): Promise<HomepageData["categories"]> {
         orderBy: homepageOrder,
         select: {
           name: true,
-          images: { orderBy: [{ sort: "asc" }, { id: "asc" }], take: 1, select: { url: true, alt: true } },
+          images: { orderBy: [{ sort: "asc" }, { id: "asc" }], take: 1, select: { url: true, alt: true, storageKey: true } },
         },
       }),
     ]);
@@ -189,23 +207,22 @@ async function getHomepageCategories(): Promise<HomepageData["categories"]> {
       slug: category.slug,
       name: category.name,
       productCount,
-      image: { url: image.url, alt: image.alt || product.name },
+      image: { url: image.url, alt: image.alt || product.name, ...publicImageThumbnail(image.url, image.storageKey) },
     };
   }));
   return cards.filter((card) => card !== null);
 }
 
-async function getHomepageProducts(
+function getHomepageProducts(
   where: Prisma.ProductWhereInput,
   orderBy: Prisma.ProductOrderByWithRelationInput[] = homepageOrder,
-): Promise<Product[]> {
-  const products = await db.product.findMany({
+): Promise<ProductRow[]> {
+  return db.product.findMany({
     where: { ...where, ...liveProduct },
     orderBy,
     take: 4,
     include: productInclude,
   });
-  return hydrate(products);
 }
 
 export async function getHomepageData(): Promise<HomepageData> {
@@ -216,7 +233,13 @@ export async function getHomepageData(): Promise<HomepageData> {
     getHomepageProducts({ type: { notIn: digitalTypes } }),
     getHomepageProducts({ personalizable: true }),
   ]);
-  return { categories, tabs: { new: isNew, digital, physical, personalizable } };
+  const brands = isNew.length || digital.length || physical.length || personalizable.length
+    ? await brandsByFormat()
+    : new Map();
+  const toProducts = (rows: ProductRow[]) => rows.map((row) => toProductDto(row, brands));
+  return { categories, tabs: {
+    new: toProducts(isNew), digital: toProducts(digital), physical: toProducts(physical), personalizable: toProducts(personalizable),
+  } };
 }
 
 export async function getSitemapEntries(): Promise<{ slug: string; updatedAt: Date }[]> {

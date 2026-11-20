@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { findPublicProductBySlug, getRelatedProducts } from "@/server/modules/catalog";
@@ -6,6 +7,7 @@ import { isStoreCheckoutOpen } from "@/server/env";
 import { getSiteSettings } from "@/server/modules/settings/service";
 
 export const dynamic = "force-dynamic";
+const getProduct = cache(findPublicProductBySlug);
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -13,7 +15,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const [product, { storeName }] = await Promise.all([findPublicProductBySlug(slug), getSiteSettings()]);
+  const [product, { storeName }] = await Promise.all([getProduct(slug), getSiteSettings()]);
   if (!product) {
     return { title: "Ürün bulunamadı" };
   }
@@ -24,14 +26,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${product.name} | ${storeName}`,
       siteName: storeName,
       description: product.subtitle,
-      images: [{ url: product.images[0].url, alt: product.images[0].alt }],
+      images: product.images.slice(0, 1).map(({ url, alt }) => ({ url, alt })),
     },
   };
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = await findPublicProductBySlug(slug);
+  const product = await getProduct(slug);
   if (!product) notFound();
 
   const [similarProducts, { storeName }] = await Promise.all([getRelatedProducts(product.slug, 4), getSiteSettings()]);

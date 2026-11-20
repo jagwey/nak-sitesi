@@ -34,6 +34,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
           {CATEGORIES.map((category) => (
             <div key={category.slug} className="space-y-1.5">
               <Link
+                prefetch={false}
                 href={`/koleksiyon?kategori=${category.slug}`}
                 onClick={onClose}
                 className="font-display block text-[1.15rem] font-medium text-ink transition-colors duration-200 hover:text-gold-text"
@@ -44,6 +45,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
                 {category.subcategories.slice(0, 3).map((sub) => (
                   <li key={sub}>
                     <Link
+                      prefetch={false}
                       href={`/koleksiyon?kategori=${category.slug}&q=${encodeURIComponent(
                         sub.split(" ")[0]
                       )}`}
@@ -69,6 +71,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
               {FILTER_LINKS.map((filter) => (
                 <li key={filter.label}>
                   <Link
+                    prefetch={false}
                     href={filter.href}
                     onClick={onClose}
                     className="group block space-y-0.5"
@@ -90,6 +93,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
               {["VP3", "PES", "DST"].map((fmt) => (
                 <Link
                   key={fmt}
+                  prefetch={false}
                   href={`/koleksiyon?tur=dijital&format=${fmt}`}
                   onClick={onClose}
                   className="underline-offset-4 transition-colors duration-200 hover:text-ink hover:underline"
@@ -104,6 +108,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
         {/* Column 10-12: Custom design */}
         <div className="col-span-3 flex flex-col justify-between">
           <Link
+            prefetch={false}
             href="/kisiye-ozel"
             onClick={onClose}
             className="group block space-y-3"

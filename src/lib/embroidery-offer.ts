@@ -3,6 +3,4 @@ export const EMBROIDERY_OFFER = [
   { minDesigns: 3, percent: 10 },
 ] as const;
 
-export const embroideryOfferText = [...EMBROIDERY_OFFER].reverse()
-  .map(({ minDesigns, percent }) => minDesigns + " farklı desende %" + percent)
-  .join(", ") + " sepet indirimi.";
+export type EmbroideryOfferTier = (typeof EMBROIDERY_OFFER)[number];

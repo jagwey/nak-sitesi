@@ -11,7 +11,7 @@ export function Footer({ site }: { site: SiteSettings }) {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-12">
           {/* Brand Column */}
           <div className="space-y-5 lg:col-span-4">
-            <Link href="/" className="inline-flex max-w-full items-center gap-3" aria-label={`${site.storeName} Ana Sayfa`}>
+            <Link prefetch={false} href="/" className="inline-flex max-w-full items-center gap-3" aria-label={`${site.storeName} Ana Sayfa`}>
               {site.logoUrl && <Image src={site.logoUrl} alt="" width={44} height={44} unoptimized className="h-11 w-11 shrink-0 object-contain" />}
               <span className="font-display min-w-0 wrap-anywhere text-[2rem] font-medium leading-none tracking-[-0.01em] text-[#F6F2EA]">
                 {site.storeName}
@@ -47,6 +47,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               {CATEGORIES.map((cat) => (
                 <li key={cat.slug}>
                   <Link
+                    prefetch={false}
                     href={`/koleksiyon?kategori=${cat.slug}`}
                     className="transition-colors duration-200 hover:text-[#F6F2EA]"
                   >
@@ -65,6 +66,7 @@ export function Footer({ site }: { site: SiteSettings }) {
             <ul className="mt-4 space-y-2.5 text-[0.9375rem] text-[#CBBFA9]">
               <li>
                 <Link
+                  prefetch={false}
                   href="/kisiye-ozel"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -73,6 +75,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/bilgi/dijital-indirme-kosullari"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -81,6 +84,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/bilgi/kargo-ve-teslimat"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -89,6 +93,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/bilgi/iade-ve-iptal"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -97,6 +102,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/bilgi/iletisim"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -114,6 +120,7 @@ export function Footer({ site }: { site: SiteSettings }) {
             <ul className="mt-4 space-y-2.5 text-[0.9375rem] text-[#CBBFA9]">
               <li>
                 <Link
+                  prefetch={false}
                   href="/hakkimizda"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -122,6 +129,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/bilgi/mesafeli-satis-sozlesmesi"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -130,6 +138,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/bilgi/gizlilik-ve-kvkk"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -138,6 +147,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/bilgi/kullanim-kosullari"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
@@ -146,6 +156,7 @@ export function Footer({ site }: { site: SiteSettings }) {
               </li>
               <li>
                 <Link
+                  prefetch={false}
                   href="/hesabim"
                   className="transition-colors duration-200 hover:text-[#F6F2EA]"
                 >

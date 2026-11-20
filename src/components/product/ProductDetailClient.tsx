@@ -236,7 +236,19 @@ export function ProductDetailClient({
     );
 
   const ctaClass =
-    "flex items-center justify-center gap-2.5 bg-cocoa px-5 text-[0.9375rem] font-medium text-[#FAF8F3] transition-colors duration-200 hover:bg-cocoa-hover disabled:cursor-not-allowed disabled:bg-hairline-strong disabled:text-ink";
+    "flex items-center justify-center gap-2.5 bg-espresso px-5 text-[0.9375rem] font-semibold text-ivory transition-colors duration-200 hover:bg-cocoa disabled:cursor-not-allowed disabled:bg-hairline-strong disabled:text-ink";
+
+  const favoriteButton = (
+    <button
+      type="button"
+      onClick={() => toggleFavorite(product.id)}
+      aria-label={fav ? "Favorilerden çıkar" : "Favorilere ekle"}
+      aria-pressed={fav}
+      className="flex h-13 w-13 shrink-0 items-center justify-center border border-hairline-strong bg-surface text-ink transition-colors duration-200 hover:border-cocoa"
+    >
+      <Heart className={`h-5 w-5 ${fav ? "fill-cocoa text-cocoa" : ""}`} strokeWidth={1.6} />
+    </button>
+  );
 
   const physicalStockLine = product.physical
     ? product.physical.inStock
@@ -308,6 +320,23 @@ export function ProductDetailClient({
               {product.isDemo && <span className="text-[0.875rem] text-stone">(Demo fiyat)</span>}
             </div>
 
+            {shopierUrl && (
+              <div className="mt-4">
+                <div className="flex gap-3">
+                  <a href={shopierUrl} className={`${ctaClass} h-13 min-w-0 flex-1`}>
+                    <ShoppingBag className="h-[18px] w-[18px] shrink-0" strokeWidth={1.6} aria-hidden="true" />
+                    Shopier’den Satın Al
+                  </a>
+                  {favoriteButton}
+                </div>
+                <p className="mt-2 text-[0.875rem] text-umber">
+                  {product.type === "digital"
+                    ? "Ödeme ve dijital teslimat Shopier üzerinden yapılır."
+                    : "Ödemenizi Shopier üzerinden tamamlayabilirsiniz."}
+                </p>
+              </div>
+            )}
+
             {/* DIGITAL: what you get + controls */}
             {product.type === "digital" && product.embroidery && (
               <div className="mt-4 space-y-5">
@@ -321,16 +350,14 @@ export function ProductDetailClient({
                   <p className="mt-1.5 text-[0.9375rem] font-medium text-ink">
                     Dijital nakış dosyası — fiziksel ürün gönderilmez.
                   </p>
-                  <p className="mt-1 flex items-start gap-2 text-[0.875rem] leading-snug text-umber">
+                  {!shopierUrl && <p className="mt-1 flex items-start gap-2 text-[0.875rem] leading-snug text-umber">
                     <Download className="mt-0.5 h-4 w-4 shrink-0 text-gold-text" strokeWidth={1.6} />
                     <span>
-                      {shopierUrl
-                        ? "Ödeme ve dijital teslimat Shopier üzerinden yapılır."
-                        : checkoutOpen
-                          ? "Ödeme sonrası dosyanızı hesabınızdan indirebilirsiniz."
-                          : "Bu desen satışa hazırlanıyor."}
+                      {checkoutOpen
+                        ? "Ödeme sonrası dosyanızı hesabınızdan indirebilirsiniz."
+                        : "Bu desen satışa hazırlanıyor."}
                     </span>
-                  </p>
+                  </p>}
 
                   {showCartAction ? <div className="mt-4">
                     <p
@@ -783,13 +810,8 @@ export function ProductDetailClient({
             )}
 
             {/* Primary CTA + favourite */}
-            <div className="mt-5 flex gap-3">
-              {shopierUrl ? (
-                <a href={shopierUrl} className={`${ctaClass} h-13 min-w-0 flex-1`}>
-                  <ShoppingBag className="h-[18px] w-[18px] shrink-0" strokeWidth={1.6} />
-                  Shopier’den Satın Al
-                </a>
-              ) : showCartAction && <button
+            {!shopierUrl && <div className="mt-5 flex gap-3">
+              {showCartAction && <button
                 type="button"
                 onClick={handleAddToCart}
                 disabled={disabled}
@@ -804,19 +826,8 @@ export function ProductDetailClient({
                   )}
                 </span>
               </button>}
-              <button
-                type="button"
-                onClick={() => toggleFavorite(product.id)}
-                aria-label={fav ? "Favorilerden çıkar" : "Favorilere ekle"}
-                aria-pressed={fav}
-                className="flex h-13 w-13 shrink-0 items-center justify-center border border-hairline-strong bg-surface text-ink transition-colors duration-200 hover:border-cocoa"
-              >
-                <Heart
-                  className={`h-5 w-5 ${fav ? "fill-cocoa text-cocoa" : ""}`}
-                  strokeWidth={1.6}
-                />
-              </button>
-            </div>
+              {favoriteButton}
+            </div>}
             <p role="status" className="sr-only">
               {justAdded ? "Ürün sepete eklendi." : ""}
             </p>

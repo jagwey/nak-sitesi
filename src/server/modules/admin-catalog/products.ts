@@ -1,4 +1,5 @@
 import "server-only";
+import { imageThumbnailPath } from "@/lib/product-image";
 import { Prisma } from "@/generated/prisma/client";
 import { db, type DbClient, type Tx } from "@/server/db";
 import { AppError } from "@/server/errors";
@@ -226,8 +227,6 @@ export async function updateProduct(id: string, input: ProductUpdateInput, actor
   return getAdminProduct(id);
 }
 
-export const thumbKey = (key: string) => key.replace(/\.webp$/, "-t.webp");
-
 /** Soft delete (ARCHIVED) or, with mode "hard", a real delete that is refused once the product was ever ordered. */
 export async function deleteProduct(id: string, mode: "archive" | "hard", actor: Actor) {
   const p = await db.product.findUnique({ where: { id }, select: { id: true, name: true, sku: true, _count: { select: { orderItems: true, inBundles: true } } } });
@@ -252,7 +251,7 @@ export async function deleteProduct(id: string, mode: "archive" | "hard", actor:
   const st = getStorage();
   await Promise.allSettled([
     ...files.map((f) => st.deleteObject({ bucket: "private", key: f.storageKey })),
-    ...images.filter((i) => i.storageKey).flatMap((i) => [st.deleteObject({ bucket: "public", key: i.storageKey! }), st.deleteObject({ bucket: "public", key: thumbKey(i.storageKey!) })]),
+    ...images.filter((i) => i.storageKey).flatMap((i) => [st.deleteObject({ bucket: "public", key: i.storageKey! }), st.deleteObject({ bucket: "public", key: imageThumbnailPath(i.storageKey!) })]),
   ]);
   return { deleted: true };
 }

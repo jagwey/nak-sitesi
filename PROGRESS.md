@@ -128,3 +128,9 @@
 - [x] Filistin Bayrağı'nın 185 TL ürün kaydı ve tek ürünlük VP3/PES/DST Shopier ZIP'i kontrol edildi. Satış bağlantısını mağaza sahibi ekleyecek. Diğer 11 desen görünür, bağlantısız kalacak.
 - [x] Tip kontrolü, 125/125 Vitest ve üretim derlemesi başarılı. Ana sayfa testi demo ve taslak kapaklarının atlandığını ve gerçek ürünlerin vitrin sekmelerinde kaldığını doğruluyor.
 - [x] `d66cd9c` Oracle'a dağıtıldı. Canlı mağazada 390 ve 1440 px genişlikte beş kategori kapağının ürün görsellerinden yüklendiği ve Filistin Bayrağı kartının doğru ürünü açtığı doğrulandı. Katalogda 12 aktif desen, 36 önizleme ve sıfır satış bağlantısı var. Shopier ZIP'indeki üç makine dosyası yeniden okundu, VP3 ölçüsü 83,8 × 41,8 mm. Fiziksel dikiş provası yapılmadı.
+
+## 2026-11-20 — Mağaza hızı ve satın alma görünürlüğü
+
+- [x] Katalog ve kategori kartları hazır WebP küçük görsellerini kullanıyor. Galeride tam çözünürlük korunuyor. İkinci kart görseli fareyle etkileşimde yükleniyor. Mobil kapak yaklaşık 35 KB ve derlemeye gömülü sürümlenmiş bir dosyadan geliyor. Gezinme bağlantılarında gereksiz ön yükleme kapatıldı, yazı tipleri değişken sürümlerine geçirildi.
+- [x] Filistin Bayrağı ana sayfada öne alındı. Geçerli Shopier bağlantısı girildiğinde düğme fiyatın yanında ve mobil alt şeritte görünüyor. Katalog filtreleri güncellenme durumunu bildiriyor. Ana sayfa ve katalog yalnızca yerel sepette gerçekten ulaşılabilen kampanya seviyelerini gösteriyor.
+- [x] Cloudflare önbelleği doğrulanmış, değişmez açık görseller ve sürümlenmiş statik varlıklarla sınırlandı. Tip kontrolü ve 138 Vitest testi geçti.

@@ -108,6 +108,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
             </button>
 
             <Link
+              prefetch={false}
               href="/"
               aria-label={`${storeName} Ana Sayfa`}
               className="group flex min-h-8 min-w-0 items-center gap-2 py-1 sm:min-h-11"
@@ -145,6 +146,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
             {PRIMARY_NAV.map((item) => (
               <Link
                 key={item.href}
+                prefetch={false}
                 href={item.href}
                 onMouseEnter={() => setMegaOpen(false)}
                 className={`whitespace-nowrap text-[0.9375rem] font-medium transition-colors duration-200 hover:text-gold-text ${
@@ -183,6 +185,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
             </button>
 
             <Link
+              prefetch={false}
               href={user ? "/hesabim" : "/giris"}
               aria-label="Hesabım"
               className="hidden h-11 w-11 items-center justify-center text-ink transition-colors duration-200 hover:text-gold-text sm:inline-flex"
@@ -236,6 +239,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
               {PRIMARY_NAV.map((item) => (
                 <Link
                   key={item.href}
+                  prefetch={false}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="font-display block py-2 text-[1.6rem] leading-tight text-ink"
@@ -244,6 +248,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
                 </Link>
               ))}
               <Link
+                prefetch={false}
                 href="/koleksiyon"
                 onClick={() => setMobileMenuOpen(false)}
                 className="font-display block py-2 text-[1.6rem] leading-tight text-gold-text"
@@ -260,6 +265,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
                 {CATEGORIES.map((cat) => (
                   <Link
                     key={cat.slug}
+                    prefetch={false}
                     href={`/koleksiyon?kategori=${cat.slug}`}
                     onClick={() => setMobileMenuOpen(false)}
                     className="py-1 text-[0.9375rem] text-ink"
@@ -272,6 +278,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
 
             <div className="mt-6 flex flex-wrap gap-6 text-[0.9375rem] font-medium text-ink">
               <Link
+                prefetch={false}
                 href={user ? "/hesabim" : "/giris"}
                 onClick={() => setMobileMenuOpen(false)}
                 className="inline-flex items-center gap-2 py-2"
@@ -280,6 +287,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
                 Hesabım
               </Link>
               <Link
+                prefetch={false}
                 href="/favoriler"
                 onClick={() => setMobileMenuOpen(false)}
                 className="inline-flex items-center gap-2 py-2"
@@ -288,6 +296,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
                 Favorilerim ({favorites.length})
               </Link>
               <Link
+                prefetch={false}
                 href="/sepet"
                 onClick={() => setMobileMenuOpen(false)}
                 className="inline-flex items-center gap-2 py-2"
