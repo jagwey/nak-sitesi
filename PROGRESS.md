@@ -143,3 +143,9 @@
 - [x] Proje `jagwey/nak-sitesi` deposunun `main` dalında. Devralırken `AGENTS.md`, `DEVIR.md`, `YAPILACAKLAR.md` ve bu kaydı oku. Yerel Next.js uygulaması `npm run dev` ile 3000 numaralı bağlantı noktasında açılır. PostgreSQL, MinIO ve Mailpit için `npm run db:up` kullanılır.
 - [x] Canlı adres `https://nakis-vitrin.nakis-sitesi.workers.dev/`. Cloudflare Worker, Oracle üzerindeki Caddy ve Docker uygulamasına yönlendirir. `.github/workflows/build-images.yml` web ve araç imajlarını GitHub Container Registry'ye yollar. Canlı yapı şu anda `612d506` uygulama imajı ve `f7fd3fdc` Worker sürümü. İşletim ayrıntıları `DEPLOYMENT.md` içinde.
 - [x] Canlı ürün kayıtları PostgreSQL'de, önizlemeler açık MinIO kovasında, VP3/PES/DST dosyaları özel MinIO kovasında. Depo uygulama, şema, araçlar ve dokümanları içerir. Canlı veritabanı, kullanıcı verisi, ücretli dosyalar ve ortam sırları GitHub'a konulmaz. Mevcut Shopier paketi bilgisayardaki `Downloads/Nakış Sitesi - Shopier` klasöründe.
+
+## 2026-11-20 — Bayrak desenleri
+
+- [x] Türk Bayrağı ve Doğu Türkistan Bayrağı 84 × 56 mm (Standart) ve 60 × 40 mm (Mini) boyutlarında ayrı ayrı dijitalleştirildi. Dört desen için 12 VP3/PES/DST dosyası ve 12 dikiş önizlemesi hazırlandı. Her ürün 100 × 100 mm kasnağa sığıyor. Fiziksel prova dikişi yapılmadı.
+- [x] Ana sayfada Filistin Bayrağı ile birlikte Bayrak desenleri bölümü ve ürün sayfalarında diğer bayrak boyutlarına bağlantılar hazırlandı. Yeni ürün fiyatı aynı serideki Filistin Bayrağı ile eşleşecek şekilde 185 TL. Yeni ürünler için Shopier bağlantısı girilmedi.
+- [x] Tip kontrolü, 157/157 Vitest testi ve üretim derlemesi başarılı. Ürün dosyaları bilgisayardaki `Downloads/Nakış Sitesi - Bayrak Desenleri` klasöründe.

@@ -55,7 +55,8 @@
 - [x] Vitrin görsel boyutları, bekleyen filtre durumu, gereksiz ön yüklemeler ve açık dosya önbelleği iyileştirildi. Shopier düğmesi fiyatla hizalandı, kampanya gösterimi satın alınabilen desen sayısına bağlandı.
 - [x] Canlı mağazada küçük görselleri, tarayıcıya özel verileri önbellekten ayıran iki dakikalık anonim ana sayfa önbelleğini ve mobil açılış süresini doğrula.
 - [x] GitHub devri için mevcut yayın, geliştirme komutları ve canlı katalog verisinin konumu `PROGRESS.md`'ye eklendi.
-- [ ] Türk Bayrağı ve Doğu Türkistan Bayrağı desenlerini iki ölçüde hazırla, vitrine ekle ve canlıda doğrula.
+- [x] Türk Bayrağı ve Doğu Türkistan Bayrağı nakış dosyalarını iki ölçüde hazırla ve Bayrak desenleri bölümüyle birlikte test et.
+- [~] Dört yeni bayrak ürününü ve vitrin bölümünü canlıya al ve tarayıcıda doğrula.
 - [ ] En az üç desen Shopier’de satışa açıldığında gerçek sepet indiriminin ödeme adımında uygulandığını doğrula ve öne çıkan duyuruya ekle.
 
 ## Açık küçük kusurlar (Phase 2'den)

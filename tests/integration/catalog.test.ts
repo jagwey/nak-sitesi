@@ -7,7 +7,7 @@ import { GET as related } from "@/app/api/products/[slug]/related/route";
 import { GET as cats } from "@/app/api/categories/route";
 import { GET as suggest } from "@/app/api/search/suggest/route";
 import { db } from "@/server/db";
-import { getAvailableEmbroideryOffers, getHomepageData } from "@/server/modules/catalog";
+import { getAvailableEmbroideryOffers, getFlagDesigns, getHomepageData } from "@/server/modules/catalog";
 
 const names = (j: { items: { name: string }[] }) => j.items.map((p) => p.name).sort();
 const get = async (q: string) => (await call(list, "GET", `/api/products${q}`)).json();
@@ -56,6 +56,26 @@ describe("catalog API", () => {
 
     await db.product.update({ where: { id: mono.id }, data: { shopierUrl: "https://www.shopier.com/123456" } });
     expect(await getAvailableEmbroideryOffers()).toEqual([]);
+  });
+
+  it("groups pictured flag designs by flag and size and skips drafts, demos and missing previews", async () => {
+    const specs = [
+      { slug: "dogu-turkistan-bayragi-mini", status: "ACTIVE", isDemo: false, pictured: false },
+      { slug: "dogu-turkistan-bayragi", status: "ACTIVE", isDemo: false, pictured: true },
+      { slug: "turk-bayragi-mini", status: "ACTIVE", isDemo: true, pictured: true },
+      { slug: "turk-bayragi", status: "DRAFT", isDemo: false, pictured: true },
+      { slug: "filistin-bayragi", status: "ACTIVE", isDemo: false, pictured: true },
+      { slug: "baska-desen", status: "ACTIVE", isDemo: false, pictured: true },
+    ] as const;
+    for (const { slug, status, isDemo, pictured } of specs) {
+      await db.product.create({ data: {
+        slug, sku: slug, name: slug, type: "DIGITAL_EMBROIDERY", status, isDemo,
+        priceKurus: 18500, images: pictured ? { create: { url: "/flag.webp", alt: slug } } : undefined,
+      } });
+    }
+    expect((await getFlagDesigns()).map((product) => product.slug)).toEqual(["filistin-bayragi", "dogu-turkistan-bayragi"]);
+    await db.product.update({ where: { slug: "turk-bayragi" }, data: { status: "ACTIVE" } });
+    expect((await getFlagDesigns()).map((product) => product.slug)).toEqual(["filistin-bayragi", "turk-bayragi", "dogu-turkistan-bayragi"]);
   });
 
   it("lists only ACTIVE products", async () => {

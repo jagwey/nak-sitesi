@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Search } from "lucide-react";
-import { findPublicProductBySlug, getAvailableEmbroideryOffers, getHomepageData } from "@/server/modules/catalog";
+import { getAvailableEmbroideryOffers, getFlagDesigns, getHomepageData } from "@/server/modules/catalog";
 import { HomeMonogramTeaser } from "@/components/custom/LiveMonogramPreview";
 import { DEFAULT_HERO_TITLE, HomeHero } from "@/components/home/HomeHero";
 import { EmbroideryOffer } from "@/components/catalog/EmbroideryOffer";
+import { ProductCard } from "@/components/catalog/ProductCard";
 import { HomeShowcaseTabs } from "@/components/home/HomeClient";
 import { formatTRY } from "@/lib/format";
 import { getSiteSettings } from "@/server/modules/settings/service";
@@ -40,13 +41,15 @@ const PATHS = [
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [site, home, flag, offers] = await Promise.all([
+  const [site, home, flags, offers] = await Promise.all([
     getSiteSettings().catch(() => null),
     getHomepageData(),
-    findPublicProductBySlug("filistin-bayragi"),
+    getFlagDesigns(),
     getAvailableEmbroideryOffers(),
   ]);
+  const flag = flags.find((product) => product.slug === "filistin-bayragi");
   const flagImage = flag?.images[0];
+  const flagOptions = flags.filter((product) => product.id !== flag?.id);
 
   return (
     <>
@@ -128,62 +131,76 @@ export default async function HomePage() {
         </div>
       )}
 
-      {flag && !flag.isDemo && flagImage && (
+      {flags.length > 0 && (
         <section
-          aria-labelledby="filistin-bayragi-baslik"
+          id="bayrak-desenleri"
+          aria-labelledby="bayrak-desenleri-baslik"
           className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
         >
-          <div className="grid items-center gap-8 md:grid-cols-2 lg:gap-16">
-            <Link
-              prefetch={false}
-              href={`/urun/${flag.slug}`}
-              className="relative block aspect-[4/3] overflow-hidden bg-linen"
-            >
-              <Image
-                src={flagImage.url}
-                unoptimized={Boolean(flagImage.thumbnailUrl)}
-                alt={flagImage.alt || flag.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </Link>
-            <div>
-              <h2
-                id="filistin-bayragi-baslik"
-                className="font-display text-[clamp(1.9rem,3vw,2.75rem)] leading-[1.08] text-ink"
+          <h2 id="bayrak-desenleri-baslik" className="mb-8 border-b border-hairline pb-5 font-display text-[clamp(1.9rem,3vw,2.75rem)] leading-tight text-ink">
+            Bayrak desenleri
+          </h2>
+          {flag && flagImage && (
+            <div className="grid items-center gap-8 md:grid-cols-2 lg:gap-16">
+              <Link
+                prefetch={false}
+                href={`/urun/${flag.slug}`}
+                className="relative block aspect-[4/3] overflow-hidden bg-linen"
               >
-                {flag.name}
-              </h2>
-              <p className="mt-3 max-w-[50ch] text-[1rem] leading-relaxed text-umber">
-                {flag.subtitle || flag.description}
-              </p>
-              <p className="mt-5 tabular-nums text-[1.125rem] font-semibold text-ink">{formatTRY(flag.priceKurus)}</p>
-              {flag.embroidery?.formatsVerified && (
-                <p className="mt-1 text-[0.9375rem] text-umber">{flag.embroidery.formats.join(" · ")} dijital dosyaları</p>
-              )}
-              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-                {flag.shopierUrl && (
-                  <a
-                    href={flag.shopierUrl}
-                    className="inline-flex min-h-11 items-center bg-espresso px-5 text-[0.9375rem] font-semibold text-ivory transition-colors hover:bg-cocoa"
-                  >
-                    Shopier’den Satın Al
-                  </a>
-                )}
-                <Link
-                  prefetch={false}
-                  href={`/urun/${flag.slug}`}
-                  className={flag.shopierUrl
-                    ? "inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-cocoa underline underline-offset-4"
-                    : "inline-flex min-h-11 items-center gap-2 bg-cocoa px-5 text-[0.9375rem] font-medium text-ivory transition-colors hover:bg-cocoa-hover"}
+                <Image
+                  src={flagImage.url}
+                  unoptimized={Boolean(flagImage.thumbnailUrl)}
+                  alt={flagImage.alt || flag.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </Link>
+              <div>
+                <h3
+                  className="font-display text-[clamp(1.9rem,3vw,2.75rem)] leading-[1.08] text-ink"
                 >
-                  Deseni incele
-                  <ArrowRight className="h-4 w-4" strokeWidth={1.6} aria-hidden="true" />
-                </Link>
+                  {flag.name}
+                </h3>
+                <p className="mt-3 max-w-[50ch] text-[1rem] leading-relaxed text-umber">
+                  {flag.subtitle || flag.description}
+                </p>
+                <p className="mt-5 tabular-nums text-[1.125rem] font-semibold text-ink">{formatTRY(flag.priceKurus)}</p>
+                {flag.embroidery?.formatsVerified && (
+                  <p className="mt-1 text-[0.9375rem] text-umber">{flag.embroidery.formats.join(" · ")} dijital dosyaları</p>
+                )}
+                <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+                  {flag.shopierUrl && (
+                    <a
+                      href={flag.shopierUrl}
+                      className="inline-flex min-h-11 items-center bg-espresso px-5 text-[0.9375rem] font-semibold text-ivory transition-colors hover:bg-cocoa"
+                    >
+                      Shopier’den Satın Al
+                    </a>
+                  )}
+                  <Link
+                    prefetch={false}
+                    href={`/urun/${flag.slug}`}
+                    className={flag.shopierUrl
+                      ? "inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-cocoa underline underline-offset-4"
+                      : "inline-flex min-h-11 items-center gap-2 bg-cocoa px-5 text-[0.9375rem] font-medium text-ivory transition-colors hover:bg-cocoa-hover"}
+                  >
+                    Deseni incele
+                    <ArrowRight className="h-4 w-4" strokeWidth={1.6} aria-hidden="true" />
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+          {flagOptions.length > 0 && (
+            <ul className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-4">
+              {flagOptions.map((product) => (
+                <li key={product.id} className="min-w-0">
+                  <ProductCard product={product} />
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       )}
 

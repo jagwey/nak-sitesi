@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
-import { findPublicProductBySlug, getRelatedProducts } from "@/server/modules/catalog";
+import { findPublicProductBySlug, getFlagDesigns, getRelatedProducts, isFlagDesign } from "@/server/modules/catalog";
 import { isStoreCheckoutOpen } from "@/server/env";
 import { getSiteSettings } from "@/server/modules/settings/service";
 
@@ -36,7 +36,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const [similarProducts, { storeName }] = await Promise.all([getRelatedProducts(product.slug, 4), getSiteSettings()]);
+  const [similarProducts, { storeName }] = await Promise.all([
+    isFlagDesign(slug) && !product.isDemo
+      ? getFlagDesigns().then((flags) => flags.filter((flag) => flag.id !== product.id))
+      : getRelatedProducts(product.slug, 4),
+    getSiteSettings(),
+  ]);
+  const showFlagOptions = isFlagDesign(slug) && !product.isDemo;
 
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -92,6 +98,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       <ProductDetailClient
         product={product}
         similarProducts={similarProducts}
+        flagOptions={showFlagOptions}
       />
     </>
   );

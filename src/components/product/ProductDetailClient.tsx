@@ -33,6 +33,7 @@ import { DemoDataNote, ProductSpecs } from "./ProductSpecs";
 interface ProductDetailClientProps {
   product: Product;
   similarProducts: Product[];
+  flagOptions: boolean;
 }
 
 const NOT_LISTED = "__listede-yok__";
@@ -90,6 +91,7 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
 export function ProductDetailClient({
   product,
   similarProducts,
+  flagOptions,
 }: ProductDetailClientProps) {
   const { checkoutOpen, addToCart, cart, isFavorite, toggleFavorite } = useStore();
   const shopierUrl = product.shopierUrl;
@@ -914,10 +916,11 @@ export function ProductDetailClient({
               id="benzer-urunler-baslik"
               className="font-display text-[clamp(1.75rem,2.6vw,2.35rem)] leading-tight text-ink"
             >
-              Benzer desenler ve parçalar
+              {flagOptions ? "Diğer bayrak desenleri" : "Benzer desenler ve parçalar"}
             </h2>
             <Link
-              href="/koleksiyon"
+              href={flagOptions ? "/#bayrak-desenleri" : "/koleksiyon"}
+              prefetch={false}
               className="inline-flex min-h-11 items-center text-[0.9375rem] font-medium text-cocoa underline-offset-4 hover:text-gold-text hover:underline"
             >
               Tümünü gör

@@ -53,6 +53,23 @@ export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
   return hydrate(slugs.map((s) => bySlug.get(s)).filter((r): r is ProductRow => !!r));
 }
 
+const flagDesignSlugs = [
+  "filistin-bayragi",
+  "turk-bayragi",
+  "turk-bayragi-mini",
+  "dogu-turkistan-bayragi",
+  "dogu-turkistan-bayragi-mini",
+];
+
+export function isFlagDesign(slug: string): boolean {
+  return flagDesignSlugs.includes(slug);
+}
+
+export async function getFlagDesigns(): Promise<Product[]> {
+  const products = await getProductsBySlugs(flagDesignSlugs);
+  return products.filter((product) => product.type === "digital" && !product.isDemo && product.images.length > 0);
+}
+
 /** Public lookup: only ACTIVE products exist as far as visitors are concerned. */
 export async function findPublicProductBySlug(slug: string): Promise<Product | null> {
   const row = await db.product.findFirst({ where: { slug, status: "ACTIVE" }, include: productInclude });
