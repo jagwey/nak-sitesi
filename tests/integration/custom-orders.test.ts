@@ -84,6 +84,36 @@ describe("custom orders", () => {
     expect(sent.some((m) => m.to === "ops@example.com" && m.text.includes("/admin/ozel-siparisler/"))).toBe(true);
   });
 
+  it("accepts isteğe özel parça with image and appears in admin list", async () => {
+    const manager = await mkUser("ORDER_MANAGER");
+    await loginAs(manager.email);
+    const res = await post(
+      createRoute,
+      form(
+        {
+          productType: "İsteğe özel parça",
+          text: "Bej havluya koyu lacivert monogram",
+          notes: "Hizmet: İsteğe özel parça\nAdet: 1\nKumaş / ürün notu: Organik pamuk",
+          size: "13 × 18 cm",
+        },
+        [{ name: "havlu-ref.png", data: await png(), type: "image/png" }],
+      ),
+      "203.0.113.40",
+    );
+    expect(res.status).toBe(201);
+    const { id } = await res.json();
+    const row = await db.customOrder.findUniqueOrThrow({ where: { id }, include: { attachments: true } });
+    expect(row.productType).toBe("İsteğe özel parça");
+    expect(row.notes).toContain("Organik pamuk");
+    expect(row.attachments).toHaveLength(1);
+
+    const list = await call(adminList, "GET", "/api/admin/custom-orders");
+    expect(list.status).toBe(200);
+    const body = await list.json();
+    const hit = body.requests.find((r: { id: string }) => r.id === id);
+    expect(hit).toMatchObject({ productType: "İsteğe özel parça", attachmentCount: 1 });
+  });
+
   it("rejects a non-image file even when it claims image/png", async () => {
     const before = objects.size;
     const res = await post(createRoute, form({}, [{ name: "evil.png", data: Buffer.from("MZ not an image at all"), type: "image/png" }]), "203.0.113.21");

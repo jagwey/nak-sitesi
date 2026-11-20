@@ -6,7 +6,16 @@ import { adminFetch, btnCls, DataTable, FormField, inputCls, Panel, selectCls, t
 import { formatTRY } from "@/lib/format";
 import { Badge, CUSTOM_STATUS, Dl, Feedback, fmtDate, fmtDay, LoadState, useAction, useLoad } from "./shared";
 
-interface Row { id: string; createdAt: string; name: string; email: string; status: string; productType: string | null; quoteKurus: number | null; attachmentCount: number }
+interface Row {
+  id: string;
+  createdAt: string;
+  name: string;
+  email: string;
+  status: string;
+  productType: string | null;
+  quoteKurus: number | null;
+  attachmentCount: number;
+}
 
 export function CustomOrdersList() {
   const [status, setStatus] = useState("");
@@ -33,6 +42,7 @@ export function CustomOrdersList() {
                 { key: "n", header: "Müşteri", primary: true, cell: (r) => <Link className="font-semibold text-gold-text underline underline-offset-2" href={`/admin/ozel-siparisler/${r.id}`}>{r.name}</Link> },
                 { key: "e", header: "E-posta", hideOnMobile: true, cell: (r) => r.email },
                 { key: "t", header: "Tür", cell: (r) => r.productType ?? "-" },
+                { key: "a", header: "Görsel", className: "tabular-nums", cell: (r) => (r.attachmentCount > 0 ? String(r.attachmentCount) : "—") },
                 { key: "s", header: "Durum", cell: (r) => <Badge map={CUSTOM_STATUS} value={r.status} /> },
                 { key: "q", header: "Teklif", className: "tabular-nums", cell: (r) => (r.quoteKurus ? formatTRY(r.quoteKurus) : "-") },
                 { key: "d", header: "Tarih", hideOnMobile: true, cell: (r) => fmtDate(r.createdAt) },
@@ -50,8 +60,26 @@ export function CustomOrdersList() {
 }
 
 interface Detail {
-  id: string; createdAt: string; name: string; email: string; phone?: string | null; status: string; productType: string | null; text?: string; size?: string | null;
-  threadColor?: string | null; deadline?: string | null; budgetKurus?: number | null; orderNumber?: string | null;
+  id: string;
+  createdAt: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  status: string;
+  productType: string | null;
+  text?: string;
+  notes?: string | null;
+  size?: string | null;
+  threadColor?: string | null;
+  machineModel?: string | null;
+  format?: string | null;
+  deadline?: string | null;
+  budgetKurus?: number | null;
+  orderNumber?: string | null;
+  quoteKurus?: number | null;
+  quoteNote?: string | null;
+  prepDays?: number | null;
+  validUntil?: string | null;
   quote?: { priceKurus: number; prepDays: number | null; note: string | null; validUntil: string | null } | null;
   attachments: { id: string; name: string; sizeBytes: number; mimeType: string; url: string }[];
 }
@@ -68,6 +96,16 @@ export function CustomOrderDetail({ id, canWrite }: { id: string; canWrite: bool
   const post = (p: string, body: unknown, msg: string) => act.run(() => adminFetch(`${base}${p}`, { method: "POST", body }), msg);
   const kurus = Math.round(Number(price.replace(",", ".")) * 100);
   const canQuote = r && ["NEW", "REVIEWING", "QUOTED"].includes(r.status);
+  const quote =
+    r?.quote ??
+    (r?.quoteKurus != null
+      ? {
+          priceKurus: r.quoteKurus,
+          prepDays: r.prepDays ?? null,
+          note: r.quoteNote ?? null,
+          validUntil: r.validUntil ?? null,
+        }
+      : null);
 
   return (
     <LoadState loading={loading} error={error} data={r}>
@@ -85,12 +123,26 @@ export function CustomOrderDetail({ id, canWrite }: { id: string; canWrite: bool
                   ["Ürün türü", r.productType ?? "-"],
                   ["Ölçü", r.size ?? "-"],
                   ["İplik rengi", r.threadColor ?? "-"],
+                  ["Makine", r.machineModel ?? "-"],
+                  ["Format", r.format ?? "-"],
+                  ["Bütçe", r.budgetKurus != null ? formatTRY(r.budgetKurus) : "-"],
                   ["İstenen tarih", fmtDay(r.deadline)],
                   ["Tarih", fmtDate(r.createdAt)],
                   ...(r.orderNumber ? ([["Sipariş", r.orderNumber]] as [string, string][]) : []),
                 ]}
               />
-              {r.text && <p className="mt-3 whitespace-pre-line text-sm text-ink">{r.text}</p>}
+              {r.text && (
+                <div className="mt-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-umber">İstek</p>
+                  <p className="mt-1 whitespace-pre-line text-sm text-ink">{r.text}</p>
+                </div>
+              )}
+              {r.notes && (
+                <div className="mt-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-umber">Ayrıntılar</p>
+                  <p className="mt-1 whitespace-pre-line text-sm text-ink">{r.notes}</p>
+                </div>
+              )}
             </Panel>
             <Panel title={`Referans görselleri (${r.attachments.length})`}>
               {r.attachments.length === 0 ? (
@@ -111,9 +163,9 @@ export function CustomOrderDetail({ id, canWrite }: { id: string; canWrite: bool
             </Panel>
           </div>
 
-          {r.quote && (
+          {quote && (
             <Panel title="Verilen teklif">
-              <Dl rows={[["Tutar", formatTRY(r.quote.priceKurus)], ["Hazırlık", `${r.quote.prepDays ?? "-"} gün`], ["Geçerlilik", fmtDay(r.quote.validUntil)], ["Not", r.quote.note ?? "-"]]} />
+              <Dl rows={[["Tutar", formatTRY(quote.priceKurus)], ["Hazırlık", `${quote.prepDays ?? "-"} gün`], ["Geçerlilik", fmtDay(quote.validUntil)], ["Not", quote.note ?? "-"]]} />
             </Panel>
           )}
 

@@ -5,7 +5,7 @@ import { CustomOrderStudio } from "@/components/custom/CustomOrderStudio";
 export const metadata: Metadata = {
   title: "Kişiye Özel Nakış ve Tasarım",
   description:
-    "İsim ve monogram nakışlarını canlı önizleme ile deneyin, özel dijital nakış dosyası veya kurumsal logo nakışı talebi oluşturun.",
+    "Görsel yükleyerek isteğe özel parça veya görselden nakışa çevirme talebi oluşturun; monogram önizlemesi ve dijital dosya istekleri de buradan iletilir.",
 };
 
 export default function KisiyeOzelPage() {

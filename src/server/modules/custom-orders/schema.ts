@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-export const PRODUCT_TYPES = ["İsim ve Monogram İşleme", "Özel Dijital Nakış Dosyası", "Kurumsal Logo Nakışı"] as const;
+export const PRODUCT_TYPES = [
+  "İsim ve Monogram İşleme",
+  "Özel Dijital Nakış Dosyası",
+  "Kurumsal Logo Nakışı",
+  "İsteğe özel parça",
+] as const;
 export const MAX_FILES = 5;
 
 const optText = (max: number) =>

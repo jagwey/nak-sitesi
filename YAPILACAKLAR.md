@@ -6,6 +6,9 @@
 ## Şu an çalışan
 - (yok)
 
+## 2026-11-20 özel parça talebi
+- [x] `/kisiye-ozel?hizmet=parca|gorsel`: görsel yükleme + isteğe bağlı ayrıntılar; önizleme solda; admin `ozel-siparisler` listesine düşer. Yeni mail yok.
+
 ## 2026-11-20 vitrin
 - [x] Okunabilir gövde (Inter, 18px), hizmet CTA’ları, kampanya bandı, kumaş önizlemesi, 32 özgün önizleme deseni. Deploy yok.
 - [x] Statik vitrine taşındı. Shopier’de sepet indirimi vaat edilmez. Deploy yok.
