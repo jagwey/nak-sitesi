@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
+import { STOREFRONT_BANNER } from "../copy";
 import type { ReactNode } from "react";
 import { Menu } from "lucide-react";
 import { storefrontCatalog } from "../catalog";
@@ -12,18 +13,17 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const manrope = Manrope({
+const inter = Inter({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600"],
-  variable: "--font-manrope",
+  weight: "variable",
+  variable: "--font-inter",
   display: "swap",
 });
 
 const navigation = [
+  { label: "Görselden nakışa", href: "/kisiye-ozel/#gorsel" },
+  { label: "İsteğe özel parça", href: "/kisiye-ozel/#parca" },
   { label: "Nakış Desenleri", href: "/koleksiyon/?tur=dijital" },
-  { label: "Fiziksel Ürünler", href: "/koleksiyon/?tur=fiziksel" },
-  { label: "Kişiye Özel Tasarım", href: "/kisiye-ozel/" },
-  { label: "Baskı Ürünleri", href: "/koleksiyon/?kategori=baski-tasarimlari" },
   { label: "Hakkımızda", href: "/hakkimizda/" },
 ];
 
@@ -32,14 +32,14 @@ export const metadata: Metadata = {
     default: `${storefrontCatalog.storeName} | Makine nakışı ve işlemeli tekstil`,
     template: `%s | ${storefrontCatalog.storeName}`,
   },
-  description: "Makine nakışı desenleri, işlemeli tekstiller ve kişiye özel nakış ürünleri.",
+  description: "Fotoğraf veya logoyu nakış dosyasına çevirme, isteğe özel parça ve Pfaff VP3 desenleri. Ödeme Shopier üzerinden yapılır.",
   robots: { index: storefrontCatalog.products.length > 0, follow: true },
 };
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
   const { storeName } = storefrontCatalog;
   return (
-    <html lang="tr" className={`${cormorant.variable} ${manrope.variable}`}>
+    <html lang="tr" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="flex min-h-screen flex-col bg-ivory font-sans text-ink antialiased">
         <div className="sticky top-0 z-40 h-0">
           <header className="absolute inset-x-0 top-0 border-b border-hairline bg-ivory/95 backdrop-blur-md">
@@ -69,12 +69,18 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
         </div>
         <main id="ana-icerik" className="flex-1" tabIndex={-1}>{children}</main>
         <footer className="bg-espresso text-ivory">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-10">
-            <a href="/" className="font-display text-3xl">{storeName}</a>
-            <nav aria-label="Alt menü" className="flex flex-wrap gap-x-6 gap-y-1 text-[0.9375rem]">
-              <a href="/koleksiyon/" className="inline-flex min-h-11 items-center hover:underline">Koleksiyon</a>
-              <a href="/kisiye-ozel/" className="inline-flex min-h-11 items-center hover:underline">Kişiye Özel Tasarım</a>
-              <a href="/hakkimizda/" className="inline-flex min-h-11 items-center hover:underline">Hakkımızda</a>
+          <div className="mx-auto grid max-w-[1440px] gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 lg:px-10">
+            <div>
+              <a href="/" className="font-display text-3xl">{storeName}</a>
+              <p className="mt-3 max-w-[42ch] text-[1.0625rem] leading-relaxed text-[#CBBFA9]">{STOREFRONT_BANNER}</p>
+            </div>
+            <nav aria-label="Alt menü" className="flex flex-col text-[1.0625rem]">
+              <a href="/kisiye-ozel/#gorsel" className="inline-flex min-h-12 items-center hover:underline">Görselden nakışa çevirme</a>
+              <a href="/kisiye-ozel/#parca" className="inline-flex min-h-12 items-center hover:underline">İsteğe özel parça</a>
+              <a href="/onizleme/" className="inline-flex min-h-12 items-center hover:underline">Önizleme desenleri</a>
+              <a href="/#sss" className="inline-flex min-h-12 items-center hover:underline">Sık sorulan sorular</a>
+              <a href="/koleksiyon/" className="inline-flex min-h-12 items-center hover:underline">Koleksiyon</a>
+              <a href="/hakkimizda/" className="inline-flex min-h-12 items-center hover:underline">Hakkımızda</a>
             </nav>
           </div>
         </footer>

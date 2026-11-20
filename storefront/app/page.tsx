@@ -4,12 +4,33 @@ import { HomeMonogramTeaser } from "@/components/custom/LiveMonogramPreview";
 import { DEFAULT_HERO_TITLE, HomeHero } from "@/components/home/HomeHero";
 import { CATEGORIES, CURATED_COLLECTIONS } from "@/data/categories";
 import { storefrontCatalog, storefrontProducts } from "../catalog";
+import { STOREFRONT_BANNER } from "../copy";
+import { PreviewShowcase } from "../components/PreviewShowcase";
 import { Showcase } from "../components/Showcase";
 
 const paths = [
-  { title: "Dijital desenler", text: "Makine nakışı için desenleri inceleyin.", href: "/koleksiyon/?tur=dijital" },
-  { title: "İşlemeli tekstiller", text: "Havlu, keten ve kanvas örneklerini görün.", href: "/koleksiyon/?tur=fiziksel" },
-  { title: "Kişiye özel tasarım", text: "İsminizi seçtiğiniz kumaş ve iplikle deneyin.", href: "/kisiye-ozel/" },
+  { title: "Görselden nakışa çevirme", text: "Fotoğraf veya logonun nakış dosyasına dönüşmesini anlatır.", href: "/kisiye-ozel/#gorsel" },
+  { title: "İsteğe özel parça", text: "Havlu, keten veya giysi için ölçü ve yazı.", href: "/kisiye-ozel/#parca" },
+  { title: "Hazır nakış desenleri", text: "VP3, PES ve DST dosyalarını inceleyin.", href: "/koleksiyon/?tur=dijital" },
+];
+
+const questions = [
+  {
+    q: "Fotoğrafımı nakış dosyasına çevirebilir misiniz?",
+    a: "Bu vitrinde otomatik dosya üretilmez ve talep formu kapalıdır. Hizmetin nasıl işlediği kişiye özel sayfada yazılıdır.",
+  },
+  {
+    q: "Satın aldığım dosyayı nereden indiririm?",
+    a: "Ödeme ve dijital teslim Shopier üzerinden yapılır. Bu sitede sepet indirimi Shopier siparişine yansımaz.",
+  },
+  {
+    q: "Hangi formatlar var?",
+    a: "Pfaff için VP3 gerekir. PES, DST ve JEF yalnızca üründe gerçekten bulunan dosyalar için yazılır.",
+  },
+  {
+    q: "Önizleme desenleri satılıyor mu?",
+    a: "Hayır. Monogram ve özgün motifler yakında etiketlidir. İndirme bağlantısı yoktur. Kumaş provası yapılmamıştır.",
+  },
 ];
 
 export default function StorefrontPage() {
@@ -17,9 +38,17 @@ export default function StorefrontPage() {
     <>
       <HomeHero
         title={DEFAULT_HERO_TITLE}
-        description="Botanik makine nakışı desenlerini, işlemeli tekstilleri ve kişiye özel monogramları keşfedin."
+        description="Fotoğraf veya logonuzu nakış dosyasına çeviririz. Havlu, keten ve giysi için ölçüye özel parça da hazırlanır. Pfaff için VP3; üründe varsa PES, DST ve JEF."
       >
-        <form action="/koleksiyon/" method="get" role="search" className="mt-7 flex max-w-[550px]">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a href="/kisiye-ozel/#gorsel" className="btn-buy inline-flex min-h-12 items-center justify-center px-5 text-[1.0625rem] font-semibold">
+            Görselden nakışa çevirme
+          </a>
+          <a href="/kisiye-ozel/#parca" className="inline-flex min-h-12 items-center justify-center border border-cocoa bg-ivory px-5 text-[1.0625rem] font-semibold text-cocoa hover:bg-cocoa hover:text-ivory">
+            İsteğe özel parça
+          </a>
+        </div>
+        <form action="/koleksiyon/" method="get" role="search" className="mt-6 flex max-w-[550px]">
           <label htmlFor="hero-arama" className="sr-only">Desen veya ürün ara</label>
           <input
             id="hero-arama"
@@ -37,6 +66,10 @@ export default function StorefrontPage() {
           Koleksiyonu keşfet <ArrowRight className="size-4" aria-hidden="true" />
         </a>
       </HomeHero>
+
+      <section aria-label="Ödeme bilgisi" className="border-b border-hairline bg-linen">
+        <p className="mx-auto max-w-[1440px] px-4 py-4 text-[1.0625rem] leading-snug text-ink sm:px-6 lg:px-10">{STOREFRONT_BANNER}</p>
+      </section>
 
       <div className="mx-auto max-w-[1440px] px-4 pt-10 sm:px-6 lg:px-10 lg:pt-16">
         <nav aria-label="Koleksiyon yolları" className="grid gap-x-8 gap-y-2 md:grid-cols-3">
@@ -70,6 +103,8 @@ export default function StorefrontPage() {
           </ul>
         </section>
       </div>
+
+      <PreviewShowcase />
 
       <Showcase products={storefrontProducts} demo={storefrontCatalog.products.length === 0} />
 
@@ -116,6 +151,20 @@ export default function StorefrontPage() {
           <a href="/hakkimizda/" className="mt-4 inline-flex min-h-11 items-center gap-2 font-medium text-cocoa underline-offset-4 hover:underline">
             Atölye hakkında <ArrowRight className="size-4" aria-hidden="true" />
           </a>
+        </div>
+      </section>
+
+      <section id="sss" aria-labelledby="sss-baslik" className="scroll-mt-24 border-t border-hairline">
+        <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
+          <h2 id="sss-baslik" className="font-display text-[clamp(1.9rem,3vw,2.75rem)] leading-tight">Sık sorulan sorular</h2>
+          <dl className="mt-8 divide-y divide-hairline border-y border-hairline">
+            {questions.map((item) => (
+              <div key={item.q} className="py-5">
+                <dt className="text-[1.125rem] font-semibold">{item.q}</dt>
+                <dd className="mt-2 max-w-[68ch] text-[1.0625rem] leading-relaxed text-umber">{item.a}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
     </>
