@@ -63,7 +63,7 @@ Frankfurt'ta `VM.Standard.A1.Flex` (Arm) kapasitesi doluyken tam mağaza Oracle'
 | `DATABASE_URL` | Üretim Postgres bağlantısı. `DATABASE_URL_TEST` canlıda gerekmez |
 | `SESSION_SECRET` | ≥ 32 karakter, rastgele, benzersiz |
 | `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | Depolama erişimi (yalnızca iki kovaya yetkili anahtar) |
-| `S3_PRESIGN_ENDPOINT` | İç ağdaki MinIO için tarayıcıdan erişilebilen HTTPS imza adresi. Bulut depolama uç noktası zaten erişilebiliyorsa boş bırakın. |
+| `S3_PRESIGN_ENDPOINT` | İç ağdaki MinIO için tarayıcıdan erişilebilen HTTPS imza adresi. Bulut depolama uç noktası zaten erişilebiliyorsa değişkeni tanımlamayın. |
 | `S3_BUCKET_PRIVATE`, `S3_BUCKET_PUBLIC` | Kova adları |
 | `S3_PUBLIC_BASE_URL` | Herkese açık kovanın HTTPS adresi; derleme ve çalışma zamanı değerleri aynı olmalı |
 | `S3_FORCE_PATH_STYLE` | Sağlayıcıya göre (`true` MinIO; çoğu bulut için `false`) |
@@ -112,6 +112,14 @@ Katalog girişi tamamlanınca arama dizinini `docker run --rm --env-file /secure
 `/opt/nakis` altında `deploy/oracle/setup-storage.sh` betiğini root olarak çalıştırın. Compose'un üçüncü dosyası `deploy/oracle/docker-compose.storage.yml` MinIO'yu yalnızca Docker ağına ve yerel `127.0.0.1:9100` adresine açar. Veriler `minio-data` disk biriminde tutulur.
 
 `.env.production` içinde `S3_ENDPOINT=http://minio:9000`, `S3_PRESIGN_ENDPOINT` için dış HTTPS site adresi, `S3_PUBLIC_BASE_URL` için aynı adresin `/images` yolu ve `S3_FORCE_PATH_STYLE=true` kullanın. Kova adları `nakis-public` ve `nakis-private` olmalıdır. Kısıtlı uygulama anahtarını root erişimli `.env.storage.app` dosyasından alın. Caddy yalnızca belirli görsel ve dosya yollarını sunar. İmzasız özel dosya isteklerini ve imzalı indirmeyi ayrı ayrı sınayın.
+
+Mevcut Oracle yayınını güncellerken `.env.production` dosyasındaki çalışan ayarları koruyun. Yeni GitHub imajını çektikten sonra `NAKIS_WEB_IMAGE` değerinde commit SHA etiketini kullanın ve yalnız web servisini yeniden başlatın.
+
+```sh
+sudo docker compose --env-file .env.production \
+  -f docker-compose.prod.yml -f deploy/oracle/docker-compose.micro.yml \
+  -f deploy/oracle/docker-compose.storage.yml up -d --no-deps --no-build --wait web
+```
 
 ## 4. SMTP
 - Sağlayıcıdan SMTP bilgileri alın; alan adı için SPF/DKIM/DMARC kayıtlarını ekleyin (aksi hâlde doğrulama/sıfırlama e-postaları spama düşer).

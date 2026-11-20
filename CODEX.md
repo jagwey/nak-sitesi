@@ -47,7 +47,7 @@ Ad, logo, iletişim ve sahip bilgisinin yalnızca admin "Ayarlar"dan ve tek bir 
 > - **Canlı adres:** `https://nakis-vitrin.nakis-sitesi.workers.dev/` (Worker sürümü `bf633ab2-2527-49b8-be9e-06a4d2f5f726`, rollback için eski vitrin `67eb400e-c172-48d4-b23d-1d06c8e87604`)
 > - **Sunucu:** Oracle Cloud Frankfurt `nakis-sitesi` (`VM.Standard.E2.1.Micro`, `92.5.103.221`, Oracle Linux 9.8, SSH: `ssh -i ~/.ssh/nakis-oci opc@92.5.103.221`, dizin: `/opt/nakis`, origin TLS: `https://92-5-103-221.sslip.io` — tokensız `404`, tokenlı `200`)
 > - **Sırlar (yerel git dışı):** `.deploy-secrets/oracle-92_5_103_221.json` (sunucuda `/opt/nakis/.env.production` ve `/opt/nakis/.env.caddy`)
-> - **İmaj derleme & güncelleme:** `main`'e push yapınca `.github/workflows/build-images.yml` otomatik `ghcr.io/jagwey/nak-sitesi-{web,tools}:latest` üretir; sunucu güncellemesi `.\scripts\deploy-oracle.ps1 -ServerIp 92.5.103.221 -SshUser opc -ImageSource ghcr` ile yapılır.
+> - **İmaj derleme & güncelleme:** `main`'e push yapınca `.github/workflows/build-images.yml` web ve tools imajlarını commit SHA ile etiketler. Mevcut sunucuda yalnız gereken servisi yeni etiketle güncelleyin ve depolama bilgilerini koruyun. `scripts/deploy-oracle.ps1` ilk kurulum betiğidir.
 
 ### 7. Canlı uçtan uca sepet, üyelik ve demo checkout doğrulaması — tamamlandı
 `https://nakis-vitrin.nakis-sitesi.workers.dev/` üzerinde gerçek tarayıcı / API testiyle şunları doğrula ve test kayıtlarını temizle:
@@ -59,8 +59,8 @@ Ad, logo, iletişim ve sahip bilgisinin yalnızca admin "Ayarlar"dan ve tek bir 
 ### 8. İlk canlı `SUPER_ADMIN` hesabı
 Kullanıcının belirttiği mevcut hesaba Süper Yönetici rolü verildi ve işlem denetim kaydına yazıldı. Parola korunarak eski oturumlar kapatıldı. Panelde Moderatör ve diğer ekip rolleri için davet açılabilir.
 
-### 9. Canlı S3 nesne depolama bağlantısı (`private` + `public` kova)
-Oracle VM üzerinde kalıcı MinIO disk birimi için kurulum `deploy/oracle/setup-storage.sh` ve `DEPLOYMENT.md` altında. Ürün görselleri `/images` yolundan sunulur. Özel nakış dosyaları kısa ömürlü imzalı bağlantı gerektirir. Canlı bağlantının doğrulama durumu `YAPILACAKLAR.md` dosyasında; nesne dosyaları için ayrı yedek planı açık.
+### 9. Canlı S3 nesne depolama bağlantısı — tamamlandı
+Oracle VM üzerinde kalıcı MinIO disk birimi için kurulum `deploy/oracle/setup-storage.sh` ve `DEPLOYMENT.md` altında. Ürün görselleri `/images` yolundan sunulur. Canlıda gerçek test VP3'ü yüklendi ve kısa ömürlü imzalı bağlantıyla indirildi. İmzasız erişim 403 döndürdü. Nesne dosyaları için ayrı yedek planı açık.
 
 ### 10. Canlı SMTP göndereni bağlama
 Şu an `EMAIL_TRANSPORT=console`. Kullanıcıdan SMTP sağlayıcı bilgisi (ör. Brevo / Resend / Mailgun / alan adı SMTP) gelince `/opt/nakis/.env.production` içinde `EMAIL_TRANSPORT=smtp` ve `SMTP_*` alanlarını ayarla; SPF/DKIM ve canlı e-posta doğrulama + parola sıfırlama teslimini test et.

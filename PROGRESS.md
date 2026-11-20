@@ -106,3 +106,4 @@
 - [x] Mevcut mağaza hesabına Süper Yönetici rolü atandı, işlem denetim kaydına yazıldı ve eski oturumlar kapatıldı.
 - [x] Hesabım ekranına yetkili kullanıcılar için Yönetim Paneli bağlantısı eklendi. Moderatör rolü yalnızca kişiye özel talepleri yönetir. SMTP kapalıysa davet bağlantısı Süper Yöneticiye gösterilir. Lint ve 121/121 test başarılı.
 - [x] Oracle VM'nin kalıcı diskinde erişime kapalı nakış dosyaları ve herkese açık görseller için ayrı MinIO kovaları kuruldu. Uygulama anahtarı yalnız nesne işlemlerine yetkili.
+- [x] `d041b34` üretim imajı Oracle'da yayımlandı. Geçici Ürün Yöneticisi ile panel, taslak ürün, WebP görsel yükleme, gerçek VP3 yükleme ve otomatik metadata okuma doğrulandı. Özel dosya imzasız 403 döndürdü. İmzalı indirme yüklenen baytlarla birebir eşleşti. Geçici hesap ve taslak temizlendi, 11 demo ürün duruyor. 390 px Chromium'da Hesabım bağlantısı ve davet formu doğrulandı.

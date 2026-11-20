@@ -37,7 +37,7 @@
 - [x] Kullanıcının mevcut canlı hesabına `SUPER_ADMIN` rolü ve denetim kaydı eklendi.
 - [x] Hesabım panel bağlantısı, Moderatör rolü ve tek kullanımlık davet akışı uygulandı.
 - [x] Canlı PostgreSQL için günlük yedekleme ve ayrı konteynerde geri yükleme provası
-- [ ] Oracle VM'deki MinIO depolamasını canlıda ürün görseli, VP3 yükleme ve imzalı indirme ile doğrula.
+- [x] Canlıda panelden taslak ürün, WebP görsel, gerçek VP3 yükleme ve imzalı indirme doğrulandı. Geçici doğrulama verileri temizlendi.
 - [ ] MinIO nesneleri için ayrı yedek ve geri yükleme provası.
 - [ ] Canlı e-posta doğrulaması ve parola sıfırlama için SMTP göndereni ayarla
 - [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
