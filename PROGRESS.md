@@ -158,6 +158,13 @@
 - [x] `CustomOrderStudio`: `hizmet=parca|gorsel` için hafif akış (canlı monogram tuvali yok). Referans görseller formda ve solda önizlenir; isteğe bağlı blok (kumaş notu, telefon, tarih, bütçe, ek not) açıldı. Ürün tipi `İsteğe özel parça` şemaya eklendi. Talepler mevcut `/api/custom-orders` ile private kovaya + `CustomOrder` kaydına gider; admin `/admin/ozel-siparisler` listesinde görsel sayısı, detayda notlar ve ekler. Yeni mail entegrasyonu yok (mevcut bildirimler duruyor). Lint yeşil; birim + özel sipariş entegrasyon testleri geçti.
 - [x] `main`’e pushlandı (`320b06b`). GHCR `nakis-sitesi-web:latest` derlemesi başarılı (Actions `44811656275`). Oracle’da web konteyneri yenilendi; canlıda `/kisiye-ozel?hizmet=parca` ve `gorsel` yeni form + isteğe bağlı ayrıntılar doğrulandı (`/api/health` 200).
 
+## 2026-11-20 — Site hızı
+
+- [x] Kök neden: 1 GB Oracle thrashing + `force-dynamic` SSR + auth/cart ilk boyamayla yarışıyor; edge home cache yazılmıyordu.
+- [x] Sunucu: dnf/pmlogger kapatıldı, dakikalık localhost warm-up cron.
+- [x] Kod: homepage `unstable_cache` 60s, idle auth/cart, Worker anonim home cache, Caddy `header_down` anonymous-home. Layout `force-dynamic` kaldı (build-time env prerender kırığı).
+- [~] GHCR rebuild + Oracle web imajı yenileme.
+
 ## 2026-11-20 — Vitrin okunabilirliği ve önizleme kataloğu
 
 - [x] Ana başlıkta görselden nakışa çevirme ve isteğe özel parça, Inter gövde (18px), altın satın alma düğmesi, kumaş önizlemesi ve 32 özgün önizleme deseni (A–Z + 6 motif). Dosyalar pyembroidery VP3/PES/DST/JEF. Satışa kapalı; kumaş provası yok. Canlıya deploy edilmedi.

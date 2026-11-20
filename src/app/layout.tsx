@@ -28,8 +28,7 @@ const inter = Inter({
   display: "swap",
 });
 
-/** Public chrome can be briefly reused; admin routes still force-dynamic themselves. */
-export const revalidate = 120;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();

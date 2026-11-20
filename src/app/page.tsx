@@ -45,7 +45,7 @@ const SERVICE_CTAS = [
   { href: "/kisiye-ozel?hizmet=parca", label: "İsteğe özel parça siparişi" },
 ];
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [site, home, flags, offers] = await Promise.all([
