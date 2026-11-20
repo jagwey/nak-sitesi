@@ -7,6 +7,7 @@ import { MACHINE_FORMAT_GUIDE, STUDIO_SETTINGS } from "../src/data/site-content"
 import { normalizeTurkish } from "../src/lib/search";
 
 const db = createScriptClient();
+const referenceOnly = process.argv.includes("--reference-only");
 
 const PERMISSIONS: Record<string, string> = {
   "product:read": "Ürünleri görüntüle",
@@ -107,7 +108,7 @@ async function main() {
   }
 
   // Licenses
-  const maxDelta = Math.max(0, ...PRODUCTS.map((p) => p.embroidery?.commercialPriceDeltaKurus ?? 0));
+  const maxDelta = referenceOnly ? 0 : Math.max(0, ...PRODUCTS.map((p) => p.embroidery?.commercialPriceDeltaKurus ?? 0));
   const lic = {
     PERSONAL: await db.license.upsert({
       where: { code: "PERSONAL" },
@@ -131,6 +132,11 @@ async function main() {
   for (const [i, c] of CURATED_COLLECTIONS.entries()) {
     const data = { title: c.title, subtitle: c.subtitle, filterQuery: c.filterQuery, image: c.image, imageAlt: c.imageAlt, sort: i };
     await db.collection.upsert({ where: { slug: c.slug }, update: data, create: { slug: c.slug, ...data } });
+  }
+
+  if (referenceOnly) {
+    console.log(`Reference seed OK: ${CATEGORIES.length} categories, ${ROLES.length} roles.`);
+    return;
   }
 
   // Demo products

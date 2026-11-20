@@ -28,6 +28,9 @@ Tüm uçlar `src/app/api/**/route.ts` altındadır ve `src/server/http.ts` için
 | `RATE_LIMITED` | 429 | Hız sınırı |
 | `PAYMENT_FAILED` | 402 | Ödeme başlatma/işleme hatası |
 | `INTERNAL` | 500 | Beklenmeyen hata |
+| `SERVICE_UNAVAILABLE` | 503 | Sağlık kontrolü sırasında yapılandırma veya veritabanı hatası |
+
+`GET /api/health` PostgreSQL erişimi varsa `200 { "ok": true }` döner.
 
 Yükleme doğrulayıcıları ayrıca ZIP/dosya kodları döner: `ZIP_INVALID`, `ZIP_UNSAFE_PATH`, `ZIP_TOO_MANY_ENTRIES`, `ZIP_TOO_LARGE`, `ZIP_BOMB`, `ZIP_BAD_ENTRY_TYPE`.
 

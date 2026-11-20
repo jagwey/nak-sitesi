@@ -1,12 +1,13 @@
 node_modules
 .next
+next-env.d.ts
 out
 .env
 .env.*
 !.env.example
-storage/
+/storage/
 .storage/
-uploads/
+/uploads/
 *.tsbuildinfo
 src/generated/
 coverage/

@@ -10,6 +10,7 @@ export type ErrorCode =
   | "UNSUPPORTED_MEDIA_TYPE"
   | "CSRF"
   | "PAYMENT_FAILED"
+  | "SERVICE_UNAVAILABLE"
   | "INTERNAL";
 
 export const STATUS_BY_CODE: Record<ErrorCode, number> = {
@@ -24,6 +25,7 @@ export const STATUS_BY_CODE: Record<ErrorCode, number> = {
   UNSUPPORTED_MEDIA_TYPE: 415,
   CSRF: 403,
   PAYMENT_FAILED: 402,
+  SERVICE_UNAVAILABLE: 503,
   INTERNAL: 500,
 };
 
@@ -40,6 +42,7 @@ export const DEFAULT_MESSAGES: Record<ErrorCode, string> = {
   UNSUPPORTED_MEDIA_TYPE: "Desteklenmeyen içerik türü.",
   CSRF: "İstek doğrulanamadı.",
   PAYMENT_FAILED: "Ödeme işlemi tamamlanamadı.",
+  SERVICE_UNAVAILABLE: "Hizmet şu anda hazır değil.",
   INTERNAL: "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
 };
 

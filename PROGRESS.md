@@ -84,3 +84,4 @@
 - [x] Mobil katalogda 390 px genişlikte kartlar eşit yükseklikte, ürün türü tek satırda ve taşma yok. Lint/test 100/100/build ve E2E 11/11 başarılı.
 - [x] Sepet, sipariş, ödeme ve ayarlardaki çapraz bağımlılıklar ortak varsayılanlar ve sipariş kilidiyle ayrıldı. TypeScript içe aktarma grafiği 260 kaynak dosyada ve 20 sunucu modülünde 0 döngü gösterdi. Lint/test 100/100/build başarılı.
 - [x] API JSON yanıtları ortak serileştirmeye taşındı. Özel sipariş testinde başarı/hata başlıkları ve hata gövdesi doğrulandı. Lint/test 100/100/build başarılı.
+- [x] Üretim Docker imajı, sağlık kontrolü, robots.txt, site haritası ve dağıtım rehberi tamamlandı. Temiz PostgreSQL'de migration, demo ürünsüz seed, yönetici, arama ve stok işi doğrulandı. Konteyner sağlık 200/503, SEO uçları, görsel optimizasyonu ve Python kontrolleri geçti. Lint/test 102/102/build başarılı.

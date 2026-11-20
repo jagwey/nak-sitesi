@@ -1,31 +1,27 @@
 import type { MetadataRoute } from "next";
 import { getSitemapEntries } from "@/server/modules/catalog";
 import { INFO_PAGES } from "@/data/site-content";
+import { siteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
-
   const staticRoutes = [
-    "",
+    "/",
     "/koleksiyon",
     "/kisiye-ozel",
     "/hakkimizda",
-    "/favoriler",
   ].map((path) => ({
-    url: `${baseUrl}${path}`,
-    lastModified: new Date(),
+    url: siteUrl(path).href,
   }));
 
   const productRoutes = (await getSitemapEntries()).map((p) => ({
-    url: `${baseUrl}/urun/${p.slug}`,
+    url: siteUrl(`/urun/${encodeURIComponent(p.slug)}`).href,
     lastModified: p.updatedAt,
   }));
 
   const infoRoutes = Object.keys(INFO_PAGES).map((slug) => ({
-    url: `${baseUrl}/bilgi/${slug}`,
-    lastModified: new Date(),
+    url: siteUrl(`/bilgi/${slug}`).href,
   }));
 
   return [...staticRoutes, ...productRoutes, ...infoRoutes];

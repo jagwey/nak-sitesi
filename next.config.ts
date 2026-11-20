@@ -3,16 +3,10 @@ import type { NextConfig } from "next";
 const isProd = process.env.NODE_ENV === "production";
 
 /** Origin of the public media bucket (MinIO in dev, CDN/S3 in prod), allowed for images only. */
-function mediaOrigin(): string | null {
-  try {
-    return process.env.S3_PUBLIC_BASE_URL ? new URL(process.env.S3_PUBLIC_BASE_URL).origin : null;
-  } catch {
-    return null;
-  }
-}
+const publicMedia = URL.parse(process.env.S3_PUBLIC_BASE_URL ?? "");
 
 function contentSecurityPolicy(): string {
-  const media = mediaOrigin();
+  const media = publicMedia?.origin;
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
     // Next injects inline bootstrap scripts; without per-request nonces 'unsafe-inline' is required.
@@ -46,6 +40,15 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [390, 640, 768, 1024, 1280, 1536, 1920],
+    remotePatterns: publicMedia?.protocol === "https:"
+      ? [{
+          protocol: "https",
+          hostname: publicMedia.hostname,
+          port: publicMedia.port,
+          pathname: `${publicMedia.pathname.replace(/\/+$/, "")}/**`,
+          search: "",
+        }]
+      : [],
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "tsc --noEmit",
+    "lint": "next typegen && tsc --noEmit",
     "test": "node --no-warnings tests/search.test.ts && vitest run",
     "postinstall": "prisma generate",
     "db:up": "docker compose up -d",

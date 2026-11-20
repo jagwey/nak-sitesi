@@ -75,7 +75,7 @@ Son doğrulama: lint temiz, 97/97 test, build başarılı.
 3. Phase 2 galeri yakınlaştırma ve mobil ürün kartı düzeltmeleri tamamlandı.
 4. Gerçek ödeme sağlayıcısı (iyzico/PayTR) bağlanacak; müşterinin hesap bilgileri gerekli. Rehber: `PAYMENT_INTEGRATION.md`.
 5. Gerçek ürünler girilecek: fotoğraf, fiyat ve yalnız gerçekten sahip olunan dosya formatları. Demo ürünler `isDemo` ile işaretli.
-6. Canlıya çıkış: `DEPLOYMENT.md` adımları.
+6. Üretim Docker imajı ve sağlık/SEO uçları yerelde doğrulandı. Canlı kurulum için `DEPLOYMENT.md` adımları.
 
 ## Repoda olmayanlar
 - `screenshots/` ve `test-results/`: büyük oldukları için `.gitignore`'da; yalnız yerel diskte.

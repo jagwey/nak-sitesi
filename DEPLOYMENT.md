@@ -3,22 +3,22 @@
 Bu liste, uygulamayı gerçek bir sunucuya almadan önce yapılması gerekenleri sıralar. Müşteriden gelmesi gereken bilgiler `PROJECT_STATUS.md` içindedir.
 
 ## 0. Ön koşullar
-- Node.js (Next.js 16 ile uyumlu LTS), PostgreSQL 17, S3 uyumlu depolama, SMTP sağlayıcı, alan adı + TLS (https).
+- Docker (BuildKit), PostgreSQL 17, S3 uyumlu depolama, SMTP sağlayıcı ve TLS'li alan adı.
 - Kod: `npm ci` → `npm run lint` → `npm test` → `npm run build` yeşil olmalı.
 
 ## 1. Ortam değişkenleri (`src/server/env.ts`)
 
-Hepsi sunucunun gizli değer deposundan verilir; `.env` repoya girmez. Şablon: `.env.example`.
+Çalışma zamanı değerlerini sunucunun gizli değer deposundan verin. `.env.example` alanları listeler. `docker run --env-file` için dosyayı repo dışında tutun ve değerleri tırnaksız `AD=değer` biçiminde yazın. Yalnızca herkese açık `S3_PUBLIC_BASE_URL` değeri derleme argümanı olarak da kullanılır.
 
 | Değişken | Production notu |
 |---|---|
 | `NODE_ENV` | `production` |
-| `APP_URL` | **https://** ile başlamalı (aksi hâlde uygulama açılmaz) |
+| `APP_URL` | Mağazanın HTTPS kök adresi; CSRF, e-posta bağlantıları ve site haritası bunu kullanır |
 | `DATABASE_URL` | Üretim Postgres bağlantısı. `DATABASE_URL_TEST` canlıda gerekmez |
 | `SESSION_SECRET` | ≥ 32 karakter, rastgele, benzersiz |
 | `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | Depolama erişimi (yalnızca iki kovaya yetkili anahtar) |
 | `S3_BUCKET_PRIVATE`, `S3_BUCKET_PUBLIC` | Kova adları |
-| `S3_PUBLIC_BASE_URL` | Herkese açık kovanın tarayıcıdan erişilen adresi |
+| `S3_PUBLIC_BASE_URL` | Herkese açık kovanın HTTPS adresi; derleme ve çalışma zamanı değerleri aynı olmalı |
 | `S3_FORCE_PATH_STYLE` | Sağlayıcıya göre (`true` MinIO; çoğu bulut için `false`) |
 | `EMAIL_TRANSPORT` | `smtp` (`console` canlıda e-posta göndermez) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | SMTP sağlayıcı bilgileri; `SMTP_FROM` doğrulanmış alan adı adresi |
@@ -26,17 +26,31 @@ Hepsi sunucunun gizli değer deposundan verilir; `.env` repoya girmez. Şablon: 
 | `PAYMENT_SIMULATION_ENABLED` | `false` (true ise uygulama açılmaz) |
 | `IYZICO_*`, `PAYTR_*` | Yalnızca ilgili sağlayıcı seçildiğinde |
 | `DOWNLOAD_URL_TTL_SECONDS`, `DOWNLOAD_LIMIT_DEFAULT`, `RESERVATION_TTL_MINUTES` | İş kuralı varsayılanları |
-| `REFUND_REVOKES_DOWNLOADS`, `DOWNLOAD_EXPIRY_DAYS` | `process.env` üzerinden okunur (doğrulanmaz) |
+| `REFUND_REVOKES_DOWNLOADS`, `DOWNLOAD_EXPIRY_DAYS` | İndirme politikasının doğrulanan varsayılanları |
 | `ADMIN_BOOTSTRAP_EMAIL`, `ADMIN_BOOTSTRAP_PASSWORD` | Yalnızca ilk yönetici için; iş bitince silin |
 
-Production'da `env.ts` şunları reddeder: `PAYMENT_SIMULATION_ENABLED=true`, `PAYMENT_PROVIDER=simulated`, https olmayan `APP_URL`. Hata ayrıntısı uygulama açılışında okunabilir şekilde listelenir.
+Üretim doğrulaması `PAYMENT_SIMULATION_ENABLED=true`, `PAYMENT_PROVIDER=simulated` ve HTTPS olmayan `APP_URL` değerlerini reddeder. Hatalı yapılandırmada sağlık kontrolü `503` döner.
+
+### İmajları oluşturma
+
+```sh
+docker build --target tools -t nakis-tools .
+docker build --build-arg S3_PUBLIC_BASE_URL=https://media.example.com/kovaniz -t nakis-app .
+```
+
+`tools` imajı migration, seed, yönetici ve periyodik işler için kullanılır. `nakis-app` imajı web uygulamasını ve nakış dosyası ayrıştırıcısını çalıştırır. Kök dizindeki `docker-compose.yml` yerel geliştirme servislerini başlatır.
 
 ## 2. PostgreSQL
 1. Yönetilen Postgres 17 (veya kendi sunucu) hazırlayın; uygulama kullanıcısı yalnızca bu veritabanına yetkili olsun.
 2. Eklenti izinleri: migration `pg_trgm` ve `unaccent` eklentilerini oluşturur (`CREATE EXTENSION` yetkisi gerekir; yönetilen servislerde izin verilen eklentiler arasında olduğunu doğrulayın).
-3. Şemayı uygulayın: `npm run db:deploy` (= `prisma migrate deploy`). Canlıda **asla** `db:migrate`, `db:reset` çalıştırmayın (`db:reset` veriyi siler).
-4. Seed: referans veri (roller/izinler, formatlar, lisanslar, makineler…) için `npm run db:seed` bir kez çalıştırılır. **Dikkat:** seed ayrıca 11 adet `isDemo` demo ürün ekler — bkz. bölüm 8.
-5. Arama: `npm run search:reindex`.
+3. Şemayı uygulayın. Aşağıdaki dağıtım komutları migration geçmişini korur ve başlangıç referans verisini oluşturur.
+
+```sh
+docker run --rm --env-file /secure/nakis.env nakis-tools npm run db:deploy
+docker run --rm --env-file /secure/nakis.env nakis-tools npm run db:seed -- -- --reference-only
+```
+
+Katalog girişi tamamlanınca arama dizinini `docker run --rm --env-file /secure/nakis.env nakis-tools npm run search:reindex` ile yenileyin.
 
 ## 3. S3 kovaları ve politikalar
 - **İki ayrı kova:** `private` ve `public`.
@@ -49,10 +63,14 @@ Production'da `env.ts` şunları reddeder: `PAYMENT_SIMULATION_ENABLED=true`, `P
 ## 4. SMTP
 - Sağlayıcıdan SMTP bilgileri alın; alan adı için SPF/DKIM/DMARC kayıtlarını ekleyin (aksi hâlde doğrulama/sıfırlama e-postaları spama düşer).
 - Canlıda `EMAIL_TRANSPORT=smtp`. Doğrulama: kayıt ol → doğrulama e-postası gelmeli; parola sıfırlama e-postası gelmeli.
-- Not: yönetici bildirimi (`ADMIN_NOTIFY_EMAIL`) şu an kodda kullanılmıyor.
+- `ADMIN_NOTIFY_EMAIL` verilirse yeni kişiye özel sipariş talepleri bu adrese bildirilir.
 
 ## 5. Zamanlanmış iş (cron)
-`npm run jobs:release-reservations` her **2–5 dakikada** bir çalıştırılmalı: süresi dolan stok rezervasyonlarını serbest bırakır, ödenmemiş siparişleri iptal eder. Örnek (Linux cron): `*/5 * * * * cd /app && npm run jobs:release-reservations >> /var/log/nakis-jobs.log 2>&1`. İş `DATABASE_URL`'ye ihtiyaç duyar. Çalışmazsa stok rezerve kalır.
+Süresi dolan stok rezervasyonlarını serbest bırakmak ve ödenmemiş siparişleri iptal etmek için bu komutu her **2–5 dakikada** bir zamanlayın.
+
+```sh
+docker run --rm --env-file /secure/nakis.env nakis-tools npm run jobs:release-reservations
+```
 
 ## 6. Yedekleme
 - PostgreSQL: günlük otomatik yedek + zaman noktasına dönüş (PITR) tercih edilir; yedekten geri dönüşü **deneyin**.
@@ -60,30 +78,36 @@ Production'da `env.ts` şunları reddeder: `PAYMENT_SIMULATION_ENABLED=true`, `P
 - `SESSION_SECRET` ve diğer sırların güvenli kopyası saklanmalı.
 
 ## 7. İlk yönetici
-1. `ADMIN_BOOTSTRAP_EMAIL` ve `ADMIN_BOOTSTRAP_PASSWORD` (≥ 12 karakter) verin (veya komut argümanı).
-2. `npm run admin:create` → SUPER_ADMIN oluşur/güncellenir (önce `db:seed` ile rol tablosu dolu olmalı).
+1. `ADMIN_BOOTSTRAP_EMAIL` ve `ADMIN_BOOTSTRAP_PASSWORD` (≥ 12 karakter) değerlerini ilk yönetici komutuna özel ortam dosyasına verin.
+2. Referans seed tamamlandıktan sonra `docker run --rm --env-file /secure/nakis-bootstrap.env nakis-tools npm run admin:create` çalıştırın. Dosyada `DATABASE_URL` de bulunmalı.
 3. Giriş yapıp parolayı doğrulayın, ardından bu iki değişkeni ortamdan **silin**.
 4. Diğer yöneticileri panelden (Yöneticiler) davet edin; her kişiye ayrı hesap.
 
 ## 8. Demo ürünlerin kaldırılması
-Seed 11 demo ürünü `isDemo=true` ile ekler (gerçek ürün/fiyat/dosya değildir). Canlıdan önce:
+Geliştirme için kullanılan tam seed 11 demo ürünü `isDemo=true` ile ekler. Yeni bir canlı veritabanında bölüm 2'deki referans seed komutunu kullanın. Mevcut demo verisi taşındıysa canlıdan önce aşağıdaki kontrolleri yapın.
 1. Panelden gerçek ürünleri girin (veya CSV ile toplu yükleyin).
 2. Demo ürünleri arşivleyin/silin (Ürünler → demo etiketli olanlar; `isDemo` işaretlidir, "demo" etiketi vardır).
 3. Hiçbir demo ürünün `ACTIVE` kalmadığını mağaza vitrininde ve arama sonuçlarında kontrol edin; sonra `npm run search:reindex`.
-Ayrıca site ayarlarındaki örnek iletişim bilgileri/yasal metinler gerçek değerlerle değiştirilmelidir.
+Site ayarları ve içerik bölümüne gerçek iletişim bilgilerini ve işletmenin sağladığı yasal metinleri girin.
 
 ## 9. Güvenlik başlıkları
-Şu an `next.config.ts` içinde güvenlik başlığı tanımlı **değildir**. Canlıdan önce uygulama içinde veya ters vekil/CDN'de ekleyin:
-`Strict-Transport-Security`, `Content-Security-Policy`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, `frame-ancestors 'none'` (veya `X-Frame-Options: DENY`). CSP'yi Next.js satır içi betikleri ve S3 görsel alan adı ile birlikte deneyerek ayarlayın. Ters vekil arkasındaysanız `Origin`/Host başlıklarının `APP_URL` ile uyumlu iletildiğinden emin olun (CSRF kontrolü buna dayanır).
+`next.config.ts` üretimde CSP, HSTS, `nosniff`, Referrer-Policy, Permissions-Policy ve çerçeve engelleme başlıklarını ekler. Ters vekilden gelen yanıtlarla birlikte bu başlıkları ve herkese açık kovadaki görselleri kontrol edin. Ters vekil, isteklerin `Origin` ve `Host` değerlerini korumalı ve güvenilen istemci IP'sinden `X-Forwarded-For` değerini oluşturmalı.
 
 ## 10. Çalıştırma
-- `npm run build` → `npm run start` (süreç yöneticisi/konteyner ile; kapanınca yeniden başlat).
-- Üretimde ters vekil (TLS sonlandırma) önünde çalıştırın; sağlık kontrolü için `GET /api/categories` kullanılabilir.
-- Webhook ucunu (`/api/payments/webhook/<sağlayıcı>`) sağlayıcının IP'lerine/imzasına güvenerek herkese açık bırakın (CSRF dışı, imza doğrulamalı).
+Migration ve seed sonrası web konteynerini TLS'yi sonlandıran ters vekilin arkasında başlatın. Aşağıdaki örnek ters vekilin aynı sunucuda olduğunu varsayar.
+
+```sh
+docker run -d --name nakis-web --restart unless-stopped \
+  --env-file /secure/nakis.env -p 127.0.0.1:3000:3000 nakis-app
+```
+
+- `GET /api/health` PostgreSQL sorgusu başarılıysa `200 {"ok":true}`, yapılandırma veya sorgu hatasında `503 SERVICE_UNAVAILABLE` döner. Sağlık denetimi SMTP ve S3'ten bağımsızdır; bu servisleri yukarıdaki adımlarla doğrulayın.
+- `/robots.txt` içinde `APP_URL` üzerinden tam `/sitemap.xml` adresini doğrulayın. Site haritasındaki ana sayfa ve yayımlanmış ürün adresleri aynı alan adını kullanmalı.
+- Bir ödeme sağlayıcısı bağlandığında imza doğrulamalı webhook ucunu (`/api/payments/webhook/<sağlayıcı>`) sağlayıcının erişimine açın.
 
 ## 11. Canlıya geçiş öncesi son kontrol
 - [ ] `npm run lint`, `npm test`, `npm run build` yeşil
-- [ ] Production env doğrulaması geçiyor (uygulama açılıyor)
+- [ ] Docker imajı derlendi ve `/api/health`, `/robots.txt`, `/sitemap.xml` üretim adresinde doğrulandı
 - [ ] `db:deploy` uygulandı, seed (yalnızca referans veri) çalıştı, demo ürünler kaldırıldı
 - [ ] Private kova herkese kapalı, imzasız erişim `403`
 - [ ] SMTP e-postaları ulaşıyor (SPF/DKIM)

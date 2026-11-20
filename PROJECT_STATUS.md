@@ -3,11 +3,12 @@
 ## Genel durum
 - **Aşama 1–2 (ön yüz, tasarım incelemesi):** tamamlandı, müşteri onaylı vitrin.
 - **Aşama 3 (backend + yönetim paneli):** uygulandı. Faz A (altyapı, auth), B (katalog, arama, depolama), C (sepet, ödeme akışı, sipariş, indirme), D1 (admin ürün/dosya/stok/CSV), D2 (admin sipariş/müşteri/kupon/ayar/CMS/özel talep) bitti.
-- Son doğrulama: lint temiz, Vitest 97/97 (13 dosya), build OK. E2E (Playwright) ekleniyor.
+- Son doğrulama: lint temiz, Vitest 102/102 (15 dosya), build ve Docker dağıtım provası başarılı. Galeri ve mobil katalog değişikliklerinde Playwright 11/11 geçti.
 - **Canlıya hazır değil:** gerçek ödeme, gerçek ürün/dosya, yasal metinler ve altyapı bilgileri bekleniyor.
 
 ## Tamamlananlar
 - Docker (Postgres 17, MinIO, Mailpit), Prisma şema + migration, seed.
+- Canlı kullanım için Docker imajı, PostgreSQL sağlık kontrolü, robots.txt, site haritası ve demo ürünsüz referans seed. Kurulum adımları `DEPLOYMENT.md` dosyasında.
 - Kayıt/giriş/e-posta doğrulama/parola sıfırlama, roller ve izinler (RBAC), oturumlar.
 - Katalog, Postgres trigram arama, favoriler, adresler, sepet (misafir birleştirme), kupon, checkout, stok rezervasyonu.
 - Ödeme sağlayıcı arayüzü, imzalı idempotent webhook, manuel ödeme, iade; simülasyon (yalnızca geliştirme).
@@ -17,11 +18,8 @@
 
 ## Yapılmayanlar / bilinen eksikler
 - Gerçek iyzico/PayTR bağlantısı (iskelet var).
-- Güvenlik başlıkları, 2FA, virüs taraması (`SECURITY.md` bilinen eksikler).
-- Yeni özel talep için yönetici e-postası gönderilmiyor.
-- E2E testleri tamamlanmadı (ajan E).
+- 2FA ve virüs taraması (`SECURITY.md` bilinen eksikler).
 - Geliştirme veritabanındaki test yönetici hesapları canlıdan önce silinmeli (yalnızca yerel).
-- GitHub'a ilk yükleme (git deposu henüz yok).
 
 ## Müşteriden beklenenler (engelleyiciler)
 1. **Ödeme sağlayıcısı:** iyzico veya PayTR sözleşmesi, sandbox ve canlı anahtarlar.
