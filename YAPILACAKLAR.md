@@ -4,7 +4,10 @@
 > Kural: `[x]` bitti, `[~]` devam ediyor, `[ ]` yapılacak. Ayrıntı ve dosya yolları → `PROGRESS.md`.
 
 ## Şu an çalışan
-- (yok)
+- [~] Site hızı: ISR + edge cache + deferred cart; Oracle’a alınıyor
+
+## 2026-11-20 hız
+- [x] Public `revalidate`, homepage cache, idle auth/cart, Caddy/Worker edge home cache, sunucu timer/warm-up.
 
 ## 2026-11-20 özel parça talebi
 - [x] `/kisiye-ozel?hizmet=parca|gorsel`: görsel yükleme + isteğe bağlı ayrıntılar; önizleme solda; admin `ozel-siparisler` listesine düşer. Yeni mail yok.

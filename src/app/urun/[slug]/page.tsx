@@ -6,7 +6,7 @@ import { findPublicProductBySlug, getFlagDesigns, getRelatedProducts, isFlagDesi
 import { isStoreCheckoutOpen } from "@/server/env";
 import { getSiteSettings } from "@/server/modules/settings/service";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 const getProduct = cache(findPublicProductBySlug);
 
 interface PageProps {

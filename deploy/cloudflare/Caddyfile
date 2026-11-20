@@ -1,14 +1,6 @@
 {$NAKIS_ORIGIN_HOST} {
 	@storefront header Nakis-Origin-Token {$NAKIS_ORIGIN_TOKEN}
 	handle @storefront {
-		@anonymous_home {
-			method GET
-			path /
-			header !Cookie
-			header !Authorization
-		}
-		header @anonymous_home X-Nakis-Edge-Cache anonymous-home
-
 		@public_media {
 			method GET HEAD
 			path_regexp media ^/images/((?:products|categories|collections)/[a-f0-9-]{36}(?:-t)?\.webp)$
@@ -37,6 +29,22 @@
 				header_down X-Content-Type-Options nosniff
 			}
 		}
+
+		# Cookie-less GET / → Worker may edge-cache for 2 minutes.
+		@anonymous_home expression `{method} == "GET" && {path} == "/" && !header({'Cookie'}) && !header({'Authorization'})`
+		handle @anonymous_home {
+			reverse_proxy 127.0.0.1:3100 {
+				header_up Host {$NAKIS_PUBLIC_HOST}
+				header_up X-Forwarded-Host {$NAKIS_PUBLIC_HOST}
+				header_up X-Forwarded-Proto https
+				header_up X-Forwarded-For {http.request.header.Nakis-Client-IP}
+				header_up -Nakis-Origin-Token
+				header_up -Nakis-Client-IP
+				header_up -Cookie
+				header_down +X-Nakis-Edge-Cache anonymous-home
+			}
+		}
+
 		handle {
 			reverse_proxy 127.0.0.1:3100 {
 				header_up Host {$NAKIS_PUBLIC_HOST}

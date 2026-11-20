@@ -226,7 +226,7 @@ export function StoreProvider({ children, checkoutOpen }: { children: React.Reac
     return u;
   }, []);
 
-  // initial load: local UI prefs, session, cart
+  // Local UI first; auth/cart deferred so first paint isn't blocked on the tiny origin VM.
   useEffect(() => {
     try {
       const f = localStorage.getItem(STORAGE_FAVS);
@@ -237,11 +237,29 @@ export function StoreProvider({ children, checkoutOpen }: { children: React.Reac
       /* private mode */
     }
     setHydrated(true);
-    void (async () => {
-      await refreshAuth();
-      await refreshCart();
-    })();
+    const loadSession = () => {
+      void (async () => {
+        await refreshAuth();
+        await refreshCart();
+      })();
+    };
+    const idle = globalThis as typeof globalThis & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (typeof idle.requestIdleCallback === "function") {
+      const id = idle.requestIdleCallback(loadSession, { timeout: 2500 });
+      return () => idle.cancelIdleCallback?.(id);
+    }
+    const t = globalThis.setTimeout(loadSession, 400);
+    return () => globalThis.clearTimeout(t);
   }, [refreshAuth, refreshCart]);
+
+  // If the user opens the cart before the deferred load finishes, fetch immediately.
+  useEffect(() => {
+    if (!cartOpen || !cartLoading) return;
+    void refreshCart();
+  }, [cartOpen, cartLoading, refreshCart]);
 
   // when a user signs in: push guest favorites to the account once, then load the account's list
   const lastUserId = useRef<string | null>(null);

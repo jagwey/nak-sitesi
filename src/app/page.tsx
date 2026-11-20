@@ -45,7 +45,7 @@ const SERVICE_CTAS = [
   { href: "/kisiye-ozel?hizmet=parca", label: "İsteğe özel parça siparişi" },
 ];
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   const [site, home, flags, offers] = await Promise.all([
@@ -70,7 +70,6 @@ export default async function HomePage() {
             <Link
               key={cta.href}
               href={cta.href}
-              prefetch={false}
               className={
                 index === 0
                   ? "btn-buy inline-flex min-h-12 items-center justify-center px-5 text-[1.0625rem] font-semibold"

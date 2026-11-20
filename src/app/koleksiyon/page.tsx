@@ -5,7 +5,7 @@ import { parseFiltersFromParams } from "@/lib/search";
 import { getAvailableEmbroideryOffers, getSuggestions, searchCatalog } from "@/server/modules/catalog";
 import { DEFAULT_PAGE_SIZE } from "@/server/modules/search/types";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Koleksiyon ve Nakış Kataloğu",

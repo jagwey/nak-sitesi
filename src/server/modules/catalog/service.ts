@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { db } from "@/server/db";
 import { AppError } from "@/server/errors";
 import { CATEGORIES, type CategoryItem, type CuratedCollection } from "@/data/categories";
@@ -240,7 +241,7 @@ function getHomepageProducts(
   });
 }
 
-export async function getHomepageData(): Promise<HomepageData> {
+async function loadHomepageData(): Promise<HomepageData> {
   const [categories, isNew, digital, physical, personalizable] = await Promise.all([
     getHomepageCategories(),
     getHomepageProducts({ isNew: true }, [{ publishedAt: "desc" }, { sku: "asc" }]),
@@ -256,6 +257,12 @@ export async function getHomepageData(): Promise<HomepageData> {
     new: toProducts(isNew), digital: toProducts(digital), physical: toProducts(physical), personalizable: toProducts(personalizable),
   } };
 }
+
+/** Short TTL cache so anonymous home/navigation does not re-query Postgres on every click. */
+export const getHomepageData = unstable_cache(loadHomepageData, ["homepage-data-v1"], {
+  revalidate: 60,
+  tags: ["catalog"],
+});
 
 export async function getSitemapEntries(): Promise<{ slug: string; updatedAt: Date }[]> {
   return db.product.findMany({ where: { status: "ACTIVE" }, select: { slug: true, updatedAt: true }, orderBy: { slug: "asc" } });

@@ -128,12 +128,20 @@ describe("anonymous homepage edge caching", () => {
     expect(put).not.toHaveBeenCalled();
   });
 
+  it("caches anonymous HTML even when the origin omits the Caddy opt-in header", async () => {
+    const { fetch, put, ctx } = setup();
+    const { "x-nakis-edge-cache": _drop, ...withoutOptIn } = homeHeaders;
+    fetch.mockResolvedValue(new Response("home", { headers: withoutOptIn }));
+    await proxy.fetch(new Request(storefront, { headers: htmlRequest }), env, ctx);
+    expect(put).toHaveBeenCalledOnce();
+  });
+
   it.each([
-    { "x-nakis-edge-cache": "" },
+    { "x-nakis-edge-cache": "private-home" },
     { "set-cookie": "session=user" },
     { vary: "Cookie" },
     { "content-type": "text/x-component" },
-  ] as Record<string, string>[])("skips non-opted-in or potentially personalized replies (%j)", async (headers) => {
+  ] as Record<string, string>[])("skips personalized or non-HTML replies (%j)", async (headers) => {
     const { fetch, put, ctx } = setup();
     fetch.mockResolvedValue(new Response("home", { headers: { ...homeHeaders, ...headers } }));
     await proxy.fetch(new Request(storefront, { headers: htmlRequest }), env, ctx);

@@ -32,9 +32,12 @@ function varyHeaders(response: Response): string[] {
 }
 
 function isAnonymousHome(response: Response): boolean {
+  // Caller already stripped Cookie/Authorization from the upstream request.
+  // Opt-in Caddy header is preferred but not required: no Set-Cookie + HTML is enough.
+  const optedIn = response.headers.get("x-nakis-edge-cache") === "anonymous-home";
   return response.status === 200 && !response.headers.has("set-cookie") &&
-    response.headers.get("x-nakis-edge-cache") === "anonymous-home" &&
     response.headers.get("content-type")?.startsWith("text/html") === true &&
+    (optedIn || !response.headers.has("x-nakis-edge-cache")) &&
     varyHeaders(response).every((value) => value === "accept-encoding" || routerVaryHeaders.includes(value));
 }
 
