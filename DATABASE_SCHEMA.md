@@ -32,7 +32,7 @@ Migration'lar: `20261119201127_init` (ana şema + CHECK kısıtları + `pg_trgm`
 | Model | Önemli alanlar / kısıtlar |
 |---|---|
 | `User` | `email` unique (küçük harf saklanır), `passwordHash` (argon2id), `status` (ACTIVE/DISABLED), `emailVerifiedAt`, `failedLoginCount`, `lockedUntil` (5 hatalı girişte kilit), `lastLoginAt`, `anonymizedAt` (KVKK anonimleştirme) |
-| `Role` | `code` unique: SUPER_ADMIN, ADMIN, PRODUCT_MANAGER, ORDER_MANAGER, CUSTOMER |
+| `Role` | `code` unique: SUPER_ADMIN, ADMIN, PRODUCT_MANAGER, ORDER_MANAGER, MODERATOR, CUSTOMER |
 | `Permission` | `code` unique (`product:write` vb.) |
 | `RolePermission`, `UserRole` | Birleşik PK; role/permission silinirse Cascade |
 | `Session` | `tokenHash` unique (cookie token'ının sha256'sı), `expiresAt`, `lastUsedAt`, `ipHash`, `userAgent` |

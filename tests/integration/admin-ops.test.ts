@@ -1,7 +1,8 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { call, jar, sent } from "./helpers";
 import { seedCatalog } from "./catalog-fixtures";
 import { __resetEnvForTests } from "@/server/env";
+import { sha256Hex } from "@/server/crypto";
 import { db } from "@/server/db";
 import { hashPassword } from "@/server/modules/auth/password";
 import { checkout } from "@/server/modules/orders/checkout";
@@ -10,6 +11,7 @@ import { PERMISSIONS } from "@/server/modules/auth/rbac";
 import { sendEmail } from "@/server/modules/notifications/email";
 import { SITE_DEFAULTS } from "@/server/modules/settings/schema";
 import { POST as login } from "@/app/api/auth/login/route";
+import { POST as resetPassword } from "@/app/api/auth/reset-password/route";
 import { POST as simulate } from "@/app/api/dev/payments/simulate/route";
 import { GET as adminOrders } from "@/app/api/admin/orders/route";
 import { POST as shipRoute } from "@/app/api/admin/orders/[id]/shipments/route";
@@ -17,6 +19,9 @@ import { POST as statusRoute } from "@/app/api/admin/orders/[id]/status/route";
 import { POST as cancelRoute } from "@/app/api/admin/orders/[id]/cancel/route";
 import { POST as refundRoute } from "@/app/api/admin/orders/[id]/refund/route";
 import { PATCH as adminPatch } from "@/app/api/admin/admins/[id]/route";
+import { POST as staffInvite } from "@/app/api/admin/admins/route";
+import { GET as customOrders } from "@/app/api/admin/custom-orders/route";
+import { GET as adminProducts } from "@/app/api/admin/products/route";
 import { GET as settingsGet, PUT as settingsPut } from "@/app/api/admin/settings/route";
 import { POST as anonymizeRoute } from "@/app/api/admin/customers/[id]/anonymize/route";
 
@@ -26,6 +31,7 @@ const ROLE_PERMS: Record<string, string[]> = {
   SUPER_ADMIN: [...PERMISSIONS],
   ADMIN: PERMISSIONS.filter((p) => p !== "user:write"),
   ORDER_MANAGER: ["order:read", "order:write", "customer:read", "customer:write", "customorder:read", "customorder:write"],
+  MODERATOR: ["customorder:read", "customorder:write"],
   CUSTOMER: [],
 };
 
@@ -105,6 +111,42 @@ describe("admin RBAC", () => {
     await expect(changeAdminRole(actor, sa.id, "ADMIN")).rejects.toMatchObject({ code: "CONFLICT" });
     await expect(setAdminStatus(actor, sa.id, "DISABLED")).rejects.toMatchObject({ code: "CONFLICT" });
     expect(await db.userRole.count({ where: { userId: sa.id, role: { code: "SUPER_ADMIN" } } })).toBe(1);
+  });
+
+  it("lets only a Super Admin invite a moderator with a private, single-use link without SMTP", async () => {
+    vi.stubEnv("EMAIL_TRANSPORT", "console");
+    __resetEnvForTests();
+    try {
+      const regularAdmin = await mkUser("ADMIN");
+      await loginAs(regularAdmin.email);
+      const invite = { email: "new-moderator@example.com", role: "MODERATOR" };
+      expect((await call(staffInvite, "POST", "/api/admin/admins", invite)).status).toBe(403);
+
+      const owner = await mkUser("SUPER_ADMIN");
+      await loginAs(owner.email);
+      const response = await call(staffInvite, "POST", "/api/admin/admins", invite);
+      expect(response.status).toBe(200);
+      expect(response.headers.get("cache-control")).toBe("no-store");
+      const result = await response.json();
+      const url = new URL(result.inviteUrl);
+      const token = new URLSearchParams(url.hash.slice(1)).get("token")!;
+      expect(url.pathname).toBe("/sifre-sifirla");
+      expect(url.search).toBe("");
+      expect(sent.some((msg) => msg.to === invite.email)).toBe(false);
+      expect(await db.verificationToken.findUnique({ where: { tokenHash: sha256Hex(token) } })).toMatchObject({ userId: result.id });
+
+      jar.clear();
+      expect((await call(resetPassword, "POST", "/api/auth/reset-password", { token, password: PW })).status).toBe(200);
+      expect((await call(resetPassword, "POST", "/api/auth/reset-password", { token, password: PW })).status).toBe(400);
+      await loginAs(invite.email);
+      expect((await call(customOrders, "GET", "/api/admin/custom-orders")).status).toBe(200);
+      expect((await call(adminProducts, "GET", "/api/admin/products")).status).toBe(403);
+      expect((await call(adminOrders, "GET", "/api/admin/orders")).status).toBe(403);
+      expect((await call(staffInvite, "POST", "/api/admin/admins", invite)).status).toBe(403);
+    } finally {
+      vi.unstubAllEnvs();
+      __resetEnvForTests();
+    }
   });
 });
 

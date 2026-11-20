@@ -1,13 +1,43 @@
 {$NAKIS_ORIGIN_HOST} {
 	@storefront header Nakis-Origin-Token {$NAKIS_ORIGIN_TOKEN}
 	handle @storefront {
-		reverse_proxy 127.0.0.1:3100 {
-			header_up Host {$NAKIS_PUBLIC_HOST}
-			header_up X-Forwarded-Host {$NAKIS_PUBLIC_HOST}
-			header_up X-Forwarded-Proto https
-			header_up X-Forwarded-For {http.request.header.Nakis-Client-IP}
-			header_up -Nakis-Origin-Token
-			header_up -Nakis-Client-IP
+		@public_media {
+			method GET HEAD
+			path_regexp media ^/images/((?:products|categories|collections)/[a-f0-9-]{36}(?:-t)?\.webp)$
+		}
+		handle @public_media {
+			rewrite * /nakis-public/{re.media.1}
+			reverse_proxy 127.0.0.1:9100 {
+				header_up -Authorization
+				header_up -Cookie
+				header_up -Nakis-Origin-Token
+				header_up -Nakis-Client-IP
+			}
+		}
+		@private_media {
+			method GET
+			path_regexp ^/nakis-private/(?:embroidery|custom-orders)/[a-f0-9-]{36}\.[a-z0-9]{1,8}$
+		}
+		handle @private_media {
+			reverse_proxy 127.0.0.1:9100 {
+				header_up Host {$NAKIS_PUBLIC_HOST}
+				header_up -Authorization
+				header_up -Cookie
+				header_up -Nakis-Origin-Token
+				header_up -Nakis-Client-IP
+				header_down Cache-Control "private, no-store"
+				header_down X-Content-Type-Options nosniff
+			}
+		}
+		handle {
+			reverse_proxy 127.0.0.1:3100 {
+				header_up Host {$NAKIS_PUBLIC_HOST}
+				header_up X-Forwarded-Host {$NAKIS_PUBLIC_HOST}
+				header_up X-Forwarded-Proto https
+				header_up X-Forwarded-For {http.request.header.Nakis-Client-IP}
+				header_up -Nakis-Origin-Token
+				header_up -Nakis-Client-IP
+			}
 		}
 	}
 	handle {

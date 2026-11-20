@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Download, Heart, LogOut, MapPin, Package, User } from "lucide-react";
+import { Download, Heart, LogOut, MapPin, Package, Shield, User } from "lucide-react";
+import { hasAnyAdminPermission } from "@/lib/admin-roles";
 import { apiFetch, ApiError } from "@/lib/api";
 import { formatTRY } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -63,6 +64,14 @@ export function AccountClient({ initialTab, initialOrder }: { initialTab?: strin
       <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-12">
         <nav aria-label="Hesap bölümleri" className="lg:col-span-3">
           <ul className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-0 lg:overflow-visible lg:border-t lg:border-hairline lg:pb-0">
+            {hasAnyAdminPermission(user) && (
+              <li className="shrink-0 lg:border-b lg:border-hairline">
+                <Link href="/admin" className="flex h-11 items-center gap-2.5 px-3 text-[0.9rem] font-medium text-ink hover:bg-linen">
+                  <Shield className="h-4 w-4 text-gold-text" strokeWidth={1.6} />
+                  Yönetim Paneli
+                </Link>
+              </li>
+            )}
             {TABS.map(({ id, label, icon: Icon }) => (
               <li key={id} className="shrink-0 lg:border-b lg:border-hairline">
                 <button

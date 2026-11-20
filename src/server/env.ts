@@ -17,6 +17,7 @@ const schema = z
     SESSION_SECRET: z.string().min(32, "SESSION_SECRET en az 32 karakter olmalı"),
 
     S3_ENDPOINT: z.string().min(1),
+    S3_PRESIGN_ENDPOINT: z.url().optional(),
     S3_REGION: z.string().default("us-east-1"),
     S3_ACCESS_KEY: z.string().min(1),
     S3_SECRET_KEY: z.string().min(1),
@@ -67,6 +68,9 @@ const schema = z
       }
       if (!v.APP_URL.startsWith("https://")) {
         ctx.addIssue({ code: "custom", path: ["APP_URL"], message: "Üretimde APP_URL https olmalı" });
+      }
+      if (v.S3_PRESIGN_ENDPOINT && !v.S3_PRESIGN_ENDPOINT.startsWith("https://")) {
+        ctx.addIssue({ code: "custom", path: ["S3_PRESIGN_ENDPOINT"], message: "Üretimde S3_PRESIGN_ENDPOINT https olmalı" });
       }
     }
     if (v.NODE_ENV === "test" && !v.DATABASE_URL_TEST) {

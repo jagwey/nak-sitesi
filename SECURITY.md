@@ -10,7 +10,7 @@ Bu belge kodda **gerçekten uygulanan** korumaları ve bilinen eksikleri listele
 | Kaba kuvvet giriş denemesi | 5 hatalı denemede hesap kilidi (`lockedUntil`); giriş limiti 5/15 dk/e-posta ve 30/15 dk/IP; hata mesajı genel (hangi alanın yanlış olduğu söylenmez) | `auth/service.ts`, `route()` |
 | Hesap numaralandırma | Parola sıfırlama isteği hesap var olsun olmasın **aynı yanıtı** verir; limit 3/saat/e-posta + 10/saat/IP | `auth` |
 | Oturum çalma/yeniden kullanma | Opak 32 bayt token; DB'de yalnızca sha256; cookie `httpOnly`, `sameSite=lax`, production'da `secure`; 30 gün kayar süre; çıkış ve parola sıfırlama oturumları sunucuda siler | `auth/session.ts` |
-| Yetki yükseltme | Rol/izinler **her istekte** DB'den okunur; pasif kullanıcı reddedilir; son SUPER_ADMIN düşürülemez/pasifleştirilemez; atanabilir roller ADMIN/PRODUCT_MANAGER/ORDER_MANAGER ile sınırlı | `auth/rbac.ts`, `admin-orders/admins.ts` |
+| Yetki yükseltme | Rol/izinler **her istekte** DB'den okunur. Pasif kullanıcı reddedilir. Süper Yönetici panelden ADMIN, PRODUCT_MANAGER, ORDER_MANAGER veya MODERATOR atayabilir. Davet bağlantısı tek kullanımlık ve bir saatliktir. | `auth/rbac.ts`, `admin-orders/admins.ts` |
 | Admin alanının keşfi | Yetkisiz kullanıcıya admin sayfaları `404`; anonim `/giris?next=/admin`'e yönlenir | `requireAdminPage` |
 | CSRF | Güvensiz metotlarda `Origin` = `APP_URL` origin'i zorunlu; yedek `Sec-Fetch-Site`; yalnızca imzalı webhook `csrf:false` | `http.ts` |
 | Hız sınırı / kötüye kullanım | IP başına DB destekli sabit pencere (`RateLimit`, atomik upsert; anahtar `ad + sha256(kimlik)`); uç bazında limitler (bkz. `API_DOCUMENTATION.md`) | `rate-limit.ts` |

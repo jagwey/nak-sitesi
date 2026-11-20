@@ -77,7 +77,7 @@ class S3Storage implements StorageAdapter {
       responseChecksumValidation: "WHEN_REQUIRED" as const,
     };
     this.client = new S3Client(cfg);
-    this.signer = this.client;
+    this.signer = e.S3_PRESIGN_ENDPOINT ? new S3Client({ ...cfg, endpoint: e.S3_PRESIGN_ENDPOINT }) : this.client;
   }
 
   private bucket(kind: BucketKind): string {

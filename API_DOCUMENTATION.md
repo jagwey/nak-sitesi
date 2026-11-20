@@ -36,7 +36,7 @@ Yükleme doğrulayıcıları ayrıca ZIP/dosya kodları döner: `ZIP_INVALID`, `
 
 ### Yetkiler
 `product:read|write`, `order:read|write`, `customer:read`, `customorder:read|write`, `coupon:write`, `settings:read|write`, `user:read|write`, `audit:read`, `file:write`.
-Roller: SUPER_ADMIN (hepsi), ADMIN (`user:write` hariç hepsi), PRODUCT_MANAGER (`product:read/write`, `file:write`), ORDER_MANAGER (`order:read/write`, `customer:read`, `customorder:read/write`), CUSTOMER (yok). İzinler her istekte veritabanından okunur.
+Roller: SUPER_ADMIN (hepsi), ADMIN (`user:write` hariç hepsi), PRODUCT_MANAGER (`product:read/write`, `file:write`), ORDER_MANAGER (`order:read/write`, `customer:read/write`, `customorder:read/write`), MODERATOR (`customorder:read/write`), CUSTOMER (yok). İzinler her istekte veritabanından okunur.
 
 ---
 
@@ -125,7 +125,7 @@ Tüm ucların izni aşağıda belirtilmiştir. Her **değiştiren** admin işlem
 | Yol | İzin | Not |
 |---|---|---|
 | `GET /api/admin/admins` | `user:read` | Yönetici listesi |
-| `POST /api/admin/admins` | `user:write` | `{ email, name?, role }`; `role` ∈ ADMIN, PRODUCT_MANAGER, ORDER_MANAGER; davet e-postası (`admin_invite`) |
+| `POST /api/admin/admins` | `user:write` + SUPER_ADMIN | `{ email, name?, role }`; ADMIN, PRODUCT_MANAGER, ORDER_MANAGER veya MODERATOR. E-posta teslim edilemezse yanıta bir saatlik `inviteUrl` eklenir. Yanıt önbelleğe alınmaz. |
 | `PATCH /api/admin/admins/[id]` | `user:write` | `{ role?, status? (ACTIVE\|DISABLED) }` |
 | `GET /api/admin/audit` | `audit:read` | `action`, `entity`, `actor`, `from`, `to` (YYYY-MM-DD), `page`, `pageSize` (≤100) |
 | `GET /api/admin/dashboard` | herhangi bir admin izni | Özet sayılar |

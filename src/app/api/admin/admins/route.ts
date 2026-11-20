@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { route } from "@/server/http";
-import { ASSIGNABLE_ROLES, inviteAdmin, listAdmins } from "@/server/modules/admin-orders/admins";
+import { ASSIGNABLE_ROLES } from "@/lib/admin-roles";
+import { inviteAdmin, listAdmins } from "@/server/modules/admin-orders/admins";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

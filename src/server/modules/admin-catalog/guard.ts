@@ -1,11 +1,7 @@
 import "server-only";
+import { hasAnyAdminPermission } from "@/lib/admin-roles";
 import { notFound, redirect } from "next/navigation";
 import { getOptionalUser, type AuthUser } from "../auth/rbac";
-
-/** Any permission that makes a user a back-office user. */
-export const ADMIN_PERMISSION_PREFIXES = ["product:", "order:", "customer:", "customorder:", "coupon:", "settings:", "user:", "audit:", "file:"];
-
-export const hasAnyAdminPermission = (u: Pick<AuthUser, "permissions">) => u.permissions.some((p) => ADMIN_PERMISSION_PREFIXES.some((x) => p.startsWith(x)));
 
 /**
  * Page-level guard. Call in EVERY admin page (layouts are not re-rendered on client navigation).

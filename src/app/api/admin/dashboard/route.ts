@@ -1,7 +1,7 @@
 import { AppError } from "@/server/errors";
 import { route } from "@/server/http";
 import { getDashboard } from "@/server/modules/admin-catalog/dashboard";
-import { hasAnyAdminPermission } from "@/server/modules/admin-catalog/guard";
+import { hasAnyAdminPermission } from "@/lib/admin-roles";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

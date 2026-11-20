@@ -37,6 +37,7 @@ const ROLES: { code: string; name: string; permissions: string[] }[] = [
     name: "Sipariş Yöneticisi",
     permissions: ["order:read", "order:write", "customer:read", "customer:write", "customorder:read", "customorder:write"],
   },
+  { code: "MODERATOR", name: "Moderatör", permissions: ["customorder:read", "customorder:write"] },
   { code: "CUSTOMER", name: "Müşteri", permissions: [] },
 ];
 

@@ -56,13 +56,11 @@ Ad, logo, iletişim ve sahip bilgisinin yalnızca admin "Ayarlar"dan ve tek bir 
 - Kayıt + giriş oturum çerezinin canlıda çalıştığını doğrula. `EMAIL_TRANSPORT=console` yalnızca alıcıyı ve konuyu kaydeder. Doğrulama ve parola sıfırlama bağlantılarının teslimi için görev 10 gerekli.
 - Test kullanıcı ve sepet kayıtlarını temizle.
 
-### 8. İlk canlı `SUPER_ADMIN` hesabını oluşturma
-Kullanıcının vereceği e-posta ile sunucuda tek seferlik `npm run admin:create` çalıştır (`ADMIN_BOOTSTRAP_EMAIL` ve `ADMIN_BOOTSTRAP_PASSWORD` ile geçici env dosyasından, iş bitince bootstrap env’lerini hemen sil) ve `/admin` girişini doğrula.
+### 8. İlk canlı `SUPER_ADMIN` hesabı
+Kullanıcının belirttiği mevcut hesaba Süper Yönetici rolü verildi ve işlem denetim kaydına yazıldı. Parola korunarak eski oturumlar kapatıldı. Panelde Moderatör ve diğer ekip rolleri için davet açılabilir.
 
 ### 9. Canlı S3 nesne depolama bağlantısı (`private` + `public` kova)
-Şu an sunucuda `/opt/nakis/.env.production` içinde `S3_ENDPOINT=https://s3.invalid` yer tutucusu var (demo görselleri `public/images/` içinden sunuluyor; gerçek ürün görseli veya ücretli VP3/PES dosyası yüklemek için gerçek S3 gerekli).
-- Oracle Object Storage (Always Free 20 GB, Frankfurt S3 uyumlu) veya Cloudflare R2 (ücretsiz 10 GB) üzerinde `nakis-private` (tamamen kapalı, imzasız erişim `403`) ve `nakis-public` (yalnız GET açık) kovalarını oluştur.
-- `.env.production` içindeki `S3_*` değişkenlerini güncelle, `S3_PUBLIC_BASE_URL` ile yeni `web` imajını derleyip yayımla, `private` kovaya imzasız erişimin `403` döndüğünü doğrula.
+Oracle VM üzerinde kalıcı MinIO disk birimi için kurulum `deploy/oracle/setup-storage.sh` ve `DEPLOYMENT.md` altında. Ürün görselleri `/images` yolundan sunulur. Özel nakış dosyaları kısa ömürlü imzalı bağlantı gerektirir. Canlı bağlantının doğrulama durumu `YAPILACAKLAR.md` dosyasında; nesne dosyaları için ayrı yedek planı açık.
 
 ### 10. Canlı SMTP göndereni bağlama
 Şu an `EMAIL_TRANSPORT=console`. Kullanıcıdan SMTP sağlayıcı bilgisi (ör. Brevo / Resend / Mailgun / alan adı SMTP) gelince `/opt/nakis/.env.production` içinde `EMAIL_TRANSPORT=smtp` ve `SMTP_*` alanlarını ayarla; SPF/DKIM ve canlı e-posta doğrulama + parola sıfırlama teslimini test et.

@@ -6,11 +6,11 @@ export const metadata = { title: "Yöneticiler" };
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  await requireAdminPage("user:read");
+  const user = await requireAdminPage("user:read");
   return (
     <>
       <PageHeader title="Yöneticiler" description="Yönetici hesapları ve rolleri." />
-      <AdminsManager />
+      <AdminsManager canManage={user.roles.includes("SUPER_ADMIN") && user.permissions.includes("user:write")} />
     </>
   );
 }

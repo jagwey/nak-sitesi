@@ -3,8 +3,8 @@
 Bu kılavuz mağazayı yönetecek kişiler içindir. Teknik bilgi gerekmez. Panelde bir şeyi yanlış yaparsanız çoğu işlem geri alınabilir; silme gibi geri dönüşü olmayan işlemlerde panel size önce sorar.
 
 ## 1. Giriş
-1. Tarayıcıda sitenin adresinin sonuna `/admin` yazın veya normal giriş sayfasından e-posta ve parolanızla girin.
-2. Yönetici hesabınız yoksa sistemi kuran kişi ilk hesabı açar; sonrasında diğer kişileri siz ekleyebilirsiniz (bölüm 14).
+1. Mağazaya e-posta ve parolanızla girin. Yetkiliyseniz **Hesabım → Yönetim Paneli** bağlantısı görünür. Doğrudan `/admin` adresini de açabilirsiniz.
+2. İlk Süper Yönetici yetkisi sunucuda verilir. Süper Yönetici, ekibini panelden davet edebilir (bölüm 15).
 3. Parolanızı kimseyle paylaşmayın. Üst üste 5 yanlış denemede hesap kısa süre kilitlenir; biraz bekleyip tekrar deneyin.
 4. İşiniz bitince "Çıkış" yapın. Yetkiniz olmayan bir sayfayı açarsanız "sayfa bulunamadı" görürsünüz; bu normaldir.
 
@@ -92,8 +92,9 @@ Not: "demo" etiketli ürünler örnek ürünlerdir; mağaza canlıya çıkmadan 
 - Bağlantılar yalnızca site içi yol veya `https://` ile başlayan adres olabilir; WhatsApp bağlantısı `wa.me` olmalıdır.
 
 ## 15. Yönetici hesapları
-- **Yöneticiler** sayfasında yeni kişi ekleyebilir, rolünü değiştirebilir veya hesabı pasif yapabilirsiniz. Her kişiye ayrı hesap açın; parola paylaşmayın.
-- Roller: **Süper Yönetici** (her şey), **Yönetici**, **Ürün Yöneticisi** (ürün ve katalog), **Sipariş Yöneticisi** (sipariş, kargo, müşteri).
+- Süper Yönetici, **Yöneticiler** sayfasından yeni ekip üyesi davet edebilir, rolünü değiştirebilir veya hesabını devre dışı bırakabilir.
+- E-posta teslimi kapalıysa ya da başarısız olursa tek kullanımlık davet bağlantısını panel gösterir. Bağlantıyı yalnızca davet edilen kişiyle paylaşın. Bir saat içinde kendi parolasını belirleyebilir.
+- Roller arasında **Moderatör** (kişiye özel tasarım talepleri), **Ürün Yöneticisi** (ürün, görsel ve nakış dosyaları), **Sipariş Yöneticisi** (sipariş, kargo, müşteri ve özel talepler), **Yönetici** ve **Süper Yönetici** bulunur.
 - Son Süper Yönetici silinemez veya pasifleştirilemez.
 - **Denetim Kaydı:** kimin ne zaman neyi değiştirdiğini gösterir. Silinemez.
 - **Müşteriler:** müşteri verisini dışa aktarabilir veya KVKK talebi üzerine **anonimleştirebilirsiniz**: kişisel bilgiler silinir, sipariş tutarları muhasebe için korunur. Bu işlem geri alınamaz; panel onay ister.

@@ -1,15 +1,14 @@
 import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
+import { ADMIN_CODES } from "@/lib/admin-roles";
 import { AppError } from "../../errors";
 import { db } from "../../db";
 import { writeAudit } from "../../audit";
 import { deleteUserSessions } from "../auth/session";
 import { requestEmailVerification } from "../auth/service";
 
-const ADMIN_ROLES = ["SUPER_ADMIN", "ADMIN", "PRODUCT_MANAGER", "ORDER_MANAGER"];
-
 /** Customers = users without any back-office role. */
-const customerWhere: Prisma.UserWhereInput = { roles: { none: { role: { code: { in: ADMIN_ROLES } } } } };
+const customerWhere: Prisma.UserWhereInput = { roles: { none: { role: { code: { in: ADMIN_CODES } } } } };
 
 export async function listCustomers(f: { search?: string; page?: number; pageSize?: number }) {
   const pageSize = f.pageSize ?? 25;

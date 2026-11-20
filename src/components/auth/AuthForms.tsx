@@ -154,10 +154,18 @@ export function ForgotForm() {
   );
 }
 
-export function ResetForm({ token }: { token?: string }) {
+export function ResetForm({ token: queryToken }: { token?: string }) {
   const { busy, error, run } = useSubmit();
   const [password, setPassword] = useState("");
   const [done, setDone] = useState(false);
+  const [fragmentToken, setFragmentToken] = useState<string | null>();
+  useEffect(() => {
+    setFragmentToken(new URLSearchParams(window.location.hash.slice(1)).get("token"));
+  }, []);
+  const token = queryToken ?? fragmentToken;
+  if (token === undefined) {
+    return <AuthShell title="Şifre sıfırla"><p className="text-umber">Yükleniyor…</p></AuthShell>;
+  }
   if (!token) {
     return (
       <AuthShell title="Şifre sıfırla" footer={<TextLink href="/sifremi-unuttum">Yeni bağlantı iste</TextLink>}>

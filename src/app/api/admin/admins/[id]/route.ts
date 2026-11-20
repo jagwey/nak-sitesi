@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { route } from "@/server/http";
-import { ASSIGNABLE_ROLES, changeAdminRole, setAdminStatus } from "@/server/modules/admin-orders/admins";
+import { ASSIGNABLE_ROLES } from "@/lib/admin-roles";
+import { changeAdminRole, setAdminStatus } from "@/server/modules/admin-orders/admins";
 import { orderIdParams } from "@/server/modules/admin-orders/schema";
 
 export const runtime = "nodejs";

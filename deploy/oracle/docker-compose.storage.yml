@@ -1,0 +1,24 @@
+services:
+  minio:
+    image: cgr.dev/chainguard/minio@sha256:e9cf6b99c226e9539ed0f14b6f00e37b07da153c7ba1f4f8709c807574b471ec
+    restart: unless-stopped
+    command: ["server", "/data", "--address", ":9000"]
+    env_file: .env.storage
+    environment:
+      GOMEMLIMIT: 144MiB
+      MINIO_BROWSER: "off"
+    volumes:
+      - minio-data:/data
+    ports:
+      - "127.0.0.1:9100:9000"
+    mem_limit: 256m
+    memswap_limit: 512m
+
+  minio-client:
+    profiles: ["storage-ops"]
+    image: cgr.dev/chainguard/minio-client@sha256:94433f625c8057d18c69675dbaa33da6e4864f084f9c44faf30d3eb8e3754e0b
+    volumes:
+      - ./deploy/oracle/storage-policies:/policies:ro,Z
+
+volumes:
+  minio-data:
