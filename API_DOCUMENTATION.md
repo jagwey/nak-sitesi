@@ -105,7 +105,7 @@ Arama motoru: Postgres (ILIKE + `pg_trgm` + `unaccent`); `SearchEngine` arayüz�
 | `GET /api/me/addresses`, `POST /api/me/addresses` | Adres alanları (`fullName`, `phone`, `line1`, `city`, `district`, …) |
 | `GET/PATCH/DELETE /api/me/addresses/[id]` | Yalnızca sahibi (başkasının kaydı 404) |
 | `GET /api/me/orders`, `GET /api/me/orders/[number]` | Kendi siparişleri |
-| `GET /api/me/downloads` | İndirme hakları |
+| `GET /api/me/downloads` | İndirme hakları. Aynı formatta ek boyu bulunan ürünlerde her dosya ayrı bir hak olarak görünür. `fileName` ve isteğe bağlı `downloadLabel` döner. |
 | `GET /api/me/custom-orders`, `GET /api/me/custom-orders/[id]` | Kendi özel talepleri |
 | `POST /api/me/custom-orders/[id]` | `{ decision: "ACCEPT" \| "REJECT" }` — teklifi kabul/ret |
 | `GET /api/favorites`, `POST /api/favorites`, `DELETE /api/favorites?productId=` | Favori listesi |
@@ -141,7 +141,7 @@ Tüm ucların izni aşağıda belirtilmiştir. Her **değiştiren** admin işlem
 | `POST /api/admin/products` | `product:write` | Yeni ürün **DRAFT** başlar |
 | `GET/PATCH /api/admin/products/[id]` | read / write | |
 | `DELETE /api/admin/products/[id]?mode=archive\|hard` | `product:write` | Siparişi olan ürün sert silinemez; arşivlenir |
-| `GET/POST /api/admin/products/[id]/files` | `file:write` | Dijital dosya (VP3, PES, DST, JEF, HUS, EXP, XXX, VIP, PEC, PCS, SEW, ART veya ZIP), en fazla 21 MB istek; private bucket |
+| `GET/POST /api/admin/products/[id]/files` | `file:write` | Özel depoya nakış dosyası yükler. POST multipart `file` ve isteğe bağlı `downloadLabel` (en fazla 40 karakter) kabul eder. Aynı format ve adla farklı içerik yüklenirse yeni sürüm oluşturulur. En fazla 21 MB istek. |
 | `POST /api/admin/products/[id]/images` | `product:write` | `file` + `alt` (≥3 karakter); 10 MB; webp'ye dönüştürülür |
 | `PUT /api/admin/products/[id]/images` | `product:write` | `{ ids }` — sıralama; ilk görsel kapak |
 | `PATCH/DELETE /api/admin/products/[id]/images/[imageId]` | `product:write` | alt metni / silme |

@@ -540,6 +540,7 @@ model DigitalFile {
   hoopSizeId   String?
   storageKey   String            @unique // PRIVATE bucket key - never exposed
   originalName String
+  downloadLabel String           @default("")
   sizeBytes    Int
   sha256       String
   version      Int               @default(1)
@@ -557,6 +558,7 @@ model DigitalFile {
   entitlements DownloadEntitlement[]
 
   @@index([productId, formatId, isCurrent])
+  @@index([productId, formatId, downloadLabel])
   @@index([sha256])
 }
 

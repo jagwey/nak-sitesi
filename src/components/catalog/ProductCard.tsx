@@ -11,13 +11,16 @@ import { useStore } from "@/lib/store";
 interface ProductCardProps {
   product: Product;
   priority?: boolean;
+  fullImage?: boolean;
+  showSubtitle?: boolean;
 }
 
-export function ProductCard({ product, priority = false }: ProductCardProps) {
+export function ProductCard({ product, priority = false, fullImage = false, showSubtitle = false }: ProductCardProps) {
   const { isFavorite, toggleFavorite } = useStore();
   const fav = isFavorite(product.id);
   const image = product.images[0];
   const secondImage = product.images[1];
+  const imageFit = fullImage ? "object-contain" : "object-cover";
   const [showPreview, setShowPreview] = useState(false);
   const discount = product.compareAtPriceKurus
     ? calculateDiscountPercent(product.compareAtPriceKurus, product.priceKurus)
@@ -37,7 +40,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
   return (
     <article className="group flex min-w-0 flex-col">
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-linen">
+      <div className={`relative w-full overflow-hidden bg-linen ${fullImage ? "aspect-square" : "aspect-[3/4]"}`}>
         <Link
           href={`/urun/${product.slug}`}
           prefetch={false}
@@ -54,7 +57,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             fill
             loading={priority ? "eager" : "lazy"}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.025]"
+            className={`${imageFit} transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.025]`}
           />
           {showPreview && secondImage && (
             <Image
@@ -63,7 +66,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               alt=""
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              className={`${imageFit} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
             />
           )}
         </Link>
@@ -99,6 +102,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               {product.name}
             </Link>
           </h3>
+          {showSubtitle && product.subtitle && <p className="mt-1 text-[0.8125rem] leading-snug text-umber">{product.subtitle}</p>}
           <p className="mt-1 truncate text-[0.8125rem] font-medium text-cocoa sm:text-[0.875rem]">{typeLine}</p>
           <p className="mt-0.5 truncate text-[0.8125rem] text-umber">{metaLine}</p>
         </div>

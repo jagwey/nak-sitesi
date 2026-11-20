@@ -14,10 +14,13 @@ export const POST = route(
     auth: { permission: "file:write" },
     params: idParams,
     maxBodyBytes: 21 * 1024 * 1024,
-    body: z.strictObject({ file: z.instanceof(File, { message: "Dosya gerekli." }) }),
+    body: z.strictObject({
+      file: z.instanceof(File, { message: "Dosya gerekli." }),
+      downloadLabel: z.string().trim().max(40).regex(/^[\p{L}\p{N} -]*$/u).optional(),
+    }),
   },
   async ({ params, body, user, ip }) => {
-    const r = await uploadEmbroideryFile(params!.id, body!.file, { id: user!.id, ip });
+    const r = await uploadEmbroideryFile(params!.id, body!.file, { id: user!.id, ip }, body!.downloadLabel);
     return json(r, { status: r.duplicate ? 200 : 201 });
   }
 );

@@ -60,7 +60,7 @@ Yayına alma kuralı (uygulama katmanı, `publishIssues`): fiyat > 0, en az 1 g�
 | `ProductFormat` | Ürün ↔ format (birleşik PK) |
 | `MachineBrand`, `MachineModel`, `MachineModelFormat`, `HoopSize`, `MachineModelHoop` | Makine uyumluluğu: marka → model; model ↔ format (`preferred`); model ↔ kasnak |
 | `EmbroideryMetadata` | Ürün başına 1 (`productId` unique): ölçü (mm), `stitchCount`, `colorCount`, `colorChanges`, `threadColors` (Json), `metadataSource` (PARSED/MANUAL), `verified` |
-| `DigitalFile` | `storageKey` unique (**private** bucket), `originalName`, `sizeBytes`, `sha256`, `version`, `isCurrent`, `status` (ACTIVE/REPLACED/DELETED), `parsedMeta`. İndeks: `(productId, formatId, isCurrent)`, `sha256` |
+| `DigitalFile` | `storageKey` unique (**private** bucket), `originalName`, `downloadLabel` (ana dosyada boş, ör. ek boy için Mini), `sizeBytes`, `sha256`, `version`, `isCurrent`, `status` (ACTIVE/REPLACED/DELETED), `parsedMeta`. Sürüm `(productId, formatId, downloadLabel)` kapsamında ilerler. İndeksler: `(productId, formatId, isCurrent)`, `(productId, formatId, downloadLabel)`, `sha256` |
 | `License`, `ProductLicense` | Lisans (PERSONAL, SMALL_BUSINESS), `priceDeltaKurus` (ürün bazında ezilebilir) |
 
 ### 4. Stok

@@ -17,6 +17,7 @@ export function ProductFiles({ productId, declared, canWrite, onMetaRead }: { pr
   const router = useRouter();
   const [notes, setNotes] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [downloadLabel, setDownloadLabel] = useState("");
 
   return (
     <div className="space-y-3">
@@ -29,19 +30,33 @@ export function ProductFiles({ productId, declared, canWrite, onMetaRead }: { pr
       {error ? <Notice tone="danger">{error}</Notice> : null}
       {notes.map((n, i) => <Notice key={i} tone={n.startsWith("Dosya çözümlenemedi") ? "warn" : "success"}>{n}</Notice>)}
       {canWrite ? (
-        <Uploader
+        <div className="space-y-3">
+          <label className="block text-sm text-ink">
+            Ek dosyanın adı (isteğe bağlı)
+            <input
+              type="text"
+              value={downloadLabel}
+              onChange={(event) => setDownloadLabel(event.target.value)}
+              maxLength={40}
+              placeholder="Mini"
+              className="mt-1 block w-full max-w-xs border border-hairline bg-white px-3 py-2"
+            />
+          </label>
+          <Uploader
           url={`/api/admin/products/${productId}/files`}
           accept=".pes,.dst,.jef,.exp,.vp3,.hus,.xxx,.pec,.vip,.sew"
           multiple
+          fields={{ downloadLabel }}
           label="Nakış dosyası yükle"
-          hint="Özel (private) depoda saklanır. Biçim dosya içeriğinden tanınır; aynı biçim tekrar yüklenirse yeni sürüm olur."
+          hint="Ana dosya için adı boş bırakın. Aynı biçimdeki farklı boyları ayrı adlarla yükleyin. Aynı biçim ve ad yeniden yüklenirse önceki dosya güncellenir."
           onUploaded={(r) => {
             const x = r as UploadResult;
             setNotes((cur) => [...cur, `${x.formatCode} v${x.version}${x.duplicate ? " (aynı dosya zaten vardı)" : ""}: ${x.note}`]);
             onMetaRead?.();
           }}
           onBatchDone={() => router.refresh()}
-        />
+          />
+        </div>
       ) : null}
       <button type="button" className={btnCls("ghost")} onClick={() => adminFetch(`/api/admin/products/${productId}/files`).then(() => router.refresh()).catch((e) => setError(errMsg(e)))}>Dosya listesini yenile</button>
     </div>

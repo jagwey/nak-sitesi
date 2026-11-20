@@ -30,7 +30,7 @@ Yalnızca gerçekten sahip olduğunuz fotoğraf, açıklama ve dosyaları kullan
 - DST ve PES dosyalarında ölçü, dikiş (ilmek) sayısı ve renk sayısı dosyadan **otomatik okunur**. Elle girilen değerler "doğrulanmadı" sayılır.
 - Yalnızca elinizde gerçekten bulunan formatı yükleyin. Bir görseli "nakış dosyası" gibi yeniden adlandırmayın; bu müşteriyi yanıltır.
 - Dosyalar herkese açık değildir; yalnızca ödeme yapan müşteri kısa süreli güvenli bağlantıyla indirebilir. Dosyayı kendiniz de panelden açabilirsiniz (bu işlem kayda geçer).
-- Dosyanın yeni sürümünü yüklerseniz eski sürüm pasif olur.
+- Ana dosya için ek dosya adını boş bırakın. Aynı ürünün başka bir boyunu eklemek için tüm formatları aynı ek adla (ör. Mini) yükleyin. Aynı formatı ve adı yeniden yüklerseniz önceki sürüm pasif olur. Site içi ödemede müşteriye seçtiği formatın tüm boyları açılır. Shopier ürünü için tüm boyları tek ZIP olarak teslim edin.
 
 ## 5. Fiyat
 - Fiyatı **TL olarak** yazın (örneğin `149,90`). Sistem bunu kendisi kuruşa çevirir.

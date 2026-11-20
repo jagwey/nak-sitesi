@@ -87,22 +87,25 @@ export async function applyEvent(tx: DbClient, ev: PaymentEvent, after: AfterCom
   const policy = await loadPolicy(tx);
   const expDays = policy.downloadExpiryDays > 0 ? policy.downloadExpiryDays : null;
   for (const it of digital) {
-    const file = it.productId && it.format
-      ? await tx.digitalFile.findFirst({
+    const files = it.productId && it.format
+      ? await tx.digitalFile.findMany({
           where: { productId: it.productId, format: { code: it.format }, status: "ACTIVE", isCurrent: true },
+          distinct: ["downloadLabel"],
           orderBy: { version: "desc" },
+          select: { id: true },
         })
-      : null;
+      : [];
     if (it.productId) {
-      await tx.downloadEntitlement.create({
-        data: {
+      const productId = it.productId;
+      await tx.downloadEntitlement.createMany({
+        data: (files.length ? files : [{ id: null }]).map((file) => ({
           orderItemId: it.id,
           userId: order.userId,
-          productId: it.productId,
-          digitalFileId: file?.id ?? null,
+          productId,
+          digitalFileId: file.id,
           remaining: policy.downloadLimit,
           expiresAt: expDays ? new Date(now.getTime() + expDays * 86_400_000) : null,
-        },
+        })),
       });
     }
     await tx.orderItem.update({ where: { id: it.id }, data: { fulfillmentStatus: "FULFILLED" } });

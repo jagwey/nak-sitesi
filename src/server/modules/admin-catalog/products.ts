@@ -318,7 +318,7 @@ export async function getAdminProduct(id: string) {
       downloadTerms: p.embroidery.downloadTerms, usageInstructions: p.embroidery.usageInstructions, metadataSource: p.embroidery.metadataSource,
     } : null,
     declaredFormats: p.formats.map((f) => ({ code: f.format.code, hasFile: currentFormats.has(f.format.code) })),
-    files: p.digitalFiles.map((f) => ({ id: f.id, formatCode: f.format.code, version: f.version, isCurrent: f.isCurrent, status: f.status, sizeBytes: f.sizeBytes, sha256: f.sha256, originalName: f.originalName, createdAt: f.createdAt.toISOString(), parsed: f.parsedMeta !== null })),
+    files: p.digitalFiles.map((f) => ({ id: f.id, formatCode: f.format.code, version: f.version, isCurrent: f.isCurrent, status: f.status, sizeBytes: f.sizeBytes, sha256: f.sha256, originalName: f.originalName, downloadLabel: f.downloadLabel, createdAt: f.createdAt.toISOString(), parsed: f.parsedMeta !== null })),
     publishIssues: issues, hasOrders: p._count.orderItems > 0, updatedAt: p.updatedAt.toISOString(),
   };
 }

@@ -58,9 +58,9 @@ describe("catalog API", () => {
     expect(await getAvailableEmbroideryOffers()).toEqual([]);
   });
 
-  it("groups pictured flag designs by flag and size and skips drafts, demos and missing previews", async () => {
+  it("lists one card per pictured flag and skips old mini slugs and drafts", async () => {
     const specs = [
-      { slug: "dogu-turkistan-bayragi-mini", status: "ACTIVE", isDemo: false, pictured: false },
+      { slug: "dogu-turkistan-bayragi-mini", status: "ACTIVE", isDemo: false, pictured: true },
       { slug: "dogu-turkistan-bayragi", status: "ACTIVE", isDemo: false, pictured: true },
       { slug: "turk-bayragi-mini", status: "ACTIVE", isDemo: true, pictured: true },
       { slug: "turk-bayragi", status: "DRAFT", isDemo: false, pictured: true },

@@ -231,6 +231,27 @@ describe("checkout + payments", () => {
     expect(log.ipHash).not.toContain("203.0.113.9");
   });
 
+  it("one purchase grants both sizes in the selected machine format and signs each file separately", async () => {
+    const { rose, number, u } = await placeDigitalOrder();
+    const standard = await db.digitalFile.findFirstOrThrow({ where: { productId: rose.id } });
+    const pes = await db.fileFormat.findUniqueOrThrow({ where: { code: "PES" } });
+    await db.digitalFile.createMany({ data: [
+      { productId: rose.id, formatId: standard.formatId, downloadLabel: "Mini", storageKey: "mini.vp3", originalName: "gul-mini.vp3", sizeBytes: 20, sha256: "1".repeat(64) },
+      { productId: rose.id, formatId: pes.id, downloadLabel: "Mini", storageKey: "mini.pes", originalName: "gul-mini.pes", sizeBytes: 30, sha256: "2".repeat(64) },
+    ] });
+    expect((await call(simulate, "POST", "/api/dev/payments/simulate", { orderNumber: number, outcome: "success" })).status).toBe(200);
+    const { downloads } = await (await call(myDownloads, "GET", "/api/me/downloads")).json();
+    expect(downloads).toHaveLength(2);
+    expect(downloads).toEqual(expect.arrayContaining([
+      expect.objectContaining({ downloadLabel: null, fileName: "gul.vp3", available: true }),
+      expect.objectContaining({ downloadLabel: "Mini", fileName: "gul-mini.vp3", available: true }),
+    ]));
+    const user = await db.user.findUniqueOrThrow({ where: { email: u.email } });
+    const signer = async ({ key }: { key: string }) => `https://signed.example/${key}`;
+    const links = await Promise.all(downloads.map(({ id }: { id: string }) => createDownloadLink(user, id, "203.0.113.9", null, signer)));
+    expect(links.map(({ url }) => url).sort()).toEqual(["https://signed.example/mini.vp3", `https://signed.example/${standard.storageKey}`].sort());
+  });
+
   it("failure event leaves order unpaid; unknown/forged signature rejected", async () => {
     const { number } = await placeDigitalOrder();
     await call(simulate, "POST", "/api/dev/payments/simulate", { orderNumber: number, outcome: "failure" });

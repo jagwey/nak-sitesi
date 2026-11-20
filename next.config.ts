@@ -53,6 +53,12 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  async redirects() {
+    return [
+      { source: "/urun/turk-bayragi-mini", destination: "/urun/turk-bayragi", permanent: true },
+      { source: "/urun/dogu-turkistan-bayragi-mini", destination: "/urun/dogu-turkistan-bayragi", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

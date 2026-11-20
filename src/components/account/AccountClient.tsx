@@ -255,6 +255,8 @@ function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
 interface Entitlement {
   id: string;
   productName: string;
+  fileName: string | null;
+  downloadLabel: string | null;
   format: string | null;
   license: string | null;
   orderNumber: string;
@@ -303,8 +305,9 @@ function DownloadsTab() {
           <li key={d.id} className="flex flex-wrap items-center justify-between gap-4 py-4">
             <div>
               <p className="font-medium text-ink">{d.productName}</p>
+              {d.fileName && <p className="break-all text-[0.8125rem] text-umber">{d.fileName}</p>}
               <p className="text-[0.8125rem] text-umber">
-                {[d.format, d.license].filter(Boolean).join(" · ")} · Sipariş {d.orderNumber}
+                {[d.downloadLabel, d.format, d.license].filter(Boolean).join(" · ")} · Sipariş {d.orderNumber}
               </p>
               <p className="text-[0.8125rem] text-umber">
                 {d.revoked ? "İptal edildi" : d.expired ? "Süresi doldu" : `Kalan indirme hakkı: ${d.remaining}`}

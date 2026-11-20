@@ -928,7 +928,7 @@ export function ProductDetailClient({
           </div>
           <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
             {similarProducts.map((item) => (
-              <ProductCard key={item.id} product={item} />
+              <ProductCard key={item.id} product={item} fullImage={flagOptions} />
             ))}
           </div>
         </section>

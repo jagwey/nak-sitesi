@@ -93,7 +93,7 @@ export interface UploadedFileResult {
 }
 
 /** Upload/replace a digital embroidery file (PRIVATE bucket). */
-export async function uploadEmbroideryFile(productId: string, file: File, actor: Actor): Promise<UploadedFileResult> {
+export async function uploadEmbroideryFile(productId: string, file: File, actor: Actor, downloadLabel = ""): Promise<UploadedFileResult> {
   const product = await db.product.findUnique({ where: { id: productId }, select: { id: true, type: true } });
   if (!product) throw new AppError("NOT_FOUND", "Ürün bulunamadı.");
   if (product.type !== "DIGITAL_EMBROIDERY") throw new AppError("VALIDATION", "Nakış dosyası yalnızca dijital nakış ürünlerine yüklenebilir.");
@@ -103,7 +103,9 @@ export async function uploadEmbroideryFile(productId: string, file: File, actor:
   const format = await db.fileFormat.findUnique({ where: { code: check.ext.toUpperCase() } });
   if (!format) throw new AppError("VALIDATION", `.${check.ext} biçimi sistemde tanımlı değil.`);
 
-  const same = await db.digitalFile.findFirst({ where: { productId, formatId: format.id, isCurrent: true, status: "ACTIVE", sha256: check.sha256 } });
+  const scope = { productId, formatId: format.id, downloadLabel };
+  const duplicateWhere = { ...scope, isCurrent: true, status: "ACTIVE" as const, sha256: check.sha256 };
+  const same = await db.digitalFile.findFirst({ where: duplicateWhere });
   if (same) {
     return { id: same.id, formatCode: format.code, version: same.version, duplicate: true, parsed: same.parsedMeta !== null, sizeBytes: same.sizeBytes, note: "Aynı dosya zaten yüklü; yeni sürüm oluşturulmadı." };
   }
@@ -111,13 +113,17 @@ export async function uploadEmbroideryFile(productId: string, file: File, actor:
   const parsed = await parseEmbroideryBuffer(buf, file.name);
   const key = newObjectKey(check.ext, "embroidery");
   await st().putObject({ bucket: "private", key, body: buf, contentType: "application/octet-stream" });
+  let result;
   try {
-    const row = await db.$transaction(async (tx) => {
-      const last = await tx.digitalFile.aggregate({ where: { productId, formatId: format.id }, _max: { version: true } });
-      await tx.digitalFile.updateMany({ where: { productId, formatId: format.id, isCurrent: true }, data: { isCurrent: false, status: "REPLACED" } });
+    result = await db.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "Product" WHERE id = ${productId} FOR UPDATE`;
+      const existing = await tx.digitalFile.findFirst({ where: duplicateWhere });
+      if (existing) return { row: existing, duplicate: true };
+      const last = await tx.digitalFile.aggregate({ where: scope, _max: { version: true } });
+      await tx.digitalFile.updateMany({ where: { ...scope, isCurrent: true }, data: { isCurrent: false, status: "REPLACED" } });
       const created = await tx.digitalFile.create({
         data: {
-          productId, formatId: format.id, storageKey: key, originalName: file.name.slice(0, 200), sizeBytes: check.sizeBytes, sha256: check.sha256,
+          ...scope, storageKey: key, originalName: file.name.slice(0, 200), sizeBytes: check.sizeBytes, sha256: check.sha256,
           version: (last._max.version ?? 0) + 1, isCurrent: true, status: "ACTIVE",
           parsedMeta: parsed.parsed ? (parsed as unknown as Prisma.InputJsonValue) : Prisma.DbNull,
         },
@@ -136,18 +142,19 @@ export async function uploadEmbroideryFile(productId: string, file: File, actor:
           if (Object.keys(patch).length) await tx.embroideryMetadata.update({ where: { productId }, data: { ...patch, metadataSource: "PARSED" } });
         }
       }
-      await writeAudit({ actorUserId: actor.id, action: "file.upload", entity: "DigitalFile", entityId: created.id, diff: { productId, format: format.code, version: created.version, sizeBytes: check.sizeBytes, sha256: check.sha256, verification: check.verification, parsed: parsed.parsed }, ip: actor.ip }, tx);
-      return created;
+      await writeAudit({ actorUserId: actor.id, action: "file.upload", entity: "DigitalFile", entityId: created.id, diff: { productId, format: format.code, downloadLabel, version: created.version, sizeBytes: check.sizeBytes, sha256: check.sha256, verification: check.verification, parsed: parsed.parsed }, ip: actor.ip }, tx);
+      return { row: created, duplicate: false };
     });
-    await reindexProducts(db, [productId]);
-    return {
-      id: row.id, formatCode: format.code, version: row.version, duplicate: false, parsed: parsed.parsed, sizeBytes: row.sizeBytes,
-      note: parsed.parsed ? "Dosyadan okundu: dikiş, boyut ve renk bilgileri boş alanlara işlendi." : "Dosya çözümlenemedi, bilgileri elle girin.",
-    };
   } catch (e) {
     await st().deleteObject({ bucket: "private", key }).catch(() => undefined);
     throw e;
   }
+  const { row, duplicate } = result;
+  if (duplicate) await st().deleteObject({ bucket: "private", key }).catch(() => undefined);
+  else await reindexProducts(db, [productId]);
+  const note = duplicate ? "Aynı dosya zaten yüklü; yeni sürüm oluşturulmadı."
+    : parsed.parsed ? "Dosyadan okundu: dikiş, boyut ve renk bilgileri boş alanlara işlendi." : "Dosya çözümlenemedi, bilgileri elle girin.";
+  return { id: row.id, formatCode: format.code, version: row.version, duplicate, parsed: row.parsedMeta !== null, sizeBytes: row.sizeBytes, note };
 }
 
 export async function listDigitalFiles(q: { q?: string; page: number; pageSize: number }) {

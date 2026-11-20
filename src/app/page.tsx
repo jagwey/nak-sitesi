@@ -135,7 +135,7 @@ export default async function HomePage() {
         <section
           id="bayrak-desenleri"
           aria-labelledby="bayrak-desenleri-baslik"
-          className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
+          className="mx-auto max-w-[1440px] scroll-mt-24 px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
         >
           <h2 id="bayrak-desenleri-baslik" className="mb-8 border-b border-hairline pb-5 font-display text-[clamp(1.9rem,3vw,2.75rem)] leading-tight text-ink">
             Bayrak desenleri
@@ -193,10 +193,10 @@ export default async function HomePage() {
             </div>
           )}
           {flagOptions.length > 0 && (
-            <ul className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-4">
+            <ul className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:max-w-3xl">
               {flagOptions.map((product) => (
                 <li key={product.id} className="min-w-0">
-                  <ProductCard product={product} />
+                  <ProductCard product={product} fullImage showSubtitle />
                 </li>
               ))}
             </ul>

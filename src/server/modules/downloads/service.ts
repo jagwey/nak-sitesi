@@ -15,6 +15,7 @@ export async function listUserDownloads(userId: string) {
     orderBy: { createdAt: "desc" },
     include: {
       orderItem: { select: { productName: true, format: true, license: true, order: { select: { number: true, status: true } } } },
+      digitalFile: { select: { originalName: true, downloadLabel: true } },
     },
   });
   const now = Date.now();
@@ -24,6 +25,8 @@ export async function listUserDownloads(userId: string) {
     return {
       id: e.id,
       productName: e.orderItem.productName,
+      fileName: e.digitalFile?.originalName ?? null,
+      downloadLabel: e.digitalFile?.downloadLabel || null,
       format: e.orderItem.format,
       license: e.orderItem.license,
       orderNumber: e.orderItem.order.number,
@@ -60,10 +63,10 @@ export async function createDownloadLink(
   if (ent.expiresAt && ent.expiresAt.getTime() <= Date.now()) throw new AppError("FORBIDDEN", "İndirme süresi doldu.");
   if (ent.remaining <= 0) throw new AppError("FORBIDDEN", "İndirme hakkınız kalmadı.");
 
-  // Prefer the product's current ACTIVE file in the purchased format; fall back to the purchased file if still ACTIVE.
+  // Follow newer versions of the same file from the purchase, keeping sizes separate.
   let file = ent.orderItem.format
     ? await db.digitalFile.findFirst({
-        where: { productId: ent.productId, format: { code: ent.orderItem.format }, status: "ACTIVE", isCurrent: true },
+        where: { productId: ent.productId, format: { code: ent.orderItem.format }, downloadLabel: ent.digitalFile?.downloadLabel ?? "", status: "ACTIVE", isCurrent: true },
         orderBy: { version: "desc" },
       })
     : null;

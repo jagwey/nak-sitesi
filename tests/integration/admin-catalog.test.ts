@@ -148,6 +148,27 @@ describe("publish validation", () => {
     expect(res.status).toBe(400);
     expect(await db.digitalFile.count({ where: { productId: p.id } })).toBe(0);
   });
+
+  it("keeps the main and Mini files of a format current and treats retries as duplicates", async () => {
+    await seedCatalog();
+    await asManager();
+    const p = await createProduct();
+    const bytes = readFileSync(path.resolve(import.meta.dirname, "../fixtures/test-fixture.pes"));
+    const upload = (name: string, downloadLabel?: string) => multipart(
+      filePost, `/api/admin/products/${p.id}/files`, p.id, {
+        file: new File([new Uint8Array(bytes)], name),
+        ...(downloadLabel === undefined ? {} : { downloadLabel }),
+      },
+    );
+
+    expect((await upload("standart.pes")).status).toBe(201);
+    expect((await upload("mini.pes", " Mini ")).status).toBe(201);
+    expect((await upload("mini.pes", "Mini")).status).toBe(200);
+    const files = await db.digitalFile.findMany({ where: { productId: p.id, isCurrent: true }, orderBy: { downloadLabel: "asc" } });
+    expect(files.map(({ originalName, downloadLabel }) => [originalName, downloadLabel])).toEqual([
+      ["standart.pes", ""], ["mini.pes", "Mini"],
+    ]);
+  });
 });
 
 describe("Shopier product link", () => {

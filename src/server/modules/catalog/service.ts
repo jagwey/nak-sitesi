@@ -56,9 +56,7 @@ export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
 const flagDesignSlugs = [
   "filistin-bayragi",
   "turk-bayragi",
-  "turk-bayragi-mini",
   "dogu-turkistan-bayragi",
-  "dogu-turkistan-bayragi-mini",
 ];
 
 export function isFlagDesign(slug: string): boolean {
