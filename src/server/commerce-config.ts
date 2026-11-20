@@ -1,4 +1,4 @@
-// Commerce policy knobs. No "server-only": also used by the CLI job script.
+// Shared defaults for cart pricing and store policy.
 export const MAX_QTY_PER_LINE = 20;
 export const MAX_CART_LINES = 50;
 /** Default max length of a personalization text when the product defines no ProductOption limit. */

@@ -4,7 +4,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { AppError } from "../../errors";
 import { db, type DbClient } from "../../db";
 import { writeAudit } from "../../audit";
-import { lockOrder } from "../orders/lifecycle";
+import { lockOrder } from "../../order-lock";
 import { cancelOrder, updateOrderStatus } from "../orders/service";
 import { applyEvent, refundOrder } from "../payments/webhook";
 import { createShipment, updateShipmentStatus } from "../shipping/service";

@@ -1,5 +1,5 @@
 import "server-only";
-// Payment + shipping provider seams. No card data ever touches this server: real providers use hosted
+// Payment provider seam. No card data ever touches this server: real providers use hosted
 // payment pages / tokenised redirects and report the outcome via signed webhooks.
 import { AppError } from "../../errors";
 import { getEnv, isPaymentSimulationAllowed } from "../../env";
@@ -132,12 +132,4 @@ export function getPaymentProvider(name: string = getEnv().PAYMENT_PROVIDER): Pa
     default:
       throw new AppError("NOT_FOUND");
   }
-}
-
-// ── Shipping ────────────────────────────────────────────────────────────────────────────────────
-export interface ShippingProvider {
-  readonly name: string;
-  /** Fee (kuruş) charged to the customer; digital-only baskets never reach this. */
-  quote(a: { subtotalKurus: number; hasPhysical: boolean }): Promise<number>;
-  createLabel?(a: { orderNumber: string }): Promise<{ trackingNumber: string; carrier: string }>;
 }

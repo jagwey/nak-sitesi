@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_QTY_PER_LINE } from "../orders/config";
+import { MAX_QTY_PER_LINE } from "../../commerce-config";
 
 /** Personalization as the storefront captures it. Unknown keys are rejected (strict). */
 export const personalizationInput = z.strictObject({

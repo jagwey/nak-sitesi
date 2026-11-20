@@ -1,12 +1,8 @@
 // Order cancel / reservation expiry. No "server-only", no ../db import: shared with scripts/release-reservations.ts.
 import type { DbClient } from "../../db";
+import { lockOrder } from "../../order-lock";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { expireStaleForInventories, releaseOrderReservations } from "../inventory/stock";
-
-/** Lock an order row for the rest of the transaction. */
-export async function lockOrder(tx: DbClient, orderId: string) {
-  await tx.$queryRaw`SELECT "id" FROM "Order" WHERE "id" = ${orderId} FOR UPDATE`;
-}
 
 /**
  * Cancel an unpaid order: free its stock, give the coupon use back, fail the pending payment.

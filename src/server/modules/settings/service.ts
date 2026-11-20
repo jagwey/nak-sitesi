@@ -3,7 +3,7 @@ import { revalidateTag, unstable_cache } from "next/cache";
 import { db, type DbClient } from "../../db";
 import { writeAudit } from "../../audit";
 import { getEnv } from "../../env";
-import { SHIPPING_FALLBACK, refundRevokesDownloads, downloadExpiryDays } from "../orders/config";
+import { SHIPPING_FALLBACK, refundRevokesDownloads, downloadExpiryDays } from "../../commerce-config";
 import {
   LEGAL_KEYS,
   SITE_DEFAULTS,

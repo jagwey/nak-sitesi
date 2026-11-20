@@ -4,7 +4,7 @@ import { AppError } from "../../errors";
 import { db, type DbClient } from "../../db";
 import { getEnv } from "../../env";
 import { randomToken, sha256Hex } from "../../crypto";
-import { MAX_CART_LINES, MAX_QTY_PER_LINE } from "../orders/config";
+import { MAX_CART_LINES, MAX_QTY_PER_LINE } from "../../commerce-config";
 import { availableForInventories } from "../inventory/stock";
 import { evaluateCoupon, normalizeCode, type CouponLine } from "../coupons/service";
 import { computeShipping, computeTotals, getShippingConfig } from "./totals";

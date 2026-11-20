@@ -1,6 +1,6 @@
 import "server-only";
 import type { DbClient } from "../../db";
-import { SHIPPING_FALLBACK } from "../orders/config";
+import { SHIPPING_FALLBACK } from "../../commerce-config";
 
 export interface ShippingConfig {
   freeShippingThresholdKurus: number;

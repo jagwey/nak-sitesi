@@ -3,7 +3,7 @@ import "server-only";
 // source is the database (Product / ProductVariant / ProductLicense / ProductOption).
 import { AppError } from "../../errors";
 import type { DbClient } from "../../db";
-import { DEFAULT_PERSONALIZATION_MAX, isDigitalType } from "../orders/config";
+import { DEFAULT_PERSONALIZATION_MAX, isDigitalType } from "../../commerce-config";
 import type { AddItemInput, PersonalizationInput } from "./schema";
 
 export const productInclude = {

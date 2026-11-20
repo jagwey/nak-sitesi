@@ -1,7 +1,7 @@
 import "server-only";
 import { db, type DbClient } from "../../db";
 import { writeAudit } from "../../audit";
-import { lockOrder } from "../orders/lifecycle";
+import { lockOrder } from "../../order-lock";
 import { applyRefund } from "../payments/webhook";
 
 /** Refund bookkeeping for a "manual" payment (no gateway call). Revokes downloads per policy via applyRefund. */

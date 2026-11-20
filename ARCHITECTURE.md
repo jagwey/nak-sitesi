@@ -19,6 +19,7 @@ Tarayıcı ──► Next.js (App Router)
 | `src/app/**` | Sayfalar ve `api/**/route.ts` dosyaları. Route'larda iş mantığı yoktur: şema + izin tanımlar, servisi çağırır |
 | `src/components/**` | Arayüz bileşenleri (`components/admin/*` yönetim kabuğu) |
 | `src/server/{env,db,errors,http,rate-limit,audit,crypto}.ts` | Ortak altyapı |
+| `src/server/{commerce-config,order-lock}.ts` | Sepet ve mağaza politikası varsayılanları, ortak sipariş satırı kilidi |
 | `src/server/modules/*` | Alan modülleri (aşağıda) |
 | `src/lib`, `src/data`, `src/services` | Faz 1–2'den kalan istemci tarafı yardımcıları/örnek veri |
 | `prisma/` | `schema.prisma`, migration'lar, `seed.ts`, `script-client.ts` (zamanlanmış işler için, `server-only` içermeyen istemci) |
@@ -38,7 +39,7 @@ Not: `src/proxy.ts` / `middleware.ts` **yoktur**. İstek korumaları (CSRF, hız
 | `cart` | Sepet, fiyatlama (`pricing.ts`), toplamlar/kargo ücreti (`totals.ts`) |
 | `coupons` | Kupon doğrulama ve atomik kullanım |
 | `inventory` | Atomik stok rezervasyonu/tüketimi/serbest bırakma, süresi dolan rezervasyon |
-| `orders` | Checkout (tek transaction), yaşam döngüsü (`lifecycle.ts`), sipariş numaraları, politika/yapılandırma (`config.ts`) |
+| `orders` | Checkout (tek transaction), yaşam döngüsü (`lifecycle.ts`), sipariş numaraları |
 | `payments` | `PaymentProvider` arayüzü, sağlayıcılar, webhook işleme (`webhook.ts`), iade |
 | `shipping` | `ShippingProvider` arayüzü + elle kargo (`manual`), gönderi kayıtları |
 | `downloads` | Hak (entitlement) kontrolü, imzalı bağlantı üretimi, indirme günlüğü |
@@ -58,18 +59,17 @@ Not: `src/proxy.ts` / `middleware.ts` **yoktur**. İstek korumaları (CSRF, hız
 admin-catalog  -> auth, inventory
 admin-orders   -> auth, notifications, orders, payments, settings, shipping
 auth           -> notifications
-cart           -> coupons, inventory, orders
+cart           -> coupons, inventory
 catalog        -> search
 custom-orders  -> notifications, orders, payments, uploads
 embroidery     -> uploads
 orders         -> cart, coupons, inventory, notifications, payments
-payments       -> inventory, notifications, orders, settings
-settings       -> orders
-shipping       -> cart, notifications, payments
-(account, coupons, downloads, favorites, inventory, notifications, search, storage, uploads: dış modül bağımlılığı yok)
+payments       -> inventory, notifications, settings
+shipping       -> cart, notifications
+(account, coupons, downloads, favorites, inventory, notifications, search, settings, storage, uploads: dış modül bağımlılığı yok)
 ```
 
-Kural: modüller birbirinin **servis fonksiyonlarını** çağırır, birbirinin Prisma tablolarına doğrudan yazmaz (stok/kupon/ödeme yazımı kendi modülünden geçer). `cart ↔ orders`, `orders ↔ payments` ve `settings ↔ orders` arasında karşılıklı import vardır (bkz. bilinen farklar); yeni modül eklerken döngü oluşturmayın.
+Kural: modüller birbirinin **servis fonksiyonlarını** çağırır. Sepet sınırları, mağaza politikası varsayılanları ve sipariş satırı kilidi bağımlılık döngüsü oluşturmayan ortak sunucu yardımcılarında tutulur.
 
 ## İstek akışı
 

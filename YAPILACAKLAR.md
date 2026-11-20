@@ -22,7 +22,8 @@
 - [x] Faz B+C sonrası doğrulama (ana oturum): lint temiz, test 68/68, build OK, ekran görüntüleri tasarımla uyumlu
 - [x] Faz D sonrası lint + test + build + ekran görüntüsü kontrolü
 - [x] Dokümanlar: README, AGENTS, ARCHITECTURE, DATABASE_SCHEMA, API_DOCUMENTATION, BACKEND_REQUIREMENTS, SECURITY, ADMIN_GUIDE, PROJECT_STATUS, TEST_REPORT, DEPLOYMENT, PAYMENT_INTEGRATION, .env.example
-- [ ] Bilinen teknik borç: modül import döngüleri (cart↔orders, orders↔payments, settings↔orders); bazı route'lar route() dışı Response.json
+- [x] Sepet, sipariş, ödeme ve ayar modüllerinin içe aktarma döngüleri giderildi
+- [ ] API JSON yanıtlarını ortak yardımcıya taşı
 - [x] GitHub: `git init`, `.gitignore` (node_modules, .next, .env*, tsconfig.tsbuildinfo), sır kontrolü, ilk commit `main`, push → https://github.com/jagwey/nak-sitesi
 - [ ] Gerçek ödeme sağlayıcısı (iyzico/PayTR) — müşterinin hesap bilgileri gerekli
 - [ ] Gerçek ürünler: fotoğraf, fiyat, yalnız gerçekten var olan formatlar (demo ürünler `isDemo`)

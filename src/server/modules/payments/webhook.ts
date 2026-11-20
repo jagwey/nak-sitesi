@@ -7,7 +7,7 @@ import { sha256Hex } from "../../crypto";
 import { writeAudit } from "../../audit";
 import { consumeOrderReservations } from "../inventory/stock";
 import { loadPolicy } from "../settings/service";
-import { lockOrder } from "../orders/lifecycle";
+import { lockOrder } from "../../order-lock";
 import { sendEmail } from "../notifications/email";
 import { getPaymentProvider, type PaymentEvent } from "./provider";
 
