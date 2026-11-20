@@ -49,11 +49,11 @@ Ad, logo, iletişim ve sahip bilgisinin yalnızca admin "Ayarlar"dan ve tek bir 
 > - **Sırlar (yerel git dışı):** `.deploy-secrets/oracle-92_5_103_221.json` (sunucuda `/opt/nakis/.env.production` ve `/opt/nakis/.env.caddy`)
 > - **İmaj derleme & güncelleme:** `main`'e push yapınca `.github/workflows/build-images.yml` otomatik `ghcr.io/jagwey/nak-sitesi-{web,tools}:latest` üretir; sunucu güncellemesi `.\scripts\deploy-oracle.ps1 -ServerIp 92.5.103.221 -SshUser opc -ImageSource ghcr` ile yapılır.
 
-### 7. Canlı uçtan uca sepet, üyelik ve demo checkout doğrulaması
+### 7. Canlı uçtan uca sepet, üyelik ve demo checkout doğrulaması — tamamlandı
 `https://nakis-vitrin.nakis-sitesi.workers.dev/` üzerinde gerçek tarayıcı / API testiyle şunları doğrula ve test kayıtlarını temizle:
 - `/api/cart/items` (`{ productId, quantity, format: "VP3", license: "PERSONAL" }`) ile misafir sepet çerezinin (`Secure; HttpOnly`) Cloudflare Worker üzerinden korunduğunu ve `/api/cart` yanıtında ürünün geldiğini doğrula.
 - Demo ürünle `/api/checkout` isteğinin üretimde reddedildiğini doğrula.
-- Kayıt + giriş oturum çerezinin canlıda çalıştığını doğrula (not: `EMAIL_TRANSPORT=console` olduğu için doğrulama bağlantısı `sudo docker logs nakis-production-web-1` içinde görünür).
+- Kayıt + giriş oturum çerezinin canlıda çalıştığını doğrula. `EMAIL_TRANSPORT=console` yalnızca alıcıyı ve konuyu kaydeder. Doğrulama ve parola sıfırlama bağlantılarının teslimi için görev 10 gerekli.
 - Test kullanıcı ve sepet kayıtlarını temizle.
 
 ### 8. İlk canlı `SUPER_ADMIN` hesabını oluşturma
@@ -67,8 +67,8 @@ Kullanıcının vereceği e-posta ile sunucuda tek seferlik `npm run admin:creat
 ### 10. Canlı SMTP göndereni bağlama
 Şu an `EMAIL_TRANSPORT=console`. Kullanıcıdan SMTP sağlayıcı bilgisi (ör. Brevo / Resend / Mailgun / alan adı SMTP) gelince `/opt/nakis/.env.production` içinde `EMAIL_TRANSPORT=smtp` ve `SMTP_*` alanlarını ayarla; SPF/DKIM ve canlı e-posta doğrulama + parola sıfırlama teslimini test et.
 
-### 11. Yedekleme ve geri dönüş testi
-Sunucuda PostgreSQL (`pg_dump`) için günlük otomatik yedekleme (ör. `/opt/nakis/backups` veya Oracle Object Storage private kova) cron’unu kur ve geri yükleme provasını doğrula.
+### 11. Yedekleme ve geri dönüş testi — tamamlandı
+Oracle sunucusunda günlük PostgreSQL yedeklemesi kuruldu. İlk arşiv ağ bağlantısı olmayan ayrı bir PostgreSQL konteynerinde geri yüklendi ve 11 demo ürün doğrulandı. Kurulum ve saklama ayrıntıları `DEPLOYMENT.md` bölüm 6’da.
 
 ### 12. (İsteğe bağlı) Özel alan adı bağlantısı
 Kullanıcı özel alan adı alınca `APP_URL`, Caddy `NAKIS_PUBLIC_HOST` / doğrudan alan adı TLS ve Cloudflare yönlendirmesini yeni alana taşı.

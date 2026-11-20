@@ -1,0 +1,12 @@
+[Unit]
+Description=Nakis Sitesi PostgreSQL backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/nakis
+StateDirectory=nakis-backups
+StateDirectoryMode=0700
+UMask=0077
+ExecStart=/usr/local/sbin/nakis-postgres-backup

@@ -119,7 +119,18 @@ docker run --rm --env-file /secure/nakis.env nakis-tools npm run jobs:release-re
 ```
 
 ## 6. Yedekleme
-- PostgreSQL: günlük otomatik yedek + zaman noktasına dönüş (PITR) tercih edilir; yedekten geri dönüşü **deneyin**.
+- Oracle sunucusunda `nakis-postgres-backup.timer` her gün 01.45 UTC'de (Türkiye saatiyle 04.45) PostgreSQL özel biçim arşivi alır. Son 14 günlük arşivler yalnızca root tarafından okunabilen `/var/lib/nakis-backups` dizininde tutulur. Sunucunun kaybına karşı ayrı konumda bir kopya saklayın.
+- Yeni Oracle sunucusunda `/opt/nakis` içinden aşağıdaki komutlarla servisi kurun. İlk çalıştırmayı ve sonraki zamanı kontrol edin. Bir geri yükleme provası için aynı PostgreSQL sürümüyle boş ve ağ bağlantısı olmayan ayrı bir konteynerde `pg_restore --exit-on-error --no-owner --no-acl` çalıştırın ve ürün sayısını doğrulayın.
+
+```sh
+sudo install -o root -g root -m 0750 deploy/oracle/backup-postgres.sh /usr/local/sbin/nakis-postgres-backup
+sudo install -o root -g root -m 0644 deploy/oracle/nakis-postgres-backup.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl start nakis-postgres-backup.service
+sudo systemctl enable --now nakis-postgres-backup.timer
+sudo systemctl list-timers nakis-postgres-backup.timer
+```
+
 - S3 `private` kova: dijital dosyaların tek kopyası burasıdır; sürümleme veya ikinci bölgeye kopya.
 - `SESSION_SECRET` ve diğer sırların güvenli kopyası saklanmalı.
 
