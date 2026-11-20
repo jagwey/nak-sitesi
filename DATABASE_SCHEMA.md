@@ -107,7 +107,7 @@ Yetki mantığı: `Order.status = PAID` **yalnızca** doğrulanmış `payment.su
 ### 10. Platform
 | Model | Notlar |
 |---|---|
-| `SiteSettings` | `key` unique, `value` Json (uygulama katmanında zod ile doğrulanır). Anahtarlar: `site`, `shipping`, `policy`, yasal metinler `kvkk`, `mesafeli-satis`, `iade-iptal`, `gizlilik`, `cerez` |
+| `SiteSettings` | `key` unique, `value` Json (uygulama katmanında Zod ile doğrulanır). `site` mağaza adı, logo adresi, işletme sahibi, iletişim ve vitrin alanlarını, `studio` kargo ücretlerini, `policy` indirme politikasını, `legal` yasal metinleri saklar. |
 | `AuditLog` | `actorUserId`, `action` (ör. `product.update`), `entity`, `entityId`, `diff` (gizli alanlar `[REDACTED]`), `ipHash` (HMAC). İndeksler: `(entity, entityId)`, `(actorUserId, createdAt)`, `createdAt` |
 | `Notification` | E-posta kuyruğu/kaydı: `type`, `toAddress`, `payload`, `status` (PENDING/SENT/FAILED), `error`, `sentAt` |
 | `RateLimit` | `key` unique (`ad + sha256(kimlik)[0..32]`), `count`, `windowStart`; atomik upsert ile sabit pencere |

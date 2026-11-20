@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { adminFetch, btnCls, FormField, inputCls, Panel, textareaCls, fieldErrors } from "@/components/admin";
 import { Feedback, LoadState, useAction, useLoad } from "./shared";
 
@@ -13,6 +14,8 @@ interface Data {
 
 const TEXT_FIELDS: [string, string, string?][] = [
   ["storeName", "Mağaza adı"],
+  ["ownerName", "Yayınlanacak işletme sahibi veya unvan"],
+  ["logoUrl", "Logo adresi", "Herkese açık görsel kovasındaki adresi veya /images/ ile başlayan görsel yolunu girin."],
   ["contactEmail", "İletişim e-postası"],
   ["contactPhone", "Telefon"],
   ["whatsapp", "WhatsApp bağlantısı", "Yalnızca wa.me adresi."],
@@ -31,6 +34,7 @@ const tl = (k: number) => String(k / 100).replace(".", ",");
 const toKurus = (s: string) => Math.round(Number(s.replace(",", ".")) * 100);
 
 export function SettingsForm() {
+  const router = useRouter();
   const { data, error, loading, reload } = useLoad<Data>("/api/admin/settings");
   const act = useAction(reload);
   const [site, setSite] = useState<Site>({});
@@ -61,6 +65,7 @@ export function SettingsForm() {
             policy: { downloadLimit: Number(pol.limit), downloadExpiryDays: Number(pol.days), refundRevokesDownloads: pol.revoke },
           },
         });
+        router.refresh();
       } catch (err) {
         setFe(fieldErrors(err));
         throw err;
@@ -73,7 +78,7 @@ export function SettingsForm() {
       {data && (
         <form onSubmit={save} className="space-y-5">
           <Feedback error={act.error} done={act.done} />
-          <Panel title="Mağaza ve iletişim" description="Boş bırakılan alanlar sitede gösterilmez; uydurma bilgi girmeyin.">
+          <Panel title="Mağaza ve iletişim" description="Logo, işletme sahibi ve iletişim alanları isteğe bağlıdır. Bu bilgiler mağazada herkese açık görünür.">
             <div className="grid gap-3 sm:grid-cols-2">
               {TEXT_FIELDS.map(([k, label, hint]) => (
                 <FormField key={k} label={label} htmlFor={`s-${k}`} hint={hint} error={fe[`site.${k}`] ?? fe[k]}>

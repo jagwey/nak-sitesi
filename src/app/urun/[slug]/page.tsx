@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { findPublicProductBySlug, getRelatedProducts } from "@/server/modules/catalog";
+import { getSiteSettings } from "@/server/modules/settings/service";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await findPublicProductBySlug(slug);
+  const [product, { storeName }] = await Promise.all([findPublicProductBySlug(slug), getSiteSettings()]);
   if (!product) {
     return { title: "Ürün bulunamadı" };
   }
@@ -19,7 +20,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: product.name,
     description: product.subtitle,
     openGraph: {
-      title: `${product.name} | Nakış Sitesi`,
+      title: `${product.name} | ${storeName}`,
+      siteName: storeName,
       description: product.subtitle,
       images: [{ url: product.images[0].url, alt: product.images[0].alt }],
     },
@@ -31,7 +33,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const product = await findPublicProductBySlug(slug);
   if (!product) notFound();
 
-  const similarProducts = await getRelatedProducts(product.slug, 4);
+  const [similarProducts, { storeName }] = await Promise.all([getRelatedProducts(product.slug, 4), getSiteSettings()]);
 
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -41,7 +43,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     image: product.images.map((i) => i.url),
     brand: {
       "@type": "Brand",
-      name: "Nakış Sitesi",
+      name: storeName,
     },
     offers: {
       "@type": "Offer",
@@ -78,11 +80,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c") }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
       />
       <ProductDetailClient
         product={product}

@@ -60,10 +60,6 @@ export const EXAMPLE_SEARCHES = [
  * metinleri yayın öncesi yönetim panelinden tanımlanmalıdır.
  */
 export const STUDIO_SETTINGS = {
-  brandName: "Nakış Sitesi",
-  emailPlaceholder: "E-posta adresi yakında eklenecek (yönetim panelinden yapılandırılır).",
-  phonePlaceholder: "+90 (5XX) XXX XX XX (Yönetim panelinden tanımlanır)",
-  addressPlaceholder: "Atölye adresi ve çalışma saatleri yayın öncesi yönetim panelinden eklenecektir.",
   freeShippingThresholdKurus: 150000, // 1.500,00 ₺
   standardShippingKurus: 8900, // 89,00 ₺
 };
@@ -177,7 +173,7 @@ export const INFO_PAGES: Record<string, InfoPageContent> = {
   "kullanim-kosullari": {
     slug: "kullanim-kosullari",
     title: "Kullanım Koşulları",
-    lead: "Nakış Sitesi çevrimiçi mağazasının kullanımına ve fikri mülkiyet haklarına ilişkin genel esaslar.",
+    lead: "Çevrimiçi mağazanın kullanımına ve fikri mülkiyet haklarına ilişkin genel esaslar.",
     isLegalPlaceholder: true,
     sections: [
       {

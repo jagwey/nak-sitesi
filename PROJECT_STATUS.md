@@ -3,7 +3,7 @@
 ## Genel durum
 - **Aşama 1–2 (ön yüz, tasarım incelemesi):** tamamlandı, müşteri onaylı vitrin.
 - **Aşama 3 (backend + yönetim paneli):** uygulandı. Faz A (altyapı, auth), B (katalog, arama, depolama), C (sepet, ödeme akışı, sipariş, indirme), D1 (admin ürün/dosya/stok/CSV), D2 (admin sipariş/müşteri/kupon/ayar/CMS/özel talep) bitti.
-- Son doğrulama: lint temiz, Vitest 102/102 (15 dosya), build ve Docker dağıtım provası başarılı. Galeri ve mobil katalog değişikliklerinde Playwright 11/11 geçti.
+- Son doğrulama: lint temiz, Vitest 103/103 (15 dosya), Playwright 12/12, build ve Docker dağıtım provası başarılı.
 - **Canlıya hazır değil:** gerçek ödeme, gerçek ürün/dosya, yasal metinler ve altyapı bilgileri bekleniyor.
 
 ## Tamamlananlar
@@ -14,6 +14,7 @@
 - Ödeme sağlayıcı arayüzü, imzalı idempotent webhook, manuel ödeme, iade; simülasyon (yalnızca geliştirme).
 - Güvenli dijital indirme (imzalı URL, hak sayacı), dosya yükleme doğrulamaları (ZIP sınırları, görsel webp).
 - Türkçe yönetim paneli: ürünler, kategoriler, koleksiyonlar, etiketler, dosyalar, stok, CSV, siparişler, müşteriler, kuponlar, kişiye özel talepler ve teklifler, içerik/ayarlar, yöneticiler, denetim kaydı.
+- Mağaza adı, logo, işletme sahibi ve iletişim bilgileri Ayarlar panelinden yönetiliyor. Vitrin, sayfa başlıkları ve e-postalar aynı mağaza adını kullanıyor.
 - Belgeler: README, ARCHITECTURE, DATABASE_SCHEMA, API_DOCUMENTATION, SECURITY, DEPLOYMENT, PAYMENT_INTEGRATION, BACKEND_REQUIREMENTS, TEST_REPORT, ADMIN_GUIDE.
 
 ## Yapılmayanlar / bilinen eksikler

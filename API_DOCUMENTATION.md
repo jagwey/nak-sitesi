@@ -186,7 +186,7 @@ Yayına alma (`ACTIVE`) koşulları: fiyat > 0, en az 1 görsel, dijital desen i
 | `GET /api/admin/content` | `settings:read` | Yasal metinler |
 | `PUT /api/admin/content` | `settings:write` | `{ key, body }`; `key` ∈ kvkk, mesafeli-satis, iade-iptal, gizlilik, cerez; en fazla 40.000 karakter |
 | `GET /api/admin/settings` | `settings:read` | |
-| `PUT /api/admin/settings` | `settings:write` | `{ site?, shipping?, policy? }`; WhatsApp yalnızca `wa.me`; bağlantılar yalnızca yol veya `https`; `javascript:`/`data:` reddedilir |
+| `PUT /api/admin/settings` | `settings:write` | `{ site?, shipping?, policy? }`; `site` mağaza adı, işletme sahibi, logo adresi, iletişim ve vitrin alanlarını içerir. Logo `/images/` veya yapılandırılmış herkese açık görsel kovasından gelir. |
 
 ---
 

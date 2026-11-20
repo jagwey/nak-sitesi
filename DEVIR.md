@@ -42,7 +42,7 @@ npm run lint
 npm test
 npm run build
 ```
-- `npm test`: arama testi ve vitest birlikte çalışır; son sonuç 97/97.
+- `npm test`: arama testi ve Vitest birlikte çalışır. Son Vitest sonucu 103/103.
 - E2E testleri için `npm run test:e2e`; önce `npm run dev` açık olmalı.
 - Bunlardan biri kırmızıyken commit atılabilir, ama commit mesajında "WIP: kırmızı" yazmalı.
 
@@ -63,11 +63,9 @@ Bir oturumun hakkı veya tokeni her an bitebilir. Push edilmemiş iş kaybolmuş
 - Faz D: admin paneli (ürün, dosya, CSV, sipariş, müşteri, kupon, CMS, ayarlar, yöneticiler, denetim), kişiye özel talep akışı.
 - Dokümanlar: README, ARCHITECTURE, DATABASE_SCHEMA, API_DOCUMENTATION, SECURITY, ADMIN_GUIDE, DEPLOYMENT, PAYMENT_INTEGRATION, PROJECT_STATUS, TEST_REPORT.
 
-Son doğrulama: lint temiz, 97/97 test, build başarılı.
+Son doğrulama (2026-11-20): lint temiz, Vitest 103/103 (15 dosya), Playwright 12/12, build ve üretim Docker imajı başarılı. Güncel senaryolar `TEST_REPORT.md` dosyasında.
 
-**Push anında yarım kalan iş:** yok. Ajan E kalemlerinin hepsi bitti. Son doğrulama (2026-11-20, nötr ad sonrası): `npm run lint` temiz, `npm test` 14 dosya / 100/100 (commerce eşzamanlı indirme testi MinIO yeniden başlatıldıktan hemen sonra 1 kez flaky fail verdi, tekrarında geçti), `npm run test:e2e` 8/8, `npm run build` OK.
-
-**Ad değişikliği:** site adı nötr "Nakış Sitesi"; logo ve sahip bilgisi yok (sonra eklenecek). Yerel DB `nakis`/`nakis_test`, kovalar `nakis-private`/`nakis-public`. `logo/` ve `public/brand/` diskte duruyor ama git dışı.
+**Mağaza kimliği:** Admin → Ayarlar'daki mağaza adı üst bilgi, alt bilgi, sayfa başlığı ve e-postaları günceller. Varsayılan ad "Nakış Sitesi". Logo ve işletme sahibi alanları müşterinin bilgilerini bekliyor. Yerel DB `nakis`/`nakis_test`, kovalar `nakis-private`/`nakis-public`. `logo/` ve `public/brand/` diskte duruyor ve git dışı.
 
 ## Yapılacaklar (öncelik sırası)
 1. ~~Ajan E kalemleri~~ bitti.

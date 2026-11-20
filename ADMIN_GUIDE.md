@@ -86,7 +86,8 @@ Not: "demo" etiketli ürünler örnek ürünlerdir; mağaza canlıya çıkmadan 
 - Kupon kodunu pasif yaparak kullanımı durdurabilirsiniz. Kullanım sınırı dolunca kupon çalışmaz; aynı anda çok kişi kullansa bile sınır aşılmaz.
 
 ## 14. Ayarlar ve içerik
-- **Ayarlar:** site adı, iletişim e-postası/telefonu/adresi, WhatsApp numarası, kargo ücreti ve ücretsiz kargo sınırı, indirme politikası (hak sayısı vb.). Bilgileri yalnızca gerçek değerlerle doldurun.
+- **Ayarlar → Mağaza ve iletişim:** Mağaza adını, yayında görünecek işletme sahibi veya unvanı, logo adresini ve iletişim bilgilerini buradan düzenleyin. Mağaza adı vitrine, sayfa başlıklarına ve e-postalara yansır. Logo için herkese açık görsel kovanızın adresini veya `/images/` altındaki görselin yolunu kullanın. Logo boşsa metin adı gösterilir.
+- Aynı ekrandan kargo ücreti, ücretsiz kargo sınırı ve indirme politikası ayarlanır.
 - **İçerik:** duyuru çubuğu (sitenin üstündeki kısa mesaj) ve yasal metinler: KVKK, mesafeli satış sözleşmesi, iade/iptal, gizlilik, çerez. Yasal metinleri **avukat onayıyla** girin; sistem metin uydurmaz.
 - Bağlantılar yalnızca site içi yol veya `https://` ile başlayan adres olabilir; WhatsApp bağlantısı `wa.me` olmalıdır.
 

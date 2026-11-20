@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -24,7 +25,7 @@ const PRIMARY_NAV = [
   { label: "Hakkımızda", href: "/hakkimizda" },
 ];
 
-export function Header() {
+export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: string }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const {
@@ -90,14 +91,14 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex h-[80px] max-w-[1440px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
-          {/* Left: Mobile menu toggle + Brand Monogram & Masthead */}
-          <div className="flex items-center gap-2 lg:gap-4">
+          {/* Left: Mobile menu toggle and store identity */}
+          <div className="flex min-w-0 items-center gap-2 lg:gap-4">
             <button
               type="button"
               onClick={() => setMobileMenuOpen((v) => !v)}
               aria-label={mobileMenuOpen ? "Menüyü kapat" : "Menüyü aç"}
               aria-expanded={mobileMenuOpen}
-              className="flex h-11 w-11 items-center justify-center text-ink transition-colors duration-200 hover:text-gold-text lg:hidden"
+              className="flex h-11 w-11 shrink-0 items-center justify-center text-ink transition-colors duration-200 hover:text-gold-text lg:hidden"
             >
               {mobileMenuOpen ? (
                 <X className="h-5 w-5" strokeWidth={1.6} />
@@ -108,11 +109,12 @@ export function Header() {
 
             <Link
               href="/"
-              aria-label="Nakış Sitesi Ana Sayfa"
-              className="group flex min-h-8 shrink-0 items-center py-1 sm:min-h-11"
+              aria-label={`${storeName} Ana Sayfa`}
+              className="group flex min-h-8 min-w-0 items-center gap-2 py-1 sm:min-h-11"
             >
-              <span className="font-display whitespace-nowrap text-[1.15rem] font-medium leading-none tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-gold-text sm:text-[1.6rem]">
-                Nakış Sitesi
+              {logoUrl && <Image src={logoUrl} alt="" width={40} height={40} unoptimized className="h-7 w-7 shrink-0 object-contain sm:h-10 sm:w-10" />}
+              <span className="font-display truncate text-[1.15rem] font-medium leading-none tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-gold-text sm:text-[1.6rem]">
+                {storeName}
               </span>
             </Link>
           </div>
@@ -120,7 +122,7 @@ export function Header() {
           {/* Center: Single-line Desktop Navigation */}
           <nav
             aria-label="Ana gezinme"
-            className="hidden items-center gap-6 xl:gap-8 lg:flex"
+            className="hidden shrink-0 items-center gap-6 xl:gap-8 lg:flex"
           >
             <button
               type="button"
@@ -155,7 +157,7 @@ export function Header() {
           </nav>
 
           {/* Right: Search, Favorites, Account, Cart */}
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}

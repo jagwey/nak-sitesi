@@ -52,7 +52,7 @@ function Nav({ items, pathname, onNavigate }: { items: NavItem[]; pathname: stri
 }
 
 /** Admin chrome: left nav (hidden items without permission), mobile drawer, top bar. Used by app/admin/layout.tsx. */
-export function AdminShell({ permissions, userLabel, children }: { permissions: string[]; userLabel: string; children: ReactNode }) {
+export function AdminShell({ permissions, userLabel, storeName, children }: { permissions: string[]; userLabel: string; storeName: string; children: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const set = new Set(permissions);
@@ -67,8 +67,8 @@ export function AdminShell({ permissions, userLabel, children }: { permissions: 
   }, [open]);
 
   const brand = (
-    <Link href="/admin" className="flex items-center gap-3">
-      <span className="font-display text-lg leading-none text-ink">Nakış Sitesi</span>
+    <Link href="/admin" className="flex min-w-0 items-center gap-3">
+      <span className="font-display truncate text-lg leading-none text-ink">{storeName}</span>
       <span className="text-[0.8125rem] leading-none text-stone">Yönetim</span>
     </Link>
   );
@@ -77,7 +77,7 @@ export function AdminShell({ permissions, userLabel, children }: { permissions: 
     <div className="min-h-screen bg-ivory text-ink">
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-hairline bg-white px-4 lg:hidden">
         {brand}
-        <button type="button" onClick={() => setOpen(true)} aria-label="Menüyü aç" aria-expanded={open} className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-linen/60">
+        <button type="button" onClick={() => setOpen(true)} aria-label="Menüyü aç" aria-expanded={open} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md hover:bg-linen/60">
           <Menu size={22} aria-hidden />
         </button>
       </header>
@@ -88,7 +88,7 @@ export function AdminShell({ permissions, userLabel, children }: { permissions: 
           <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white p-4 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
               {brand}
-              <button type="button" onClick={() => setOpen(false)} aria-label="Menüyü kapat" className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-linen/60">
+              <button type="button" onClick={() => setOpen(false)} aria-label="Menüyü kapat" className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md hover:bg-linen/60">
                 <X size={22} aria-hidden />
               </button>
             </div>

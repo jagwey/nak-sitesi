@@ -1,15 +1,16 @@
 # TEST_REPORT.md — Test Raporu
 
-Tarih: 2026-11-20. Sonuçlar ana oturumun son doğrulamasından alınmıştır (bu belge testleri yeniden çalıştırmadı).
+Tarih: 2026-11-20. Son Codex görevlerinden sonra çalıştırılan kontroller.
 
 ## Özet
 | Kontrol | Sonuç |
 |---|---|
-| `npm run lint` (tsc --noEmit) | Temiz |
-| `npm test` — Vitest | **97/97 geçti, 13 dosya, ~27,8 sn** |
-| `tests/search.test.ts` (eski betik testi) | `npm test` içinde çalışır |
+| `npm run lint` (Next.js tür üretimi ve tsc --noEmit) | Temiz |
+| `npm test` — Vitest | **103/103 geçti, 15 dosya** |
+| `tests/search.test.ts` | `npm test` içinde 10/10 geçti |
 | `npm run build` | Başarılı |
-| E2E (Playwright) | 8 test / 6 dosya, hepsi geçti (`npm run test:e2e`, Chromium, dev sunucu) |
+| E2E (Playwright) | 12/12 geçti, 8 dosya (`npm run test:e2e`, Chromium, dev sunucu) |
+| Docker üretim imajı | Yerel kurulum, sağlık 200/503, robots.txt, site haritası, paylaşım görseli, görsel optimizasyonu ve Python doğrulandı |
 
 Entegrasyon testleri gerçek Postgres (`DATABASE_URL_TEST`) ve MinIO üzerinde çalışır; `tests/setup/` veritabanını hazırlar.
 
@@ -17,15 +18,17 @@ Entegrasyon testleri gerçek Postgres (`DATABASE_URL_TEST`) ve MinIO üzerinde �
 | Dosya | Test |
 |---|---|
 | unit/embroidery | 3 |
+| unit/env | 3 |
 | unit/http | 4 |
 | unit/uploads | 12 |
 | integration/addresses | 5 |
 | integration/admin-catalog | 13 |
-| integration/admin-ops | 8 |
+| integration/admin-ops | 9 |
 | integration/auth | 11 |
 | integration/catalog | 8 |
 | integration/commerce | 13 |
 | integration/custom-orders | 8 |
+| integration/deployment | 2 |
 | integration/favorites | 4 |
 | integration/search | 6 |
 | integration/storage | 2 |
@@ -51,6 +54,9 @@ Fixture: `tests/fixtures/test-fixture.dst`, `test-fixture.pes`.
 | Admin API 401/403, ORDER_MANAGER sınırları, son SUPER_ADMIN korunur | integration/admin-ops |
 | Geçersiz durum geçişi, iptalde stok iadesi + denetim, iade indirmeleri kapatır | integration/admin-ops |
 | Ayar bağlantısı `javascript:` reddi, anonimleştirmede tutarlar korunur | integration/admin-ops |
+| Mağaza ayarları, eski kayıtlar, logo adresi doğrulaması, e-posta gönderen adı ve şablonu | integration/admin-ops |
+| Mağaza ayarının mobil vitrinde ve ürün başlığında güncellenmesi | e2e/08-brand-settings |
+| Yakınlaştırmanın 390 ve 1440 px'te klavyeyle çalışması ve mobil katalog kartları | e2e/07-gallery, e2e/05-mobile |
 | Admin ürün CRUD, yayın şartları, dosya/görsel yükleme, CSV | integration/admin-catalog |
 | Dosya doğrulama, ZIP bombası/yol, görsel yeniden kodlama | unit/uploads |
 | DST/PES ayrıştırma | unit/embroidery |
@@ -67,6 +73,5 @@ npm test
 ```
 
 ## Açık / kapsam dışı
-- E2E: arama-sepet, kayıt/giriş/çıkış, fiziksel ödeme (PENDING_PAYMENT), simüle ödeme + indirme hakkı, admin erişimi (müşteri 404), mobil akış, güvenlik başlıkları. Vitest: 14 dosya / 100 test.
 - Gerçek ödeme sağlayıcısı testleri yok (sağlayıcı bağlı değil).
 - Yük ve güvenlik (penetrasyon) testi yapılmadı; AV taraması yok.

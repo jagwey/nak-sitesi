@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { getSiteSettings } from "@/server/modules/settings/service";
+import type { SiteSettings } from "@/server/modules/settings/schema";
 
 /** Shown only when enabled and non-empty in admin settings. */
-export async function AnnouncementBar() {
-  const s = await getSiteSettings().catch(() => null);
-  if (!s || !s.announcementEnabled || !s.announcementText.trim()) return null;
+export function AnnouncementBar({ site: s }: { site: SiteSettings }) {
+  if (!s.announcementEnabled || !s.announcementText) return null;
   const cls = "block px-4 py-2 text-center text-[0.8125rem] text-[#F6F2EA]";
   return (
     <div role="status" className="relative z-30 bg-espresso">

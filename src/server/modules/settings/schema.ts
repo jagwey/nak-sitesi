@@ -42,8 +42,28 @@ const linkField = z
     { message: "Bağlantı bir yol (/...) veya https adresi olmalı." }
   );
 
+const logoField = z.string().trim().max(500).refine((value) => {
+  if (!value) return true;
+  if (/[\\\s]|%2f|%5c/i.test(value)) return false;
+
+  const local = value.startsWith("/images/");
+  const url = local ? URL.parse(value, "https://local.invalid") : URL.parse(value);
+  if (!url || url.username || url.password || url.search || url.hash || !/\.(avif|jpe?g|png|svg|webp)$/i.test(url.pathname)) {
+    return false;
+  }
+  if (local) return url.pathname.startsWith("/images/");
+
+  const bucket = URL.parse(process.env.S3_PUBLIC_BASE_URL ?? "");
+  return bucket !== null
+    && (url.protocol === "https:" || (process.env.NODE_ENV !== "production" && url.protocol === "http:"))
+    && url.origin === bucket.origin
+    && url.pathname.startsWith(`${bucket.pathname.replace(/\/+$/, "")}/`);
+}, { message: "Logo, /images/ altındaki veya herkese açık görsel kovasındaki bir görsel olmalı." });
+
 export const siteSettingsSchema = z.strictObject({
   storeName: text(80),
+  ownerName: text(160),
+  logoUrl: logoField,
   contactEmail: z.union([z.literal(""), z.email().max(200)]),
   contactPhone: text(40),
   contactAddress: text(400),
@@ -62,7 +82,9 @@ export const siteSettingsSchema = z.strictObject({
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 
 export const SITE_DEFAULTS: SiteSettings = {
-  storeName: "",
+  storeName: "Nakış Sitesi",
+  ownerName: "",
+  logoUrl: "",
   contactEmail: "",
   contactPhone: "",
   contactAddress: "",

@@ -2,10 +2,13 @@ import "server-only";
 import nodemailer from "nodemailer";
 import { db } from "../../db";
 import { getEnv } from "../../env";
-import { templates, type TemplateData, type TemplateName } from "./templates";
+import { SITE_DEFAULTS } from "../settings/schema";
+import { loadSite } from "../settings/service";
+import { renderEmail, type TemplateData, type TemplateName } from "./templates";
 
 export interface EmailMessage {
   to: string;
+  fromName: string;
   subject: string;
   html: string;
   text: string;
@@ -27,7 +30,15 @@ class SmtpSender implements EmailSender {
     });
   })();
   async send(msg: EmailMessage) {
-    await this.transport.sendMail({ from: getEnv().SMTP_FROM, to: msg.to, subject: msg.subject, html: msg.html, text: msg.text });
+    const smtpFrom = getEnv().SMTP_FROM.trim();
+    const address = smtpFrom.match(/<([^<>]+)>\s*$/)?.[1]?.trim() ?? smtpFrom;
+    await this.transport.sendMail({
+      from: { name: msg.fromName, address },
+      to: msg.to,
+      subject: msg.subject,
+      html: msg.html,
+      text: msg.text,
+    });
   }
 }
 
@@ -64,12 +75,13 @@ export async function sendEmail<K extends TemplateName>(
   data: TemplateData[K],
   opts: SendEmailOptions = {}
 ): Promise<boolean> {
-  const rendered = templates[type](data);
+  const { storeName } = await loadSite().catch(() => SITE_DEFAULTS);
+  const rendered = renderEmail(type, data, storeName);
   const n = await db.notification.create({
     data: { userId: opts.userId ?? null, type, channel: "EMAIL", toAddress: to, payload: (opts.logPayload ?? {}) as object, status: "PENDING" },
   });
   try {
-    await getEmailSender().send({ to, ...rendered });
+    await getEmailSender().send({ to, fromName: storeName, ...rendered });
     await db.notification.update({ where: { id: n.id }, data: { status: "SENT", sentAt: new Date() } });
     return true;
   } catch (err) {

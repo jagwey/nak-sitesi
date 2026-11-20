@@ -1,8 +1,8 @@
 const jar = (globalThis as unknown as { __cookieJar: Map<string, string> }).__cookieJar;
-import { setEmailSender } from "@/server/modules/notifications/email";
+import { setEmailSender, type EmailMessage } from "@/server/modules/notifications/email";
 
-export const sent: { to: string; subject: string; text: string }[] = [];
-setEmailSender({ async send(m) { sent.push({ to: m.to, subject: m.subject, text: m.text }); } });
+export const sent: EmailMessage[] = [];
+setEmailSender({ async send(m) { sent.push(m); } });
 
 export const ORIGIN = "http://localhost:3000";
 

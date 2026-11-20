@@ -1,5 +1,6 @@
 import "server-only";
 import { revalidateTag, unstable_cache } from "next/cache";
+import { cache } from "react";
 import { db, type DbClient } from "../../db";
 import { writeAudit } from "../../audit";
 import { getEnv } from "../../env";
@@ -30,7 +31,7 @@ async function writeKey(client: DbClient, key: string, value: object) {
 
 function bust() {
   try {
-    revalidateTag(SETTINGS_TAG, "max");
+    revalidateTag(SETTINGS_TAG, { expire: 0 });
   } catch {
     /* outside Next runtime (tests/CLI) */
   }
@@ -38,18 +39,25 @@ function bust() {
 
 export async function loadSite(client: DbClient = db): Promise<SiteSettings> {
   const v = await readKey(client, "site");
-  const parsed = siteSettingsSchema.safeParse({ ...SITE_DEFAULTS, ...v });
-  return parsed.success ? parsed.data : SITE_DEFAULTS;
+  const settings = { ...SITE_DEFAULTS };
+  for (const key of Object.keys(siteSettingsSchema.shape) as (keyof SiteSettings)[]) {
+    const field = siteSettingsSchema.shape[key].safeParse(v[key]);
+    if (field.success) Object.assign(settings, { [key]: field.data });
+  }
+  settings.storeName ||= SITE_DEFAULTS.storeName;
+  return settings;
 }
 
-/** Storefront read: cached, tag-invalidated on save; falls back to a direct read outside Next. */
-export async function getSiteSettings(): Promise<SiteSettings> {
+const cachedSiteSettings = unstable_cache(() => loadSite(), ["public-site-settings"], { tags: [SETTINGS_TAG], revalidate: 300 });
+
+/** Storefront read: shared within a render, invalidated after an admin save. */
+export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
   try {
-    return await unstable_cache(() => loadSite(), ["site-settings"], { tags: [SETTINGS_TAG], revalidate: 300 })();
+    return await cachedSiteSettings();
   } catch {
-    return loadSite();
+    return loadSite().catch(() => SITE_DEFAULTS);
   }
-}
+});
 
 export async function loadShipping(client: DbClient = db) {
   const v = await readKey(client, "studio");

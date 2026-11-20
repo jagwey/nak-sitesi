@@ -13,7 +13,14 @@ const esc = (s: string) =>
 export const formatTry = (kurus: number) =>
   `${(Math.trunc(kurus) / 100).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺`;
 
-function layout(opts: { title: string; paragraphs: string[]; cta?: { label: string; url: string }; footnote?: string }): string {
+interface EmailContent {
+  subject: string;
+  paragraphs: string[];
+  cta?: { label: string; url: string };
+  footnote?: string;
+}
+
+function layout(opts: EmailContent, storeName: string): string {
   const paras = opts.paragraphs.map((p) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#4A372C">${esc(p)}</p>`).join("");
   const cta = opts.cta
     ? `<p style="margin:24px 0"><a href="${esc(opts.cta.url)}" style="display:inline-block;background:#4A372C;color:#FAF8F3;text-decoration:none;padding:12px 24px;border-radius:2px;font-family:Manrope,Arial,sans-serif;font-size:15px">${esc(opts.cta.label)}</a></p>
@@ -23,22 +30,24 @@ function layout(opts: { title: string; paragraphs: string[]; cta?: { label: stri
   return `<!doctype html><html lang="tr"><body style="margin:0;padding:0;background:#FAF8F3">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#FAF8F3"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#FFFFFF;border:1px solid #EDE4D6">
-<tr><td style="padding:28px 32px 8px;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:26px;color:#4A372C;letter-spacing:.02em">Nakış Sitesi</td></tr>
+<tr><td style="padding:28px 32px 8px;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:26px;color:#4A372C;letter-spacing:.02em">${esc(storeName)}</td></tr>
 <tr><td style="padding:8px 32px 32px;font-family:Manrope,Arial,Helvetica,sans-serif">
-<h1 style="margin:16px 0;font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#242320">${esc(opts.title)}</h1>
+<h1 style="margin:16px 0;font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#242320">${esc(opts.subject)}</h1>
 ${paras}${cta}${foot}
 </td></tr></table></td></tr></table></body></html>`;
 }
 
-function text(title: string, paragraphs: string[], url?: string, foot?: string) {
-  return [title, "", ...paragraphs, ...(url ? ["", url] : []), ...(foot ? ["", foot] : [])].join("\n");
+function make(subject: string, paragraphs: string[], cta?: EmailContent["cta"], footnote?: string): EmailContent {
+  return { subject, paragraphs, cta, footnote };
 }
 
-function make(subject: string, paragraphs: string[], cta?: { label: string; url: string }, footnote?: string): RenderedEmail {
+export function renderEmail<K extends TemplateName>(type: K, data: TemplateData[K], storeName: string): RenderedEmail {
+  const content = templates[type](data);
+  const { subject, paragraphs, cta, footnote } = content;
   return {
     subject,
-    html: layout({ title: subject, paragraphs, cta, footnote }),
-    text: text(subject, paragraphs, cta?.url, footnote),
+    html: layout(content, storeName),
+    text: [storeName, "", subject, "", ...paragraphs, ...(cta ? ["", cta.url] : []), ...(footnote ? ["", footnote] : [])].join("\n"),
   };
 }
 
@@ -60,7 +69,7 @@ export type TemplateName = keyof TemplateData;
 
 const hello = (n?: string | null) => (n ? `Merhaba ${n},` : "Merhaba,");
 
-export const templates: { [K in TemplateName]: (d: TemplateData[K]) => RenderedEmail } = {
+const templates: { [K in TemplateName]: (d: TemplateData[K]) => EmailContent } = {
   verify_email: (d) =>
     make("E-posta adresinizi doğrulayın", [hello(d.name), "Hesabınızı etkinleştirmek için e-posta adresinizi doğrulayın. Bağlantı 24 saat geçerlidir."], { label: "E-postamı doğrula", url: d.url }, "Bu hesabı siz oluşturmadıysanız bu e-postayı yok sayabilirsiniz."),
   password_reset: (d) =>

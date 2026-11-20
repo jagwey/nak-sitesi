@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { call, jar } from "./helpers";
+import { call, jar, sent } from "./helpers";
 import { seedCatalog } from "./catalog-fixtures";
 import { __resetEnvForTests } from "@/server/env";
 import { db } from "@/server/db";
@@ -7,6 +7,8 @@ import { hashPassword } from "@/server/modules/auth/password";
 import { checkout } from "@/server/modules/orders/checkout";
 import { addItem } from "@/server/modules/cart/service";
 import { PERMISSIONS } from "@/server/modules/auth/rbac";
+import { sendEmail } from "@/server/modules/notifications/email";
+import { SITE_DEFAULTS } from "@/server/modules/settings/schema";
 import { POST as login } from "@/app/api/auth/login/route";
 import { POST as simulate } from "@/app/api/dev/payments/simulate/route";
 import { GET as adminOrders } from "@/app/api/admin/orders/route";
@@ -153,7 +155,36 @@ describe("settings and KVKK", () => {
     expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { instagramUrl: "javascript:alert(1)" } })).status).toBe(400);
     expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { announcementLink: "javascript:alert(1)" } })).status).toBe(400);
     expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { whatsapp: "https://evil.example/x" } })).status).toBe(400);
+    expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { logoUrl: "//example.com/logo.png" } })).status).toBe(400);
+    expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { logoUrl: "/images/../api/logo.png" } })).status).toBe(400);
+    expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { logoUrl: "https://evil.example/logo.png" } })).status).toBe(400);
     expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { instagramUrl: "https://instagram.com/nakissitesi" } })).status).toBe(200);
+  });
+
+  it("loads legacy settings and immediately uses an audited shop name in emails", async () => {
+    await db.siteSettings.create({ data: { key: "site", value: { contactEmail: "test-shop@example.com", storeName: "" } } });
+    const admin = await mkUser("SUPER_ADMIN");
+    await loginAs(admin.email);
+
+    const original = await call(settingsGet, "GET", "/api/admin/settings");
+    expect((await original.json()).site).toMatchObject({
+      storeName: SITE_DEFAULTS.storeName, contactEmail: "test-shop@example.com", ownerName: "", logoUrl: "",
+    });
+
+    const storeName = "Atölye & <Dikiş>";
+    const saved = await call(settingsPut, "PUT", "/api/admin/settings", {
+      site: { storeName, ownerName: "Test İşletme", logoUrl: "/images/atelier-workbench.webp" },
+    });
+    expect(saved.status).toBe(200);
+    expect((await saved.json()).site).toMatchObject({
+      storeName, contactEmail: "test-shop@example.com", ownerName: "Test İşletme", logoUrl: "/images/atelier-workbench.webp",
+    });
+    expect(await db.auditLog.findFirst({ where: { actorUserId: admin.id, action: "settings.update" } })).not.toBeNull();
+    expect(await sendEmail("verify_email", "branding@example.com", { url: "https://example.com/verify" })).toBe(true);
+    const email = sent.findLast(({ to }) => to === "branding@example.com");
+    expect(email?.fromName).toBe(storeName);
+    expect(email?.text).toContain(storeName);
+    expect(email?.html).toContain("Atölye &amp; &lt;Dikiş&gt;");
   });
 
   it("anonymize keeps order totals but removes personal data", async () => {

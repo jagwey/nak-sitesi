@@ -7,11 +7,11 @@ import { getSiteSettings } from "@/server/modules/settings/service";
 export const metadata: Metadata = {
   title: "Hakkımızda ve Atölye",
   description:
-    "Nakış Sitesi'nin üretim disiplini, dijital desen kalitesi ve doğal tekstil yaklaşımı.",
+    "Atölyenin üretim disiplini, dijital desen kalitesi ve doğal tekstil yaklaşımı.",
 };
 
 export default async function HakkimizdaPage() {
-  const about = (await getSiteSettings().catch(() => null))?.aboutText.trim() ?? "";
+  const { storeName, logoUrl, ownerName, aboutText } = await getSiteSettings();
   return (
     <div className="mx-auto max-w-[1440px] px-4 pb-24 pt-[112px] sm:px-6 lg:px-10">
       {/* Editorial Intro */}
@@ -21,22 +21,21 @@ export default async function HakkimizdaPage() {
             Geleneksel zarafetle modern makine nakışının buluşma noktası.
           </h1>
           <p className="max-w-[58ch] text-[1.0625rem] leading-relaxed text-umber">
-            Nakış Sitesi, hem kendi makinesinde üretim yapan zanaatkârlara yönelik yüksek hassasiyetli dijital nakış dosyaları hem de evlere kalıcı sıcaklık katan işlemeli doğal tekstil ürünleri sunmak için tasarlanmış bir nakış atölyesidir.
+            {storeName}, hem kendi makinesinde üretim yapan zanaatkârlara yönelik yüksek hassasiyetli dijital nakış dosyaları hem de evlere kalıcı sıcaklık katan işlemeli doğal tekstil ürünleri sunmak için tasarlanmış bir nakış atölyesidir.
           </p>
-          {about ? (
-            <p className="max-w-[58ch] whitespace-pre-line text-[1.0625rem] leading-relaxed text-umber">{about}</p>
-          ) : (
-          <p className="text-[0.875rem] text-stone">
-            Marka adı ve sahip bilgisi yakında eklenecek. Atölye hikâyesi yayın öncesinde yönetim panelinden düzenlenebilir içerik alanı olarak güncellenecektir.
-          </p>
-          )}
+          {aboutText && <p className="max-w-[58ch] whitespace-pre-line text-[1.0625rem] leading-relaxed text-umber">{aboutText}</p>}
+          {ownerName && <p className="wrap-anywhere text-[0.875rem] text-stone">{ownerName}</p>}
         </div>
 
-        <div className="flex justify-center lg:col-span-5">
-          <div className="border border-hairline bg-surface p-10 sm:p-14">
-            <p className="font-display w-[220px] text-center text-[2.25rem] font-medium leading-tight tracking-[-0.01em] text-ink sm:w-[260px]">
-              Nakış Sitesi
-            </p>
+        <div className="flex min-w-0 justify-center lg:col-span-5">
+          <div className="max-w-full border border-hairline bg-surface p-10 sm:p-14">
+            {logoUrl ? (
+              <Image src={logoUrl} alt={storeName} width={260} height={120} unoptimized className="h-[120px] max-w-full object-contain" />
+            ) : (
+              <p className="font-display w-[220px] max-w-full wrap-anywhere text-center text-[2.25rem] font-medium leading-tight tracking-[-0.01em] text-ink sm:w-[260px]">
+                {storeName}
+              </p>
+            )}
           </div>
         </div>
       </div>
