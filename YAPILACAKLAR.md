@@ -55,6 +55,7 @@
 - [x] Vitrin görsel boyutları, bekleyen filtre durumu, gereksiz ön yüklemeler ve açık dosya önbelleği iyileştirildi. Shopier düğmesi fiyatla hizalandı, kampanya gösterimi satın alınabilen desen sayısına bağlandı.
 - [x] Canlı mağazada küçük görselleri, tarayıcıya özel verileri önbellekten ayıran iki dakikalık anonim ana sayfa önbelleğini ve mobil açılış süresini doğrula.
 - [x] GitHub devri için mevcut yayın, geliştirme komutları ve canlı katalog verisinin konumu `PROGRESS.md`'ye eklendi.
+- [x] Son yayın durumunu, ödeme ve dosya teslimini özetleyen `CURSOR.md` eklendi.
 - [x] Türk Bayrağı ve Doğu Türkistan Bayrağı nakış dosyalarını iki ölçüde hazırla ve Bayrak desenleri bölümüyle birlikte test et.
 - [x] İlk Bayrak desenleri bölümünü canlıya al ve tarayıcıda doğrula.
 - [x] Türk Bayrağı ve Doğu Türkistan Bayrağı için Standart ve Mini boyları tek satın alımla teslim et ve satış ZIP'lerini hazırla.

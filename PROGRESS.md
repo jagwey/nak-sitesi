@@ -140,8 +140,8 @@
 
 ## 2026-11-20 — GitHub devri
 
-- [x] Proje `jagwey/nak-sitesi` deposunun `main` dalında. Devralırken `AGENTS.md`, `DEVIR.md`, `YAPILACAKLAR.md` ve bu kaydı oku. Yerel Next.js uygulaması `npm run dev` ile 3000 numaralı bağlantı noktasında açılır. PostgreSQL, MinIO ve Mailpit için `npm run db:up` kullanılır.
-- [x] Canlı adres `https://nakis-vitrin.nakis-sitesi.workers.dev/`. Cloudflare Worker, Oracle üzerindeki Caddy ve Docker uygulamasına yönlendirir. `.github/workflows/build-images.yml` web ve araç imajlarını GitHub Container Registry'ye yollar. Canlı yapı şu anda `612d506` uygulama imajı ve `f7fd3fdc` Worker sürümü. İşletim ayrıntıları `DEPLOYMENT.md` içinde.
+- [x] Proje `jagwey/nak-sitesi` deposunun `main` dalında. Güncel devir özeti `CURSOR.md` dosyasında. İşe başlamadan önce `AGENTS.md`, `DEVIR.md` ve `YAPILACAKLAR.md` dosyalarını oku. Yerel Next.js uygulaması `npm run dev` ile 3000 numaralı bağlantı noktasında açılır. PostgreSQL, MinIO ve Mailpit için `npm run db:up` kullanılır.
+- [x] Canlı adres `https://nakis-vitrin.nakis-sitesi.workers.dev/`. Cloudflare Worker, Oracle üzerindeki Caddy ve Docker uygulamasına yönlendirir. `.github/workflows/build-images.yml` web ve araç imajlarını GitHub Container Registry'ye yollar. Worker sürümü `f7fd3fdc`. Güncel uygulama sürümü için aşağıdaki yayın kaydını ve `CURSOR.md` dosyasını kontrol et. İşletim ayrıntıları `DEPLOYMENT.md` içinde.
 - [x] Canlı ürün kayıtları PostgreSQL'de, önizlemeler açık MinIO kovasında, VP3/PES/DST dosyaları özel MinIO kovasında. Depo uygulama, şema, araçlar ve dokümanları içerir. Canlı veritabanı, kullanıcı verisi, ücretli dosyalar ve ortam sırları GitHub'a konulmaz. Mevcut Shopier paketi bilgisayardaki `Downloads/Nakış Sitesi - Shopier` klasöründe.
 
 ## 2026-11-20 — Bayrak desenleri
