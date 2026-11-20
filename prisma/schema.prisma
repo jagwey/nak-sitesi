@@ -337,6 +337,7 @@ model Product {
   isNew               Boolean       @default(false)
   isFeatured          Boolean       @default(false)
   isDemo              Boolean       @default(false) // seeded demo data; never real stock/pricing
+  shopierUrl          String?
   physicalInfo        Json? // colors, sizes, material, productionTime, careInstructions...
   searchText          String        @default("") // normalized (folded Turkish) text for trigram search
   categoryId          String?

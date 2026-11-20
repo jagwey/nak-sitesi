@@ -46,7 +46,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       "@type": "Brand",
       name: storeName,
     },
-    ...(isStoreCheckoutOpen() && !product.isDemo && { offers: {
+    ...(isStoreCheckoutOpen() && !product.isDemo && !product.shopierUrl && { offers: {
       "@type": "Offer",
       priceCurrency: "TRY",
       price: (product.priceKurus / 100).toFixed(2),

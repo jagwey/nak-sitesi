@@ -22,6 +22,7 @@ import { POST as commitPost } from "@/app/api/admin/import/commit/route";
 import { POST as bulkPost } from "@/app/api/admin/bulk/route";
 import { GET as adminsGet } from "@/app/api/admin/admins/route";
 import { GET as publicList } from "@/app/api/products/route";
+import { GET as publicDetail } from "@/app/api/products/[slug]/route";
 
 const PW = "correct-horse-battery";
 const ROLE_PERMS: Record<string, string[]> = {
@@ -146,6 +147,29 @@ describe("publish validation", () => {
     const res = await multipart(filePost, `/api/admin/products/${p.id}/files`, p.id, { file: junk });
     expect(res.status).toBe(400);
     expect(await db.digitalFile.count({ where: { productId: p.id } })).toBe(0);
+  });
+});
+
+describe("Shopier product link", () => {
+  it("accepts and exposes only a validated product link and supports clearing it", async () => {
+    const { rose, towel } = await seedCatalog();
+    await asManager();
+    const patch = (id: string, shopierUrl: string | null) =>
+      call(productPatch, "PATCH", `/api/admin/products/${id}`, { shopierUrl }, idp(id));
+    for (const url of ["https://shopier.com.evil.example/655165", "http://shopier.com/655165", "https://shopier.com/dukkan"]) {
+      expect((await patch(rose.id, url)).status).toBe(400);
+    }
+    expect((await patch(towel.id, "https://shopier.com/655165")).status).toBe(400);
+    const link = "https://www.shopier.com/655165";
+    const saved = await patch(rose.id, "https://www.shopier.com/ShowProductNew/products.php?id=655165&utm_source=catalog");
+    expect(saved.status).toBe(200);
+    expect(await saved.json()).toMatchObject({ shopierUrl: link });
+    const response = await call(publicDetail, "GET", `/api/products/${rose.slug}`, undefined, { params: { slug: rose.slug } });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ product: { shopierUrl: link } });
+    expect(await (await patch(rose.id, null)).json()).toMatchObject({ shopierUrl: null });
+    await db.product.update({ where: { id: rose.id }, data: { isDemo: true } });
+    expect((await patch(rose.id, link)).status).toBe(400);
   });
 });
 

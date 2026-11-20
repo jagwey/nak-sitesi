@@ -80,6 +80,7 @@ export function toProductDto(row: ProductRow, brandsByFormat: BrandsByFormat): P
     description: row.description ?? "",
     highlights: row.highlights,
     isDemo: row.isDemo,
+    shopierUrl: row.isDemo ? undefined : row.shopierUrl ?? undefined,
   };
 
   const em = row.embroidery;

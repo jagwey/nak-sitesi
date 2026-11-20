@@ -80,6 +80,8 @@ Geliştirici adımları:
 
 ## Test ve canlı ayrımı
 
+Shopier’e bağlı dijital nakış ürünleri kendi ürün sayfasından Shopier’e yönlenir. Ödeme ve ZIP teslimatı Shopier’de tamamlanır. Bu akış yerel sipariş, indirme hakkı veya sepet kampanyası oluşturmaz ve yerel `PAYMENT_PROVIDER=none` ile çalışır. Kampanyalar Shopier panelinde ayrıca yapılandırılır.
+
 | Ortam | `PAYMENT_PROVIDER` | Simülasyon | Not |
 |---|---|---|---|
 | Yerel geliştirme | `none` veya `simulated` | `PAYMENT_SIMULATION_ENABLED=true` yalnızca `simulated` ile | Sahte ödeme |

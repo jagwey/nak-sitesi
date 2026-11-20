@@ -40,12 +40,14 @@
 - [x] Canlıda panelden taslak ürün, WebP görsel, gerçek VP3 yükleme ve imzalı indirme doğrulandı. Geçici doğrulama verileri temizlendi.
 - [ ] MinIO nesneleri için ayrı yedek ve geri yükleme provası.
 - [ ] Canlı e-posta doğrulaması ve parola sıfırlama için SMTP göndereni ayarla
-- [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
+- [ ] 12 özgün deseni Shopier’de listele, teslim ZIP’lerini bağla ve ürün bağlantılarını mağaza yönetim paneline gir.
+- [ ] Shopier kampanyasında 3 farklı desene %10 ve 5 farklı desene %20 koşullarını doğrula.
 - [ ] Canlı vitrinde kişiye özel talepler için işletmenin doğrulanmış iletişim kanalı
 - [x] Mağaza adı, logo, işletme sahibi ve iletişim ayarları tek kayıtta; güncellemeler vitrinde, başlıklarda ve e-postada doğrulandı
 - [x] GitHub: `git init`, `.gitignore` (node_modules, .next, .env*, tsconfig.tsbuildinfo), sır kontrolü, ilk commit `main`, push → https://github.com/jagwey/nak-sitesi
 - [ ] Gerçek ödeme sağlayıcısı (iyzico/PayTR) — müşterinin hesap bilgileri gerekli
 - [x] Dijital nakış kataloğuna gerçek desenler, fiyatları ve doğrulanmış formatlar eklendi. Demo ürünler arşivlendi.
+- [x] Canlı katalogdaki 11 demo ürün kalıcı olarak silindi. 12 gerçek desen için Shopier yükleme paketi ve ürün bağlantısı alanı hazırlandı.
 
 ## Açık küçük kusurlar (Phase 2'den)
 - [x] Galeri yakınlaştırma düğmesi fotoğrafın altında ve 390/1440 px genişlikte klavyeyle çalışıyor

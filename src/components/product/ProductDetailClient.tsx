@@ -92,6 +92,8 @@ export function ProductDetailClient({
   similarProducts,
 }: ProductDetailClientProps) {
   const { checkoutOpen, addToCart, cart, isFavorite, toggleFavorite } = useStore();
+  const shopierUrl = product.shopierUrl;
+  const showCartAction = (checkoutOpen || product.isDemo) && !shopierUrl;
   const fav = isFavorite(product.id);
 
   // Digital state
@@ -322,13 +324,15 @@ export function ProductDetailClient({
                   <p className="mt-1 flex items-start gap-2 text-[0.875rem] leading-snug text-umber">
                     <Download className="mt-0.5 h-4 w-4 shrink-0 text-gold-text" strokeWidth={1.6} />
                     <span>
-                      {!checkoutOpen && <span className="block font-medium">Online ödeme şu anda kapalı.</span>}
-                      Satış açıldığında dosyanızı ödeme sonrası hesabınızdan indirebilirsiniz. Hesap ve ödeme
-                      altyapısı henüz aktif değildir.
+                      {shopierUrl
+                        ? "Ödeme ve dijital teslimat Shopier üzerinden yapılır."
+                        : checkoutOpen
+                          ? "Ödeme sonrası dosyanızı hesabınızdan indirebilirsiniz."
+                          : "Bu desen satışa hazırlanıyor."}
                     </span>
                   </p>
 
-                  <div className="mt-4">
+                  {showCartAction ? <div className="mt-4">
                     <p
                       id="format-label"
                       className="text-[0.875rem] font-medium text-ink"
@@ -364,7 +368,11 @@ export function ProductDetailClient({
                     <p className="mt-2 text-[0.8125rem] text-umber">
                       Üründe bulunan formatlar listelenmiştir; seçiminiz sepete eklenir.
                     </p>
-                  </div>
+                  </div> : (
+                    <p className="mt-4 text-[0.875rem] font-medium text-ink">
+                      Dosya formatları: <span className="text-gold-text">{product.embroidery.formats.join(", ")}</span>
+                    </p>
+                  )}
 
                   <dl className="mt-3 divide-y divide-hairline border-t border-hairline text-[0.875rem]">
                     <InfoRow label="Makineler">
@@ -444,7 +452,7 @@ export function ProductDetailClient({
                 </div>
 
                 {/* License */}
-                <fieldset>
+                {showCartAction && <fieldset>
                   <legend className="mb-2 text-[0.875rem] font-medium text-ink">
                     Kullanım lisansı
                   </legend>
@@ -483,7 +491,7 @@ export function ProductDetailClient({
                       );
                     })}
                   </div>
-                </fieldset>
+                </fieldset>}
               </div>
             )}
 
@@ -776,7 +784,12 @@ export function ProductDetailClient({
 
             {/* Primary CTA + favourite */}
             <div className="mt-5 flex gap-3">
-              <button
+              {shopierUrl ? (
+                <a href={shopierUrl} className={`${ctaClass} h-13 min-w-0 flex-1`}>
+                  <ShoppingBag className="h-[18px] w-[18px] shrink-0" strokeWidth={1.6} />
+                  Shopier’den Satın Al
+                </a>
+              ) : showCartAction && <button
                 type="button"
                 onClick={handleAddToCart}
                 disabled={disabled}
@@ -790,7 +803,7 @@ export function ProductDetailClient({
                     <span className="tabular-nums hidden min-[380px]:inline"> · {formatTRY(totalKurus)}</span>
                   )}
                 </span>
-              </button>
+              </button>}
               <button
                 type="button"
                 onClick={() => toggleFavorite(product.id)}
@@ -807,7 +820,7 @@ export function ProductDetailClient({
             <p role="status" className="sr-only">
               {justAdded ? "Ürün sepete eklendi." : ""}
             </p>
-            {personalizationIncomplete && (
+            {showCartAction && personalizationIncomplete && (
               <p className="mt-2 text-[0.8125rem] text-umber">
                 Sepete eklemek için isim/baş harf girin ya da kişiselleştirmeyi kapatın.
               </p>
@@ -908,14 +921,18 @@ export function ProductDetailClient({
       )}
 
       {/* Mobile sticky add-to-cart bar */}
-      <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-hairline bg-ivory/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+      {(shopierUrl || showCartAction) && <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-hairline bg-ivory/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
         <div className="min-w-0">
           <p className="truncate text-[0.8125rem] text-umber">{product.name}</p>
           <p className="tabular-nums text-[1rem] font-semibold text-ink">
             {formatTRY(totalKurus)}
           </p>
         </div>
-        <button
+        {shopierUrl ? (
+          <a href={shopierUrl} className={`${ctaClass} h-11 shrink-0 px-4 text-[0.875rem]`}>
+            Shopier’den Satın Al
+          </a>
+        ) : <button
           type="button"
           onClick={handleAddToCart}
           disabled={disabled}
@@ -924,8 +941,8 @@ export function ProductDetailClient({
         >
           {ctaIcon}
           {ctaLabel}
-        </button>
-      </div>
+        </button>}
+      </div>}
     </div>
   );
 }

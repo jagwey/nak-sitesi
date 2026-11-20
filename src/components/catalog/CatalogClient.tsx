@@ -302,9 +302,9 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
               : "İşlemeli tekstil için kumaşı, ölçüyü ve adedi belirterek teklif isteyebilirsiniz."}</p>
             <Link href={filters.kategori === "baski-tasarimlari" ? "/kisiye-ozel?talep=baski" : "/kisiye-ozel"} className="mt-2 inline-block font-medium text-cocoa underline">Kişiye özel teklif iste</Link>
           </div>
-        ) : products.some((product) => product.type === "digital" && !product.isDemo) && (
+        ) : checkoutOpen && products.some((product) => product.type === "digital" && !product.isDemo) && !products.some((product) => product.shopierUrl) && (
           <p className="mt-5 text-[0.9375rem] text-umber">
-            {embroideryOfferText} {!checkoutOpen && "Online ödeme şu anda kapalı."}
+            {embroideryOfferText}
           </p>
         )}
 

@@ -20,6 +20,10 @@ Giriş yapınca özet ekranı açılır: bekleyen siparişler, kişiye özel tal
 
 Yalnızca gerçekten sahip olduğunuz fotoğraf, açıklama ve dosyaları kullanın.
 
+### Shopier’den satış
+
+Ürünü Shopier’de listeleyin ve o desene ait teslimat ZIP’ini Shopier’in **Dijital Ürün Teslimatı** uygulamasında bağlayın. **Ürünler → ilgili desen → Shopier ürün bağlantısı** alanına Shopier’de yayımlanan ürün adresini girin. Kaydedince mağazada **Shopier’den Satın Al** düğmesi görünür. Satış fiyatını iki katalogda birlikte güncelleyin.
+
 ## 4. Nakış dosyası yükleme (VP3, PES, DST ve diğerleri)
 - Dijital desen ürününde "Dosyalar" bölümünden dosyayı seçip yükleyin. Kabul edilen biçimler: VP3, PES, DST, JEF, HUS, EXP, XXX, VIP, PEC, PCS, SEW, ART veya bunları içeren ZIP. Dosya en fazla 20 MB olmalı.
 - Sistem dosyayı kontrol eder; bozuk veya uygunsuz dosyayı reddeder ve nedenini söyler.

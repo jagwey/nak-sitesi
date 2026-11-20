@@ -112,6 +112,7 @@ export interface Product {
   physical?: PhysicalMetadata;
   /** Seeded demo record (not a real product). Set by the DB catalog service. */
   isDemo?: boolean;
+  shopierUrl?: string;
 }
 
 /**

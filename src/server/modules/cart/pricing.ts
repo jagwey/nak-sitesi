@@ -79,6 +79,7 @@ export function resolveLine(
   product: CatalogProduct,
   input: Pick<AddItemInput, "variantId" | "format" | "license" | "color" | "size" | "personalization">
 ): ResolvedLine {
+  if (product.shopierUrl) throw vErr("Bu desen Shopier üzerinden satışta. Ürün sayfasından Shopier’e geçebilirsiniz.");
   const digital = isDigitalType(product.type);
   const kind = digital ? "DIGITAL" : "PHYSICAL";
 

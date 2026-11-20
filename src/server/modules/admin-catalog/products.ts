@@ -142,7 +142,7 @@ export async function syncRelations(tx: Tx, productId: string, type: string, inp
 
 const SCALARS = [
   "name", "slug", "sku", "type", "status", "shortDescription", "description", "highlights", "usageAreas", "priceKurus",
-  "compareAtPriceKurus", "seoTitle", "seoDescription", "personalizable", "isNew", "isFeatured", "categoryId",
+  "compareAtPriceKurus", "shopierUrl", "seoTitle", "seoDescription", "personalizable", "isNew", "isFeatured", "categoryId",
 ] as const;
 
 function scalarData(input: ProductUpdateInput): Prisma.ProductUncheckedUpdateInput {
@@ -167,6 +167,7 @@ function diffOf(before: Record<string, unknown>, input: ProductUpdateInput) {
 }
 
 export async function createProduct(input: ProductCreateInput, actor: Actor) {
+  if (input.shopierUrl && input.type !== "DIGITAL_EMBROIDERY") throw new AppError("VALIDATION", "Shopier bağlantısı dijital nakış desenlerinde kullanılabilir.");
   const id = await db.$transaction(async (tx) => {
     await assertSkuFree(tx, input.sku);
     const slug = await uniqueProductSlug(tx, input.slug ?? slugifyTr(input.name));
@@ -181,12 +182,12 @@ export async function createProduct(input: ProductCreateInput, actor: Actor) {
         slug, sku: input.sku, type: input.type, status: "DRAFT", name: input.name, shortDescription: input.shortDescription, description: input.description,
         highlights: input.highlights, usageAreas: input.usageAreas, priceKurus: input.priceKurus, compareAtPriceKurus: input.compareAtPriceKurus,
         seoTitle: input.seoTitle, seoDescription: input.seoDescription, personalizable: input.personalizable, isNew: input.isNew, isFeatured: input.isFeatured,
-        categoryId: input.categoryId, physicalInfo: input.physicalInfo ?? undefined, searchText: "",
+        categoryId: input.categoryId, shopierUrl: input.shopierUrl, physicalInfo: input.physicalInfo ?? undefined, searchText: "",
       },
     });
     await syncRelations(tx, p.id, input.type, input);
     if (NEEDS_INVENTORY.has(input.type) && input.variants.length === 0) await ensureInventory(tx, { productId: p.id });
-    await writeAudit({ actorUserId: actor.id, action: "product.create", entity: "Product", entityId: p.id, diff: { name: input.name, sku: input.sku, type: input.type, priceKurus: input.priceKurus, status: "DRAFT" }, ip: actor.ip }, tx);
+    await writeAudit({ actorUserId: actor.id, action: "product.create", entity: "Product", entityId: p.id, diff: { name: input.name, sku: input.sku, type: input.type, priceKurus: input.priceKurus, shopierUrl: p.shopierUrl, status: "DRAFT" }, ip: actor.ip }, tx);
     return p.id;
   }, { timeout: 30000 });
   await reindexProducts(db, [id]);
@@ -206,6 +207,10 @@ export async function updateProduct(id: string, input: ProductUpdateInput, actor
       throw new AppError("VALIDATION", "Kategori bulunamadı.");
     }
     const type = input.type ?? before.type;
+    const shopierUrl = input.shopierUrl === undefined ? before.shopierUrl : input.shopierUrl;
+    if (shopierUrl && (before.isDemo || type !== "DIGITAL_EMBROIDERY")) {
+      throw new AppError("VALIDATION", "Shopier bağlantısı satışa uygun dijital nakış desenlerinde kullanılabilir.");
+    }
     const nextStatus = input.status ?? before.status;
     const data = scalarData(input);
     if (nextStatus === "ACTIVE" && !before.publishedAt) data.publishedAt = new Date();
@@ -301,7 +306,7 @@ export async function getAdminProduct(id: string) {
   const vopts = (v: { options: unknown }) => (v.options ?? {}) as Record<string, string>;
   return {
     id: p.id, slug: p.slug, sku: p.sku, type: p.type, status: p.status, name: p.name, shortDescription: p.shortDescription, description: p.description,
-    highlights: p.highlights, usageAreas: p.usageAreas, priceKurus: p.priceKurus, compareAtPriceKurus: p.compareAtPriceKurus,
+    highlights: p.highlights, usageAreas: p.usageAreas, priceKurus: p.priceKurus, compareAtPriceKurus: p.compareAtPriceKurus, shopierUrl: p.shopierUrl,
     seoTitle: p.seoTitle, seoDescription: p.seoDescription, personalizable: p.personalizable, isNew: p.isNew, isFeatured: p.isFeatured, isDemo: p.isDemo,
     physicalInfo: (p.physicalInfo ?? null) as Record<string, unknown> | null, categoryId: p.categoryId,
     collectionIds: p.collections.map((c) => c.collectionId), tagIds: p.tags.map((t) => t.tagId), licenseIds: p.licenses.map((l) => l.licenseId),

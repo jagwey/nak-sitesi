@@ -48,6 +48,18 @@ async function seedWithFile() {
 }
 
 describe("cart", () => {
+  it("blocks Shopier products both when already in the cart and on a new add", async () => {
+    const { rose } = await seedWithFile();
+    const add = () => call(addItemRoute, "POST", "/api/cart/items", { productId: rose.id, format: "VP3" });
+    expect((await add()).status).toBe(201);
+    await db.product.update({ where: { id: rose.id }, data: { shopierUrl: "https://www.shopier.com/655165" } });
+    expect((await add()).status).toBe(400);
+    const response = await call(getCart, "GET", "/api/cart");
+    expect(await response.json()).toMatchObject({
+      cart: { items: [{ blocking: true, issues: [expect.stringContaining("Shopier")] }], totalKurus: 0 },
+    });
+  });
+
   it("adds, prices on the server, rejects client price and bad format", async () => {
     const { rose } = await seedWithFile();
     const ok = await call(addItemRoute, "POST", "/api/cart/items", { productId: rose.id, format: "VP3", license: "PERSONAL", quantity: 2 }); // digital items are always quantity 1

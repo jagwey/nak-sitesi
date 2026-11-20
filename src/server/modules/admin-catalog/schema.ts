@@ -5,6 +5,16 @@ export const PRODUCT_STATUSES = ["DRAFT", "ACTIVE", "ARCHIVED"] as const;
 
 const kurus = z.number().int().min(0).max(2_000_000_000);
 const str = (max: number) => z.string().trim().max(max);
+const shopierProductUrl = z.string().trim().max(500).transform((value, ctx) => {
+  const url = URL.parse(value);
+  if (url?.protocol === "https:" && ["shopier.com", "www.shopier.com"].includes(url.host) && !url.username && !url.password) {
+    const id = url.pathname.match(/^\/(?:s\/product\/)?([1-9]\d{0,19})\/?$/)?.[1]
+      ?? (url.pathname === "/ShowProductNew/products.php" ? url.searchParams.get("id") : null);
+    if (id && /^[1-9]\d{0,19}$/.test(id)) return `https://www.shopier.com/${id}`;
+  }
+  ctx.addIssue({ code: "custom", message: "Geçerli bir HTTPS Shopier ürün bağlantısı girin." });
+  return z.NEVER;
+});
 const strList = (max = 200, n = 30) => z.array(z.string().trim().min(1).max(max)).max(n);
 
 export const optionSchema = z.strictObject({
@@ -62,6 +72,7 @@ export const productCreateSchema = z.strictObject({
   usageAreas: strList(80, 20),
   priceKurus: kurus,
   compareAtPriceKurus: kurus.nullable(),
+  shopierUrl: shopierProductUrl.nullish(),
   seoTitle: str(120).nullable(),
   seoDescription: str(300).nullable(),
   personalizable: z.boolean(),

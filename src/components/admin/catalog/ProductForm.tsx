@@ -45,6 +45,7 @@ export function ProductForm({ options, product, canWrite = true, canFiles = true
   const [usageAreas, setUsageAreas] = useState((p?.usageAreas ?? []).join(", "));
   const [price, setPrice] = useState(p ? kurusToTlInput(p.priceKurus) : "");
   const [compare, setCompare] = useState(p?.compareAtPriceKurus != null ? kurusToTlInput(p.compareAtPriceKurus) : "");
+  const [shopierUrl, setShopierUrl] = useState(p?.shopierUrl ?? "");
   const [personalizable, setPersonalizable] = useState(p?.personalizable ?? false);
   const [isNew, setIsNew] = useState(p?.isNew ?? false);
   const [isFeatured, setIsFeatured] = useState(p?.isFeatured ?? false);
@@ -99,6 +100,7 @@ export function ProductForm({ options, product, canWrite = true, canFiles = true
     const body = {
       name, ...(slug.trim() ? { slug: slug.trim() } : {}), sku, type, shortDescription, description, highlights: lines(highlights), usageAreas: csv(usageAreas),
       priceKurus, compareAtPriceKurus, seoTitle: seoTitle.trim() || null, seoDescription: seoDescription.trim() || null, personalizable, isNew, isFeatured,
+      shopierUrl: isDigitalEmb && !p?.isDemo ? shopierUrl.trim() || null : null,
       categoryId: categoryId || null, collectionIds, tagIds, licenseIds: isDigitalEmb ? licenseIds : [], formatCodes: isDigitalEmb ? formatCodes : [],
       variants: vs, options: os,
       embroidery: isDigitalEmb ? {
@@ -184,6 +186,11 @@ export function ProductForm({ options, product, canWrite = true, canFiles = true
           <FormField label="Kısa açıklama" htmlFor="short" error={errs.shortDescription}>
             <textarea id="short" rows={2} className={textareaCls} value={shortDescription} disabled={dis} onChange={(ev) => setShort(ev.target.value)} />
           </FormField>
+          {isDigitalEmb && !p?.isDemo && (
+            <FormField label="Shopier ürün bağlantısı" htmlFor="shopierUrl" hint="Shopier’de listelediğiniz ürünün adresini girin. Vitrinde Shopier’den satın alma düğmesi görünür." error={errs.shopierUrl}>
+              <input id="shopierUrl" type="url" className={inputCls} value={shopierUrl} disabled={dis} onChange={(ev) => setShopierUrl(ev.target.value)} />
+            </FormField>
+          )}
           <FormField label="Açıklama" htmlFor="desc" error={errs.description}>
             <textarea id="desc" rows={6} className={textareaCls} value={description} disabled={dis} onChange={(ev) => setDescription(ev.target.value)} />
           </FormField>

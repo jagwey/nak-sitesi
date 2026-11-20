@@ -146,6 +146,8 @@ Tüm ucların izni aşağıda belirtilmiştir. Her **değiştiren** admin işlem
 
 Yayına alma (`ACTIVE`) koşulları: fiyat > 0, en az 1 görsel, dijital desen için en az bir güncel ve aktif dosya; sağlanmazsa `400 VALIDATION` ve eksiklerin listesi.
 
+Gerçek dijital nakış ürünlerinde `shopierUrl` isteğe bağlıdır. HTTPS Shopier ürün adresi sayısal ürün kimliğiyle standart biçime dönüştürülür. `PATCH` ile `null` gönderilerek bağlantı kaldırılır. Bağlantısı olan ürün yerel sepete eklenemez.
+
 ### Taksonomi, toplu işlem, içe aktarma
 | Yol | İzin | Not |
 |---|---|---|
