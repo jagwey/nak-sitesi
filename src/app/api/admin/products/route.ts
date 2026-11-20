@@ -1,4 +1,4 @@
-import { route } from "@/server/http";
+import { json, route } from "@/server/http";
 import { createProduct, listProducts } from "@/server/modules/admin-catalog/products";
 import { productCreateSchema, productListQuery } from "@/server/modules/admin-catalog/schema";
 
@@ -9,5 +9,5 @@ export const GET = route({ auth: { permission: "product:read" }, query: productL
 
 export const POST = route({ auth: { permission: "product:write" }, body: productCreateSchema }, async ({ body, user, ip }) => {
   const p = await createProduct(body!, { id: user!.id, ip });
-  return Response.json(p, { status: 201, headers: { "cache-control": "no-store" } });
+  return json(p, { status: 201 });
 });

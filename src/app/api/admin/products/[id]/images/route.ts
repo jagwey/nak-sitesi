@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { route } from "@/server/http";
+import { json, route } from "@/server/http";
 import { addProductImage, reorderProductImages } from "@/server/modules/admin-catalog/media";
 import { idParams } from "@/server/modules/admin-catalog/schema";
 
@@ -18,7 +18,7 @@ export const POST = route(
   },
   async ({ params, body, user, ip }) => {
     const img = await addProductImage(params!.id, body!.file, body!.alt, { id: user!.id, ip });
-    return Response.json(img, { status: 201, headers: { "cache-control": "no-store" } });
+    return json(img, { status: 201 });
   }
 );
 

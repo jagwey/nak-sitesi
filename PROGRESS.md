@@ -83,3 +83,4 @@
 - [x] Galeri yakınlaştırma düğmesi görselin altına taşındı. 390/1440 px konum ve klavye testi 2/2, önceki E2E testleri 8/8, lint/test 100/100/build başarılı.
 - [x] Mobil katalogda 390 px genişlikte kartlar eşit yükseklikte, ürün türü tek satırda ve taşma yok. Lint/test 100/100/build ve E2E 11/11 başarılı.
 - [x] Sepet, sipariş, ödeme ve ayarlardaki çapraz bağımlılıklar ortak varsayılanlar ve sipariş kilidiyle ayrıldı. TypeScript içe aktarma grafiği 260 kaynak dosyada ve 20 sunucu modülünde 0 döngü gösterdi. Lint/test 100/100/build başarılı.
+- [x] API JSON yanıtları ortak serileştirmeye taşındı. Özel sipariş testinde başarı/hata başlıkları ve hata gövdesi doğrulandı. Lint/test 100/100/build başarılı.

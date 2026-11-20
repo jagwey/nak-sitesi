@@ -1,4 +1,4 @@
-import { route } from "@/server/http";
+import { json, route } from "@/server/http";
 import { createTag, listTags } from "@/server/modules/admin-catalog/taxonomy";
 import { tagSchema } from "@/server/modules/admin-catalog/schema";
 
@@ -9,5 +9,5 @@ export const GET = route({ auth: { permission: "product:read" } }, async () => l
 
 export const POST = route({ auth: { permission: "product:write" }, body: tagSchema }, async ({ body, user, ip }) => {
   const r = await createTag(body!, { id: user!.id, ip });
-  return Response.json(r, { status: 201, headers: { "cache-control": "no-store" } });
+  return json(r, { status: 201 });
 });

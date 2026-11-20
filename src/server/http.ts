@@ -132,7 +132,9 @@ export function errorResponse(err: unknown): Response {
   const status = STATUS_BY_CODE[e.code as ErrorCode];
   const body: { error: Record<string, unknown> } = { error: { code: e.code, message: e.message } };
   if (e.details !== undefined) body.error.details = e.details;
-  if (getEnv().NODE_ENV !== "production" && e.code === "INTERNAL" && err instanceof Error) body.error.debug = err.message;
+  if ((process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") && e.code === "INTERNAL" && err instanceof Error) {
+    body.error.debug = err.message;
+  }
   const headers: Record<string, string> = {};
   if (e.code === "RATE_LIMITED" && e.retryAfterSec) headers["retry-after"] = String(e.retryAfterSec);
   return json(body, { status, headers });

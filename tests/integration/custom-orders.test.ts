@@ -73,6 +73,8 @@ describe("custom orders", () => {
   it("accepts a valid request with an image, stores a re-encoded private object", async () => {
     const res = await post(createRoute, form({}, [{ name: "ref.png", data: await png(), type: "image/png" }]));
     expect(res.status).toBe(201);
+    expect(res.headers.get("cache-control")).toBe("no-store");
+    expect(res.headers.get("content-type")).toBe("application/json; charset=utf-8");
     const { id } = await res.json();
     const att = await db.customOrderAttachment.findMany({ where: { customOrderId: id } });
     expect(att.length).toBe(1);
@@ -86,6 +88,11 @@ describe("custom orders", () => {
     const before = objects.size;
     const res = await post(createRoute, form({}, [{ name: "evil.png", data: Buffer.from("MZ not an image at all"), type: "image/png" }]), "203.0.113.21");
     expect(res.status).toBe(415);
+    expect(res.headers.get("cache-control")).toBe("no-store");
+    expect(res.headers.get("content-type")).toBe("application/json; charset=utf-8");
+    expect(await res.json()).toEqual({
+      error: { code: "UNSUPPORTED_MEDIA_TYPE", message: expect.any(String), details: { code: "BAD_MAGIC", file: "evil.png" } },
+    });
     expect(await db.customOrder.count()).toBe(0);
     expect(objects.size).toBe(before);
   });

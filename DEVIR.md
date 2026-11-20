@@ -71,7 +71,7 @@ Son doğrulama: lint temiz, 97/97 test, build başarılı.
 
 ## Yapılacaklar (öncelik sırası)
 1. ~~Ajan E kalemleri~~ bitti.
-2. Teknik borç: bazı `route()` işleyicileri doğrudan `Response.json` kullanıyor. Modül içe aktarma döngüleri giderildi.
+2. Modül içe aktarma döngüleri giderildi. API JSON yanıtları `route()` ve ortak `json()` yardımcısından geçer.
 3. Phase 2 galeri yakınlaştırma ve mobil ürün kartı düzeltmeleri tamamlandı.
 4. Gerçek ödeme sağlayıcısı (iyzico/PayTR) bağlanacak; müşterinin hesap bilgileri gerekli. Rehber: `PAYMENT_INTEGRATION.md`.
 5. Gerçek ürünler girilecek: fotoğraf, fiyat ve yalnız gerçekten sahip olunan dosya formatları. Demo ürünler `isDemo` ile işaretli.

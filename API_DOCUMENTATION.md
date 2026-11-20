@@ -194,6 +194,6 @@ Yayına alma (`ACTIVE`) koşulları: fiyat > 0, en az 1 görsel, dijital desen i
 ```
 
 ## Notlar ve bilinen farklar
-- Bazı admin uçları `Response.json(...)` ile, bazıları `route()` dönüş değeri ile yanıt verir; ikisi de `no-store` başlığı taşır.
+- JSON yanıtlarını `route()` serileştirir. Özel durum kodları ve başlıklar için işleyici `json()` yardımcısını kullanır. CSV çıktısı kendi içerik türünü korur.
 - Admin müşteri durumu ve doğrulama yeniden gönderme uçları `order:write` ister; müşteri sayfası `customer:read` ile görüntülenir.
 - Yetki hata mesajları Türkçedir.
