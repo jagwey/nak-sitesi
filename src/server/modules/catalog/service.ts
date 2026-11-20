@@ -3,7 +3,8 @@ import { db } from "@/server/db";
 import { AppError } from "@/server/errors";
 import { CATEGORIES, type CategoryItem, type CuratedCollection } from "@/data/categories";
 import type { Product } from "@/data/products";
-import { DEFAULT_FILTERS, type CatalogFilterState, type SearchSuggestion } from "@/lib/search";
+import type { Prisma } from "@/generated/prisma/client";
+import type { CatalogFilterState, SearchSuggestion } from "@/lib/search";
 import { getSearchEngine, DEFAULT_PAGE_SIZE, type Facets } from "../search";
 import { productInclude, toProductDto, type BrandsByFormat, type ProductRow } from "./dto";
 
@@ -149,26 +150,73 @@ export async function getCollections(): Promise<CuratedCollection[]> {
 }
 
 export interface HomepageData {
-  categories: CategoryNode[];
-  collections: CuratedCollection[];
+  categories: { slug: string; name: string; productCount: number; image: { url: string; alt: string } }[];
   tabs: { new: Product[]; digital: Product[]; physical: Product[]; personalizable: Product[] };
 }
 
-const first = (f: Partial<CatalogFilterState>, n = 4, facets = false) =>
-  searchCatalog({ ...DEFAULT_FILTERS, ...f }, { pageSize: n, facets }).then((r) => r.items);
+const liveProduct = { status: "ACTIVE", isDemo: false } satisfies Prisma.ProductWhereInput;
+const digitalTypes = ["DIGITAL_EMBROIDERY", "DIGITAL_PRINT", "BUNDLE"] satisfies Prisma.EnumProductTypeFilter["in"];
+const homepageOrder = [{ isFeatured: "desc" }, { createdAt: "asc" }, { sku: "asc" }] satisfies Prisma.ProductOrderByWithRelationInput[];
+
+async function getHomepageCategories(): Promise<HomepageData["categories"]> {
+  const categories = await db.category.findMany({
+    where: { parentId: null, active: true },
+    orderBy: [{ sort: "asc" }, { slug: "asc" }],
+    select: { id: true, slug: true, name: true, children: { select: { id: true } } },
+  });
+  const cards = await Promise.all(categories.map(async (category) => {
+    let scope: Prisma.ProductWhereInput = {
+      categoryId: { in: [category.id, ...category.children.map((child) => child.id)] },
+    };
+    if (category.slug === "dijital-nakis-desenleri") scope = { type: { in: digitalTypes } };
+    if (category.slug === "kisiye-ozel-urunler") scope = { personalizable: true };
+
+    const where = { ...scope, ...liveProduct };
+    const [productCount, product] = await Promise.all([
+      db.product.count({ where }),
+      db.product.findFirst({
+        where: { ...where, images: { some: {} } },
+        orderBy: homepageOrder,
+        select: {
+          name: true,
+          images: { orderBy: [{ sort: "asc" }, { id: "asc" }], take: 1, select: { url: true, alt: true } },
+        },
+      }),
+    ]);
+    const image = product?.images[0];
+    if (!product || !image) return null;
+    return {
+      slug: category.slug,
+      name: category.name,
+      productCount,
+      image: { url: image.url, alt: image.alt || product.name },
+    };
+  }));
+  return cards.filter((card) => card !== null);
+}
+
+async function getHomepageProducts(
+  where: Prisma.ProductWhereInput,
+  orderBy: Prisma.ProductOrderByWithRelationInput[] = homepageOrder,
+): Promise<Product[]> {
+  const products = await db.product.findMany({
+    where: { ...where, ...liveProduct },
+    orderBy,
+    take: 4,
+    include: productInclude,
+  });
+  return hydrate(products);
+}
 
 export async function getHomepageData(): Promise<HomepageData> {
-  const [categories, collections, isNew, digital, physical, personalizable] = await Promise.all([
-    getCategoryTree(),
-    getCollections(),
-    db.product
-      .findMany({ where: { status: "ACTIVE", isNew: true }, orderBy: [{ publishedAt: "desc" }, { sku: "asc" }], take: 4, select: { id: true } })
-      .then((r) => getProductsByIds(r.map((x) => x.id))),
-    first({ tur: "digital" }),
-    first({ tur: "physical" }),
-    first({ kisisellestirme: true }),
+  const [categories, isNew, digital, physical, personalizable] = await Promise.all([
+    getHomepageCategories(),
+    getHomepageProducts({ isNew: true }, [{ publishedAt: "desc" }, { sku: "asc" }]),
+    getHomepageProducts({ type: { in: digitalTypes } }),
+    getHomepageProducts({ type: { notIn: digitalTypes } }),
+    getHomepageProducts({ personalizable: true }),
   ]);
-  return { categories, collections, tabs: { new: isNew, digital, physical, personalizable } };
+  return { categories, tabs: { new: isNew, digital, physical, personalizable } };
 }
 
 export async function getSitemapEntries(): Promise<{ slug: string; updatedAt: Date }[]> {

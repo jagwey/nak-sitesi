@@ -6,11 +6,39 @@ import { GET as one } from "@/app/api/products/[slug]/route";
 import { GET as related } from "@/app/api/products/[slug]/related/route";
 import { GET as cats } from "@/app/api/categories/route";
 import { GET as suggest } from "@/app/api/search/suggest/route";
+import { db } from "@/server/db";
+import { getHomepageData } from "@/server/modules/catalog";
 
 const names = (j: { items: { name: string }[] }) => j.items.map((p) => p.name).sort();
 const get = async (q: string) => (await call(list, "GET", `/api/products${q}`)).json();
 
 describe("catalog API", () => {
+  it("uses active, non-demo products for homepage covers, counts, and tabs", async () => {
+    const { rose, cicek, draft } = await seedCatalog();
+    await db.category.create({
+      data: { slug: "dijital-nakis-desenleri", name: "Dijital Nakış Desenleri", sort: -1 },
+    });
+    await db.product.update({
+      where: { id: cicek.id },
+      data: { isDemo: true, isFeatured: true, isNew: true },
+    });
+    await db.productImage.createMany({ data: [
+      { productId: rose.id, url: "/rose-detail.webp", sort: 1 },
+      { productId: rose.id, url: "/rose.webp", alt: "Gül dikişi", sort: 0 },
+      { productId: cicek.id, url: "/demo.webp" },
+      { productId: draft.id, url: "/draft.webp" },
+    ] });
+
+    const { categories, tabs } = await getHomepageData();
+    expect(categories).toEqual([
+      { slug: "dijital-nakis-desenleri", name: "Dijital Nakış Desenleri", productCount: 2, image: { url: "/rose.webp", alt: "Gül dikişi" } },
+      { slug: "cicek-ve-botanik", name: "Çiçek ve Botanik", productCount: 1, image: { url: "/rose.webp", alt: "Gül dikişi" } },
+    ]);
+    expect(names({ items: tabs.new })).toEqual(["Gül Motifi"]);
+    expect(names({ items: tabs.digital })).toEqual(["Gül Motifi", "Monogram M"]);
+    expect(names({ items: tabs.physical })).toEqual(["Keten Havlu"]);
+  });
+
   it("lists only ACTIVE products", async () => {
     await seedCatalog();
     const j = await get("");

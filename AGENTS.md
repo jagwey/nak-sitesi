@@ -25,6 +25,13 @@ Bu dosya, projeyi devralacak geliştirici veya yapay zekâ ajanları için bağl
 - Bir dijital ürüne gerçekten sahip olmadığı nakış formatı (VP3, PES, DST vb.) eklenmez; görseller yeniden adlandırılarak nakış dosyası gibi sunulmaz.
 - Fiyatlar her zaman tamsayı **kuruş** (`priceKurus`) olarak tutulur.
 
+### Nakış dijitalleştirme
+
+- Yeni desenlerde görsel referans olarak kullanıcının verdiği PNG'yi, dikiş standardı olarak `Tulay_Birer_Pfaff_v5_Katli_Siki_Saten.vp3` ve `Duhanedoku_Pfaff_140mm_Siki_Saten.vp3` dosyalarını esas alın. Bu iki özel dosyayı yalnızca dikiş tekniği için inceleyin. İçlerindeki logoları kopyalamayın ve dosyaları kataloğa veya depoya yüklemeyin.
+- Referanstaki tok, katmanlı bitişi hedefleyin. Harf iç boşluklarını, ince kolları ve dış hatları koruyun. Yazı ve dar kıvrımlarda genişliği kademeli değişen saten, geniş alanlarda uygun açılı ve katmanlı dolgu kullanın. Alt dikişi, çekme telafisini ve sıklığı desen ölçüsüne, kumaşa ve telaya göre ayarlayın. Açıklık ve üst üste aşırı kısa dikiş oluşan bölgeleri düzeltin.
+- Teslimden önce VP3'ü yeniden açın. Ölçü ve kasnak uyumunu, iplik sırasını, atlamaları ve dikiş dağılımını kontrol edin. Dikiş dosyasından bütün desenin ve kritik ayrıntıların önizlemesini üretin. Görünür kusurları düzeltip yeniden kontrol edin. Fiziksel kumaş provası yapılmadıysa bunu belirtin.
+- Ana sayfa kategori kapaklarında ve desen seçkilerinde etkin, demo olmayan ürünlerin kayıtlı görsellerini kullanın. Ürün önizlemesi olmayan kategoriyi kapak bölümünde göstermeyin.
+
 ## 5. Backend Kuralları (Faz 3, bağlayıcı)
 Ayrıntı: `ARCHITECTURE.md`, `SECURITY.md`, `PAYMENT_INTEGRATION.md`.
 - **Modül sınırları:** İş mantığı `src/server/modules/<modül>/` altındadır. Route dosyaları ince kalır (şema + izin + servis çağrısı). Bir modül başka modülün tablolarına doğrudan yazmaz; onun servis fonksiyonunu çağırır. Yeni bağımlılık döngüsü oluşturmayın.
@@ -37,7 +44,7 @@ Ayrıntı: `ARCHITECTURE.md`, `SECURITY.md`, `PAYMENT_INTEGRATION.md`.
 - **Gizli değerler:** Token'lar (oturum, misafir, teklif, doğrulama) DB'de yalnızca sha256 özeti olarak saklanır. Sırlar kodda/logda/repoda bulunmaz; yeni env değişkeni `src/server/env.ts` ve `.env.example`'a (Türkçe yorumla) eklenir.
 - **Şema değişikliği:** `prisma/schema.prisma` + yeni migration (canlıda `npm run db:deploy`). `DATABASE_SCHEMA.md`'yi güncelleyin. SiteSettings içine geçici meta/yan tablo hileleri yazmayın; gerçek sütun kullanın.
 - **Testler:** Davranış değiştiren her iş test içerir (`tests/unit`, `tests/integration`; E2E `tests/e2e`). `npm run lint` ve `npm test` yeşil olmadan iş bitmiş sayılmaz.
-- **Dürüst durum:** Demo ürünler `isDemo` ile işaretlidir; gerçek ödeme sağlayıcısı ve gerçek nakış dosyaları yoktur. Bunlar varmış gibi sunulmaz.
+- **Dürüst durum:** Demo ürünler `isDemo` ile işaretlidir. Bir ürünün indirilebilir formatlarını yüklenen gerçek dosyalar belirler. Shopier satın alma bağlantısı yalnızca gerçek ürün adresi yönetim paneline kaydedildiğinde gösterilir.
 
 ## 6. Komutlar
 - Geliştirme sunucusu: `npm run dev`

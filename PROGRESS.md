@@ -120,3 +120,10 @@
 - [x] Yönetim paneline doğrulanan Shopier ürün adresi ve mağazaya masaüstü/mobil satın alma bağlantısı eklendi. Bağlantılı ürünler yerel sepetten ayrıldı.
 - [x] Tip kontrolü, 124/124 Vitest ve üretim derlemesi başarılı.
 - [x] `bdb9802` Oracle'a dağıtıldı ve Shopier bağlantısı migration'ı uygulandı. Yerel tarayıcıda masaüstü ve mobil bağlantı davranışı doğrulandı. Canlıda 12 desen, 36 erişilebilir önizleme, eski demo için 404 API yanıtı ve bağlantısız ürünlerin satış hazırlığı görünümü 390 ve 1440 px genişlikte doğrulandı.
+
+## 2026-11-20 — Ana sayfa ve ilk satış
+
+- [x] Ana sayfa kategori kapakları aktif, demo olmayan desenlerin önizlemelerine bağlandı. Kapak görseli olmayan kategoriler ve eski seçki görselleri kaldırıldı. Filistin Bayrağı'nın ürün sayfası ana sayfada öne çıkarıldı.
+- [x] Tülay Birer ve Duhanedoku VP3 referanslarına göre yeni desenlerin dikiş kalitesi, önizleme ve teslim kontrolü kuralları `AGENTS.md`'ye eklendi.
+- [x] Filistin Bayrağı'nın 185 TL ürün kaydı ve tek ürünlük VP3/PES/DST Shopier ZIP'i kontrol edildi. Satış bağlantısını mağaza sahibi ekleyecek. Diğer 11 desen görünür, bağlantısız kalacak.
+- [x] Tip kontrolü, 125/125 Vitest ve üretim derlemesi başarılı. Ana sayfa testi demo ve taslak kapaklarının atlandığını ve gerçek ürünlerin vitrin sekmelerinde kaldığını doğruluyor.

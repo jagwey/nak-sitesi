@@ -1,9 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { CATEGORIES, CURATED_COLLECTIONS } from "@/data/categories";
+import { CATEGORIES } from "@/data/categories";
+
+const FILTER_LINKS = [
+  { label: "PFAFF uyumlu desenler", href: "/koleksiyon?makine=PFAFF" },
+  { label: "10×10 cm kasnağa sığan desenler", href: "/koleksiyon?kasnak=10x10%20cm" },
+];
 
 interface MegaMenuProps {
   open: boolean;
@@ -59,21 +63,18 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
         <div className="col-span-3 flex flex-col justify-between border-r border-hairline pr-8">
           <div className="space-y-4">
             <p className="text-[0.875rem] font-medium text-gold-text">
-              Öne çıkan seçkiler
+              Makine ve kasnak
             </p>
             <ul className="space-y-3">
-              {CURATED_COLLECTIONS.map((col) => (
-                <li key={col.slug}>
+              {FILTER_LINKS.map((filter) => (
+                <li key={filter.label}>
                   <Link
-                    href={`/koleksiyon?${col.filterQuery}`}
+                    href={filter.href}
                     onClick={onClose}
                     className="group block space-y-0.5"
                   >
                     <span className="font-display text-[1.1rem] text-ink transition-colors duration-200 group-hover:text-gold-text">
-                      {col.title}
-                    </span>
-                    <span className="block text-[0.875rem] leading-snug text-umber">
-                      {col.subtitle}
+                      {filter.label}
                     </span>
                   </Link>
                 </li>
@@ -86,7 +87,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
               Makine formatına göre
             </p>
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[0.875rem] text-umber">
-              {["VP3", "PES", "DST", "JEF", "HUS", "EXP"].map((fmt) => (
+              {["VP3", "PES", "DST"].map((fmt) => (
                 <Link
                   key={fmt}
                   href={`/koleksiyon?tur=dijital&format=${fmt}`}
@@ -100,22 +101,13 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
           </div>
         </div>
 
-        {/* Column 10-12: Editorial Featured Visual */}
+        {/* Column 10-12: Custom design */}
         <div className="col-span-3 flex flex-col justify-between">
           <Link
             href="/kisiye-ozel"
             onClick={onClose}
             className="group block space-y-3"
           >
-            <div className="relative aspect-[3/4] w-full overflow-hidden bg-linen">
-              <Image
-                src="/images/prod-monogram-towel.webp"
-                alt="Kişiye özel altın monogram işlemeli havlu seti"
-                fill
-                sizes="280px"
-                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-              />
-            </div>
             <div>
               <p className="font-display text-[1.15rem] text-ink">
                 Kişiye Özel Monogram Atölyesi

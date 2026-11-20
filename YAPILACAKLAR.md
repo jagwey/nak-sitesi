@@ -40,8 +40,8 @@
 - [x] Canlıda panelden taslak ürün, WebP görsel, gerçek VP3 yükleme ve imzalı indirme doğrulandı. Geçici doğrulama verileri temizlendi.
 - [ ] MinIO nesneleri için ayrı yedek ve geri yükleme provası.
 - [ ] Canlı e-posta doğrulaması ve parola sıfırlama için SMTP göndereni ayarla
-- [ ] 12 özgün deseni Shopier’de listele, teslim ZIP’lerini bağla ve ürün bağlantılarını mağaza yönetim paneline gir.
-- [ ] Shopier kampanyasında 3 farklı desene %10 ve 5 farklı desene %20 koşullarını doğrula.
+- [ ] Shopier’de ilk olarak yalnızca Filistin Bayrağı’nı listele, dijital teslim ZIP’ini yükle ve ürün adresini yönetim paneline ekle (mağaza sahibi).
+- [ ] Yeni PNG'ler geldikten sonra referans VP3'lerin dikiş standardıyla yeni desenleri hazırla. Diğer ürünlerin satışı kapsam netleşince açılacak.
 - [ ] Canlı vitrinde kişiye özel talepler için işletmenin doğrulanmış iletişim kanalı
 - [x] Mağaza adı, logo, işletme sahibi ve iletişim ayarları tek kayıtta; güncellemeler vitrinde, başlıklarda ve e-postada doğrulandı
 - [x] GitHub: `git init`, `.gitignore` (node_modules, .next, .env*, tsconfig.tsbuildinfo), sır kontrolü, ilk commit `main`, push → https://github.com/jagwey/nak-sitesi
@@ -49,6 +49,9 @@
 - [x] Dijital nakış kataloğuna gerçek desenler, fiyatları ve doğrulanmış formatlar eklendi. Demo ürünler arşivlendi.
 - [x] Canlı katalogdaki 11 demo ürün kalıcı olarak silindi. 12 gerçek desen için Shopier yükleme paketi ve ürün bağlantısı alanı hazırlandı.
 - [x] Shopier bağlantısı alanı ve satın alma düğmesi olan sürüm canlıya alındı.
+- [x] Ana sayfanın kategori kapakları aktif katalogdan besleniyor ve Filistin Bayrağı öne çıkarılıyor.
+- [x] Yeni VP3'ler için yoğun saten, katmanlı dolgu ve dikiş önizlemesi kuralları eklendi.
+- [ ] Güncellenen ana sayfayı canlıya al ve kategori kapaklarını masaüstü/mobil doğrula.
 
 ## Açık küçük kusurlar (Phase 2'den)
 - [x] Galeri yakınlaştırma düğmesi fotoğrafın altında ve 390/1440 px genişlikte klavyeyle çalışıyor
