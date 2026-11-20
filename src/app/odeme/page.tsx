@@ -43,7 +43,7 @@ const STATUS_TR: Record<string, string> = {
 const emptyAddr = { fullName: "", phone: "", line1: "", line2: "", city: "", district: "", postalCode: "" };
 
 export default function OdemePage() {
-  const { cart, user, authReady, subtotalKurus, discountKurus, shippingKurus, totalKurus, couponCode, hasPhysicalItems, hasDigitalItems, cartBlocking, refreshCart } = useStore();
+  const { cart, user, authReady, subtotalKurus, discountKurus, embroideryDiscountPercent, checkoutOpen, shippingKurus, totalKurus, couponCode, hasPhysicalItems, hasDigitalItems, cartBlocking, refreshCart } = useStore();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
@@ -124,6 +124,14 @@ export default function OdemePage() {
 
   const shell = (children: React.ReactNode) => (
     <div className="mx-auto max-w-[1440px] px-4 pb-24 pt-[112px] sm:px-6 lg:px-10">{children}</div>
+  );
+
+  if (!checkoutOpen) return shell(
+    <div className="mx-auto max-w-[640px]">
+      <h1 className="font-display text-[2.5rem] text-ink">Online ödeme şu anda kapalı</h1>
+      <p className="mt-3 text-umber">Sepetinizi kaydedebilir ve desenleri incelemeye devam edebilirsiniz.</p>
+      <Link href="/sepet" className="mt-5 inline-block text-cocoa underline">Sepete dön</Link>
+    </div>
   );
 
   if (result) {
@@ -318,7 +326,7 @@ export default function OdemePage() {
               </div>
               {discountKurus > 0 && (
                 <div className="flex justify-between">
-                  <dt className="text-umber">İndirim{couponCode ? ` (${couponCode})` : ""}</dt>
+                  <dt className="text-umber">{embroideryDiscountPercent ? "Desen indirimi (%" + embroideryDiscountPercent + ")" : "İndirim"}{!embroideryDiscountPercent && couponCode ? ` (${couponCode})` : ""}</dt>
                   <dd className="tabular-nums text-ink">−{formatTRY(discountKurus)}</dd>
                 </div>
               )}

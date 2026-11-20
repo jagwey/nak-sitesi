@@ -56,3 +56,9 @@
 - [ ] Duhanedoku "HANDMADE WITH LOVE" küçük yazı bozuk, papatya konturu köşeli
 - [ ] `Referans_Stil_140mm\OKUBENI.md`
 - [ ] Gerçek makinede test dikişi (kullanıcı)
+
+## Özgün makine nakışı koleksiyonu
+- [x] 12 özgün dijital desenin VP3, PES ve DST dosyaları, ürün başına üç dikiş önizlemesi ve fiyatları canlı panele taslak olarak aktarıldı.
+- [x] Sepet desen kampanyası ve fiziksel/baskı ürünleri için kişiye özel teklif akışı hazır.
+- [ ] Yeni mağaza sürümünü Oracle'a dağıt, gerçek koleksiyonu yayımla ve canlı sayfaları doğrula.
+- [ ] Fiziksel makinede prova dikişi yap.

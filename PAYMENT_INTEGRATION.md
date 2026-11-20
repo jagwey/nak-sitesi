@@ -50,6 +50,8 @@ interface PaymentProvider {
 
 Banka havalesi/EFT için: `POST /api/admin/orders/[id]/manual-payment` `{ reference }` (5–200 karakter). Yalnızca SUPER_ADMIN veya ORDER_MANAGER; denetim kaydı yazılır. Bu, sağlayıcı olmadan siparişi `PAID` yapabilen **tek** yönetici yoludur ve bilinçli, kayıtlı bir insan eylemidir.
 
+Üretimde `PAYMENT_PROVIDER=none` iken müşteri ödeme akışı kapalıdır. Katalog, sepet ve kişiye özel teklif talepleri açık kalır.
+
 ## Geliştirme simülasyonu
 
 `POST /api/dev/payments/simulate` `{ orderNumber, outcome: "success" | "failure", guestToken? }` — simülasyon kapalıysa `404`. Gerçek webhook yolundan (imzalı olay → `processWebhook`) geçer; böylece test ve geliştirme gerçek akışı kullanır. Simülasyon imza sırrı `PAYMENT_SIMULATION_SECRET`'tır (boşsa kodda sabit bir geliştirme sırrı kullanılır; yalnızca simülasyon izinliyken geçerlidir).

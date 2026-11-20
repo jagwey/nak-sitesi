@@ -32,12 +32,14 @@ export default function SepetPage() {
     removeCoupon,
     subtotalKurus,
     discountKurus,
+    embroideryDiscountPercent,
     hasPhysicalItems,
     hasDigitalItems,
     shippingKurus,
     totalKurus,
     couponError,
     cartBlocking,
+    checkoutOpen,
     cartLoading,
     freeShippingThresholdKurus,
     user,
@@ -361,7 +363,7 @@ export default function SepetPage() {
               </div>
               {discountKurus > 0 && (
                 <div className="flex justify-between text-gold-text">
-                  <dt>Kupon indirimi</dt>
+                  <dt>{embroideryDiscountPercent ? "Desen indirimi (%" + embroideryDiscountPercent + ")" : "Kupon indirimi"}</dt>
                   <dd className="tabular-nums">-{formatTRY(discountKurus)}</dd>
                 </div>
               )}
@@ -386,7 +388,11 @@ export default function SepetPage() {
               </div>
             </dl>
 
-            {cartBlocking ? (
+            {!checkoutOpen ? (
+              <p className="mt-6 border border-hairline-strong bg-linen/55 p-4 text-[0.875rem] text-ink">
+                Online ödeme şu anda kapalı. Desenleri sepetinizde saklayabilirsiniz.
+              </p>
+            ) : cartBlocking ? (
               <p role="alert" className="mt-6 border border-hairline-strong bg-linen/55 p-4 text-[0.875rem] text-ink">
                 Sepetinizde ilerlemenizi engelleyen bir ürün var. Lütfen yukarıdaki uyarıyı giderin.
               </p>
@@ -401,7 +407,7 @@ export default function SepetPage() {
                 <ArrowRight className="h-4 w-4" strokeWidth={1.6} />
               </Link>
             )}
-            {!user && hasDigitalItems && (
+            {checkoutOpen && !user && hasDigitalItems && (
               <p className="mt-3 text-[0.8125rem] text-stone">Dijital ürünler için giriş yapmanız veya hesap oluşturmanız gerekir.</p>
             )}
           </div>

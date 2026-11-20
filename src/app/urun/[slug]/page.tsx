@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { findPublicProductBySlug, getRelatedProducts } from "@/server/modules/catalog";
+import { isStoreCheckoutOpen } from "@/server/env";
 import { getSiteSettings } from "@/server/modules/settings/service";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +46,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       "@type": "Brand",
       name: storeName,
     },
-    offers: {
+    ...(isStoreCheckoutOpen() && !product.isDemo && { offers: {
       "@type": "Offer",
       priceCurrency: "TRY",
       price: (product.priceKurus / 100).toFixed(2),
@@ -53,7 +54,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         product.type === "digital" || product.physical?.inStock
           ? "https://schema.org/InStock"
           : "https://schema.org/OutOfStock",
-    },
+    } }),
   };
 
   const breadcrumbJsonLd = {

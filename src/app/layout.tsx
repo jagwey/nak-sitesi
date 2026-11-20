@@ -8,6 +8,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { SearchOverlay } from "@/components/layout/SearchOverlay";
 import { StoreProvider } from "@/lib/store";
+import { isStoreCheckoutOpen } from "@/server/env";
 import { siteUrl } from "@/lib/site-url";
 import { getSiteSettings } from "@/server/modules/settings/service";
 import "./globals.css";
@@ -73,7 +74,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c") }}
         />
-        <StoreProvider>
+        <StoreProvider checkoutOpen={isStoreCheckoutOpen()}>
           <ChromeGate>
             <AnnouncementBar site={site} />
             {/* Zero-height sticky anchor: header sits below the (in-flow) announcement bar at the top of the page, then sticks to the viewport top. */}

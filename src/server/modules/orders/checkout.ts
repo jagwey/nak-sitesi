@@ -2,7 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { AppError } from "../../errors";
 import { db, type DbClient } from "../../db";
-import { getEnv } from "../../env";
+import { getEnv, isStoreCheckoutOpen } from "../../env";
 import { randomToken, sha256Hex } from "../../crypto";
 import { findCart, priceCart } from "../cart/service";
 import { reserveStock } from "../inventory/stock";
@@ -64,6 +64,7 @@ export async function checkout(user: { id: string; email: string; phone?: string
       if (env.NODE_ENV === "production" && priced.lines.some((line) => line.resolved.product.isDemo)) {
         throw new AppError("VALIDATION", "Sepetiniz demo ürün içeriyor. Demo ürünler siparişe açık değil.");
       }
+      if (!isStoreCheckoutOpen()) throw new AppError("SERVICE_UNAVAILABLE", "Online ödeme şu anda kapalı.");
       // Digital deliveries are bound to an account (entitlement + re-download), so guests cannot buy them.
       if (v.hasDigital && !user) {
         throw new AppError("VALIDATION", "Dijital ürünler için giriş yapmalı veya hesap oluşturmalısınız.", { details: { requiresAccount: true } });
@@ -86,7 +87,7 @@ export async function checkout(user: { id: string; email: string; phone?: string
           discountKurus: v.discountKurus,
           shippingKurus: v.shippingKurus,
           totalKurus: v.totalKurus,
-          couponCode: v.discountKurus > 0 ? v.couponCode : null,
+          couponCode: priced.couponId ? v.couponCode : null,
           shippingAddress: shippingAddress ?? undefined,
           customerNote: input.customerNote ?? null,
           guestAccessTokenHash: guestToken && v.hasPhysical ? sha256Hex(guestToken) : null,

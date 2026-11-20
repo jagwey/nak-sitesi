@@ -68,6 +68,8 @@ Arama motoru: Postgres (ILIKE + `pg_trgm` + `unaccent`); `SearchEngine` arayüz�
 
 ## 3. Sepet ve ödeme akışı
 
+Üç farklı gerçek nakış deseniyle %10, beş farklı desenle %20 otomatik indirim hesaplanır. Aynı desenin farklı biçimleri eşik hesabında tek desen sayılır. Kupon ve desen indirimi birlikte uygulanmaz, yüksek olan uygulanır. Sepet yanıtındaki `embroideryDiscountPercent` geçerli desen oranını gösterir. Üretimde ödeme sağlayıcısı `none` ise gerçek ürünlerde checkout `503 SERVICE_UNAVAILABLE` döndürür ve sepeti korur.
+
 | Metot ve yol | Auth | İstek | Notlar |
 |---|---|---|---|
 | `GET /api/cart` | optional | — | 120/dk. Misafir sepeti tokenı cookie'dedir (yalnızca özeti DB'de) |

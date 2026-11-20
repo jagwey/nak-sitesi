@@ -71,6 +71,7 @@ interface ServerCart {
   couponError: string | null;
   subtotalKurus: number;
   discountKurus: number;
+  embroideryDiscountPercent: number;
   shippingKurus: number;
   totalKurus: number;
   hasPhysical: boolean;
@@ -92,6 +93,7 @@ interface StoreContextValue {
   toast: string | null;
   cartLoading: boolean;
   cartBlocking: boolean;
+  checkoutOpen: boolean;
   freeShippingThresholdKurus: number;
   user: AuthUser | null;
   authReady: boolean;
@@ -116,6 +118,7 @@ interface StoreContextValue {
   cartCount: number;
   subtotalKurus: number;
   discountKurus: number;
+  embroideryDiscountPercent: number;
   hasPhysicalItems: boolean;
   hasDigitalItems: boolean;
   shippingKurus: number;
@@ -128,7 +131,7 @@ const STORAGE_FAVS = "tb_store_favs_v1";
 const STORAGE_SEARCHES = "tb_store_recent_searches_v1";
 
 const EMPTY: ServerCart = {
-  items: [], couponCode: null, couponError: null, subtotalKurus: 0, discountKurus: 0, shippingKurus: 0, totalKurus: 0,
+  items: [], couponCode: null, couponError: null, subtotalKurus: 0, discountKurus: 0, embroideryDiscountPercent: 0, shippingKurus: 0, totalKurus: 0,
   hasPhysical: false, hasDigital: false, itemCount: 0, blocking: false, freeShippingThresholdKurus: 0,
 };
 
@@ -167,7 +170,7 @@ function toItem(l: ServerLine): CartItem {
 
 const errMsg = (e: unknown, fallback: string) => (e instanceof ApiError ? e.message : fallback);
 
-export function StoreProvider({ children }: { children: React.ReactNode }) {
+export function StoreProvider({ children, checkoutOpen }: { children: React.ReactNode; checkoutOpen: boolean }) {
   const [server, setServer] = useState<ServerCart>(EMPTY);
   const [cartLoading, setCartLoading] = useState(true);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -384,7 +387,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const r = await apiFetch<{ cart: ServerCart }>("/api/cart/coupon", { method: "POST", body: { code } });
       setServer(r.cart);
       if (r.cart.couponError) return { ok: false, message: r.cart.couponError };
-      return { ok: true, message: "Kupon uygulandı." };
+      return { ok: true, message: r.cart.embroideryDiscountPercent ? "Sepetinizde daha avantajlı desen indirimi uygulanıyor." : "Kupon uygulandı." };
     } catch (e) {
       return { ok: false, message: errMsg(e, "Kupon uygulanamadı.") };
     }
@@ -423,6 +426,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         toast,
         cartLoading,
         cartBlocking: server.blocking,
+        checkoutOpen,
         freeShippingThresholdKurus: server.freeShippingThresholdKurus,
         user,
         authReady,
@@ -447,6 +451,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         cartCount: cart.reduce((s, i) => s + i.quantity, 0),
         subtotalKurus: server.subtotalKurus,
         discountKurus: server.discountKurus,
+        embroideryDiscountPercent: server.embroideryDiscountPercent,
         hasPhysicalItems: server.hasPhysical,
         hasDigitalItems: server.hasDigital,
         shippingKurus: server.shippingKurus,

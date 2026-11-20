@@ -21,7 +21,7 @@ export const CATEGORIES: CategoryItem[] = [
   {
     slug: "dijital-nakis-desenleri",
     name: "Dijital Nakış Desenleri",
-    shortDescription: "PFAFF VP3 ve çoklu makine formatlarında test edilmiş nakış dosyaları.",
+    shortDescription: "PFAFF VP3 ve farklı makine formatlarında dijital nakış dosyaları.",
     image: "/images/prod-rose-vp3.webp",
     imageAlt: "Doğal keten üzerine işlenmiş botanik gül makine nakışı deseni",
     subcategories: [

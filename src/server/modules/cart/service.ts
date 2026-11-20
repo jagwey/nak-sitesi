@@ -7,7 +7,7 @@ import { randomToken, sha256Hex } from "../../crypto";
 import { MAX_CART_LINES, MAX_QTY_PER_LINE } from "../../commerce-config";
 import { availableForInventories } from "../inventory/stock";
 import { evaluateCoupon, normalizeCode, type CouponLine } from "../coupons/service";
-import { computeShipping, computeTotals, getShippingConfig } from "./totals";
+import { computeEmbroideryOffer, computeShipping, computeTotals, getShippingConfig } from "./totals";
 import { loadProductByRef, loadProductsByIds, readStored, resolveLine, sameStored, type CatalogProduct, type ResolvedLine } from "./pricing";
 import type { AddItemInput } from "./schema";
 
@@ -88,6 +88,7 @@ export interface CartView {
   couponError: string | null;
   subtotalKurus: number;
   discountKurus: number;
+  embroideryDiscountPercent: number;
   shippingKurus: number;
   totalKurus: number;
   hasPhysical: boolean;
@@ -108,7 +109,7 @@ type CartWithItems = NonNullable<Awaited<ReturnType<typeof loadCartRow>>>;
 const loadCartRow = (client: DbClient, id: string) => client.cart.findUnique({ where: { id }, include: { items: { orderBy: { createdAt: "asc" } } } });
 
 const emptyView = (cfg: { freeShippingThresholdKurus: number }): CartView => ({
-  id: null, items: [], couponCode: null, couponError: null, subtotalKurus: 0, discountKurus: 0, shippingKurus: 0, totalKurus: 0,
+  id: null, items: [], couponCode: null, couponError: null, subtotalKurus: 0, discountKurus: 0, embroideryDiscountPercent: 0, shippingKurus: 0, totalKurus: 0,
   hasPhysical: false, hasDigital: false, itemCount: 0, blocking: false, freeShippingThresholdKurus: cfg.freeShippingThresholdKurus,
 });
 
@@ -211,14 +212,21 @@ export async function priceCart(client: DbClient, cart: CartWithItems | null, wh
   }
 
   const subtotalKurus = couponLines.reduce((s, l) => s + l.lineTotalKurus, 0);
-  let discountKurus = 0;
+  const embroideryOffer = computeEmbroideryOffer(lines
+    .filter(({ resolved: { product } }) => product.type === "DIGITAL_EMBROIDERY" && !product.isDemo)
+    .map(({ resolved, lineTotalKurus }) => ({ productId: resolved.product.id, lineTotalKurus })));
+  let discountKurus = embroideryOffer.discountKurus;
+  let embroideryDiscountPercent = embroideryOffer.percent;
   let couponError: string | null = null;
   let couponId: string | null = null;
   if (cart.couponCode) {
     try {
       const ev = await evaluateCoupon(client, cart.couponCode, couponLines, who);
-      discountKurus = ev.discountKurus;
-      couponId = ev.coupon.id;
+      if (ev.discountKurus > discountKurus) {
+        discountKurus = ev.discountKurus;
+        couponId = ev.coupon.id;
+        embroideryDiscountPercent = 0;
+      }
     } catch (e) {
       couponError = e instanceof AppError ? e.message : "Kupon uygulanamadı.";
     }
@@ -235,6 +243,7 @@ export async function priceCart(client: DbClient, cart: CartWithItems | null, wh
       items,
       couponCode: cart.couponCode,
       couponError,
+      embroideryDiscountPercent,
       ...totals,
       hasPhysical,
       hasDigital,

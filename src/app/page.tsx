@@ -10,7 +10,7 @@ import { HomeShowcaseTabs } from "@/components/home/HomeClient";
 import { formatTRY } from "@/lib/format";
 import { getSiteSettings } from "@/server/modules/settings/service";
 
-const FORMAT_LIST = "VP3, PES, DST, JEF, HUS";
+const FORMAT_LIST = "VP3, PES ve DST";
 
 const QUICK_CHIPS = [
   { label: "VP3 desenler", href: "/koleksiyon?format=VP3" },
@@ -18,7 +18,7 @@ const QUICK_CHIPS = [
   { label: "10×10 kasnağa sığan", href: "/koleksiyon?kasnak=10x10%20cm" },
   { label: "Bebek", href: "/koleksiyon?q=bebek" },
   { label: "Havlu", href: "/koleksiyon?q=havlu" },
-  { label: "Desen paketleri", href: "/koleksiyon?q=paket" },
+  { label: "Desen indirimleri", href: "/koleksiyon?tur=dijital" },
 ];
 
 const PATHS = [
@@ -28,9 +28,9 @@ const PATHS = [
     href: "/koleksiyon?tur=dijital",
   },
   {
-    title: "Hazır ve kişiye özel ürünler",
-    sub: "İşlemeli tekstiller, kargo ile.",
-    href: "/koleksiyon?tur=fiziksel",
+    title: "İşlemeli tekstiller",
+    sub: "Kumaş, ölçü ve adet için teklif iste.",
+    href: "/kisiye-ozel",
   },
   {
     title: "Kişiye özel sipariş",

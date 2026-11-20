@@ -107,3 +107,7 @@
 - [x] Hesabım ekranına yetkili kullanıcılar için Yönetim Paneli bağlantısı eklendi. Moderatör rolü yalnızca kişiye özel talepleri yönetir. SMTP kapalıysa davet bağlantısı Süper Yöneticiye gösterilir. Lint ve 121/121 test başarılı.
 - [x] Oracle VM'nin kalıcı diskinde erişime kapalı nakış dosyaları ve herkese açık görseller için ayrı MinIO kovaları kuruldu. Uygulama anahtarı yalnız nesne işlemlerine yetkili.
 - [x] `d041b34` üretim imajı Oracle'da yayımlandı. Geçici Ürün Yöneticisi ile panel, taslak ürün, WebP görsel yükleme, gerçek VP3 yükleme ve otomatik metadata okuma doğrulandı. Özel dosya imzasız 403 döndürdü. İmzalı indirme yüklenen baytlarla birebir eşleşti. Geçici hesap ve taslak temizlendi, 11 demo ürün duruyor. 390 px Chromium'da Hesabım bağlantısı ve davet formu doğrulandı.
+
+## 2026-11-20 — Özgün makine nakışı koleksiyonu
+- [x] 12 desen için 36 gerçek VP3, PES ve DST dosyası, 36 dikiş önizlemesi ve teslim arşivi hazırlandı. Her dosya yeniden okunarak dikişleri ve 100 × 100 mm kasnağa sığdığı kontrol edildi. Ürünler gerçek dosyaları ve 155–200 TL fiyatlarıyla canlı yönetim paneline taslak aktarıldı.
+- [x] 3 farklı desene %10, 5 farklı desene %20 sepet indirimi eklendi. İndirim fiziksel ürünlere ve demolara uygulanmaz. Fiziksel ve baskı alışverişi için kişiye özel teklif akışı eklendi. Ödeme sağlayıcısı kapalıyken sipariş oluşturulmaz. Lint, 122/122 test ve üretim derlemesi başarılı.

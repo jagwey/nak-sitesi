@@ -121,3 +121,9 @@ export function isPaymentSimulationAllowed(): boolean {
   const e = getEnv();
   return e.NODE_ENV !== "production" && e.PAYMENT_SIMULATION_ENABLED && e.PAYMENT_PROVIDER === "simulated";
 }
+
+/** Visitors can browse and price their basket while production payments are offline. */
+export function isStoreCheckoutOpen(): boolean {
+  const e = getEnv();
+  return e.NODE_ENV !== "production" || e.PAYMENT_PROVIDER !== "none";
+}

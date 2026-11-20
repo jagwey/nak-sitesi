@@ -91,7 +91,7 @@ export function ProductDetailClient({
   product,
   similarProducts,
 }: ProductDetailClientProps) {
-  const { addToCart, cart, isFavorite, toggleFavorite } = useStore();
+  const { checkoutOpen, addToCart, cart, isFavorite, toggleFavorite } = useStore();
   const fav = isFavorite(product.id);
 
   // Digital state
@@ -322,7 +322,8 @@ export function ProductDetailClient({
                   <p className="mt-1 flex items-start gap-2 text-[0.875rem] leading-snug text-umber">
                     <Download className="mt-0.5 h-4 w-4 shrink-0 text-gold-text" strokeWidth={1.6} />
                     <span>
-                      Ödeme sonrası dosyayı hesabınızdan indireceksiniz. Hesap ve ödeme
+                      {!checkoutOpen && <span className="block font-medium">Online ödeme şu anda kapalı.</span>}
+                      Satış açıldığında dosyanızı ödeme sonrası hesabınızdan indirebilirsiniz. Hesap ve ödeme
                       altyapısı henüz aktif değildir.
                     </span>
                   </p>

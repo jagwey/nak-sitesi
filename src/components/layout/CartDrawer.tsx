@@ -16,6 +16,7 @@ export function CartDrawer() {
     updateQuantity,
     subtotalKurus,
     discountKurus,
+    embroideryDiscountPercent,
     hasPhysicalItems,
     hasDigitalItems,
     shippingKurus,
@@ -219,7 +220,7 @@ export function CartDrawer() {
               </div>
               {discountKurus > 0 && (
                 <div className="flex justify-between text-gold-text">
-                  <span>Kupon indirimi</span>
+                  <span>{embroideryDiscountPercent ? "Desen indirimi (%" + embroideryDiscountPercent + ")" : "Kupon indirimi"}</span>
                   <span className="tabular-nums">-{formatTRY(discountKurus)}</span>
                 </div>
               )}

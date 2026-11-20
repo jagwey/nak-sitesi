@@ -12,6 +12,7 @@ import {
   serializeFiltersToParams,
   type CatalogFilterState,
 } from "@/lib/search";
+import { embroideryOfferText } from "@/lib/embroidery-offer";
 import { useStore } from "@/lib/store";
 import type { Product } from "@/data/products";
 import type { Facets } from "@/server/modules/search/types";
@@ -31,7 +32,7 @@ interface CatalogClientProps {
 export function CatalogClient({ products, total, page, pageSize, facets, emptySuggestions }: CatalogClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addRecentSearch } = useStore();
+  const { addRecentSearch, checkoutOpen } = useStore();
 
   const filters = useMemo(
     () => parseFiltersFromParams(searchParams),
@@ -294,6 +295,19 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
           </form>
         </div>
 
+        {filters.tur === "physical" || filters.kategori === "baski-tasarimlari" ? (
+          <div className="mt-5 border-l-2 border-hairline-strong pl-4 text-[0.9375rem] text-umber">
+            <p>{filters.kategori === "baski-tasarimlari"
+              ? "Tekstil baskısı talebinizi ölçü, adet ve referans görselle iletebilirsiniz."
+              : "İşlemeli tekstil için kumaşı, ölçüyü ve adedi belirterek teklif isteyebilirsiniz."}</p>
+            <Link href={filters.kategori === "baski-tasarimlari" ? "/kisiye-ozel?talep=baski" : "/kisiye-ozel"} className="mt-2 inline-block font-medium text-cocoa underline">Kişiye özel teklif iste</Link>
+          </div>
+        ) : products.some((product) => product.type === "digital" && !product.isDemo) && (
+          <p className="mt-5 text-[0.9375rem] text-umber">
+            {embroideryOfferText} {!checkoutOpen && "Online ödeme şu anda kapalı."}
+          </p>
+        )}
+
         {/* Example quick search controls */}
         <div className="mt-5">
           <p className="mb-2 text-[0.875rem] text-umber">Hızlı aramalar</p>
@@ -348,8 +362,7 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
             <span className="tabular-nums font-medium text-ink">
               {total}
             </span>{" "}
-            ürün gösteriliyor{" "}
-            <span className="text-stone">(Demo katalog)</span>
+            ürün gösteriliyor
           </p>
         </div>
 

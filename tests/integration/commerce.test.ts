@@ -72,6 +72,29 @@ describe("cart", () => {
     expect((await call(couponRoute, "POST", "/api/cart/coupon", { code: "NOPE" })).status).toBeGreaterThanOrEqual(400);
   });
 
+  it("discounts three and five distinct real embroidery designs, without counting duplicate formats or physical items", async () => {
+    const { rose, cicek, mono, draft, archived, towel } = await seedWithFile();
+    await db.product.updateMany({ where: { id: { in: [draft.id, archived.id] } }, data: { status: "ACTIVE" } });
+    const { email } = await signup();
+    const user = await db.user.findUniqueOrThrow({ where: { email } });
+    const add = (productId: string, format?: string) => addItem({ userId: user.id }, { productId, format, quantity: 1 });
+
+    await add(rose.id, "VP3");
+    await add(rose.id, "PES");
+    expect((await add(cicek.id, "VP3")).discountKurus).toBe(0);
+    expect(await add(mono.id, "PES")).toMatchObject({ embroideryDiscountPercent: 10, discountKurus: 10000 });
+    await add(draft.id, "VP3");
+    await add(towel.id);
+    expect(await add(archived.id, "VP3")).toMatchObject({ embroideryDiscountPercent: 20, discountKurus: 24000 });
+
+    await db.coupon.create({ data: { code: "SMALL", type: "FIXED", value: 500 } });
+    const response = await call(couponRoute, "POST", "/api/cart/coupon", { code: "SMALL" });
+    expect((await response.json()).cart).toMatchObject({ embroideryDiscountPercent: 20, discountKurus: 24000 });
+    const order = await checkout(user, { shippingAddress: ADDR });
+    expect(order.order.discountKurus).toBe(24000);
+    expect(await db.couponRedemption.count()).toBe(0);
+  });
+
   it("merges the guest cart into the account on login", async () => {
     const { rose } = await seedWithFile();
     await call(register, "POST", "/api/auth/register", { email: "m@example.com", password: "correct-horse-battery" }, { ip: "198.51.100.90" });
@@ -111,6 +134,12 @@ describe("checkout + payments", () => {
     __resetEnvForTests();
     try {
       await expect(checkout(user, {})).rejects.toThrow("Demo ürünler siparişe açık değil.");
+      expect(await db.order.count()).toBe(0);
+      expect(await db.payment.count()).toBe(0);
+      expect(await db.cartItem.count()).toBe(1);
+
+      await db.product.update({ where: { id: rose.id }, data: { isDemo: false } });
+      await expect(checkout(user, {})).rejects.toThrow("Online ödeme şu anda kapalı.");
       expect(await db.order.count()).toBe(0);
       expect(await db.payment.count()).toBe(0);
       expect(await db.cartItem.count()).toBe(1);

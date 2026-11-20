@@ -51,7 +51,7 @@ export function HomeShowcaseTabs({
             Atölyeden seçilmiş parçalar
           </h2>
           <p className="mt-2 max-w-[54ch] text-[1rem] text-umber">
-            Her biri kendi makine formatları veya kumaş dokusuyla detaylandırılmış demo koleksiyon vitrini.
+            Özgün makine nakışı desenlerini dikiş önizlemeleri ve dosya formatlarıyla keşfedin.
           </p>
         </div>
 
@@ -82,6 +82,13 @@ export function HomeShowcaseTabs({
           })}
         </div>
       </div>
+
+      {products.length === 0 && (activeTab === "fiziksel" || activeTab === "kisisel") && (
+        <div className="mt-8 text-[0.9375rem] text-umber">
+          <p>İşlemeli tekstil için yüzey, ölçü ve adet bilgisiyle teklif isteyebilirsiniz.</p>
+          <Link href="/kisiye-ozel" className="mt-2 inline-block font-medium text-cocoa underline">Kişiye özel teklif iste</Link>
+        </div>
+      )}
 
       <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
         {products.map((product) => (

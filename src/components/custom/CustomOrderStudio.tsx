@@ -24,6 +24,7 @@ const ORDER_STAGES = [
 export function CustomOrderStudio() {
   const searchParams = useSearchParams();
   const initialText = searchParams.get("yazi") ?? "Defne";
+  const printRequest = searchParams.get("talep") === "baski";
 
   const [orderType, setOrderType] = useState<
     "İsim ve Monogram İşleme" | "Özel Dijital Nakış Dosyası" | "Kurumsal Logo Nakışı"
@@ -41,6 +42,7 @@ export function CustomOrderStudio() {
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [note, setNote] = useState("");
+  const [quantity, setQuantity] = useState("1");
   const [referenceFileName, setReferenceFileName] = useState<string | null>(null);
   const [referencePreviewUrl, setReferencePreviewUrl] = useState<string | null>(
     null
@@ -91,7 +93,13 @@ export function CustomOrderStudio() {
       fd.set("machineModel", machineBrand);
       fd.set("format", fileFormat);
     }
-    if (note.trim()) fd.set("notes", note.trim());
+    const details = [
+      printRequest && "Talep türü: Tekstil baskısı",
+      !isDigitalRequest && "Yüzey: " + (SURFACE_OPTIONS.find((option) => option.id === surface)?.label ?? ""),
+      !isDigitalRequest && "Adet: " + quantity,
+      note.trim(),
+    ].filter(Boolean);
+    if (details.length) fd.set("notes", details.join("\n"));
     if (deadline) fd.set("deadline", deadline);
     if (budget.trim()) fd.set("budgetTl", budget.trim());
     fd.set("consent", "true");
@@ -260,6 +268,23 @@ export function CustomOrderStudio() {
                   ))}
                 </div>
               </div>
+
+              {printRequest && <p className="text-[0.9375rem] text-umber">Tekstil baskısı için referans görseli ve istenen ayrıntıları ekleyebilirsiniz.</p>}
+
+              {!isDigitalRequest && (
+                <label className="block">
+                  <span className="mb-1.5 block text-[0.875rem] font-medium text-ink">Adet</span>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    required
+                    value={quantity}
+                    onChange={(event) => setQuantity(event.target.value)}
+                    className="h-11 w-full border border-hairline-strong bg-ivory px-3 text-[0.9375rem] text-ink focus:border-cocoa focus:outline-none sm:w-32"
+                  />
+                </label>
+              )}
 
               {/* Surface + Desired Size */}
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
