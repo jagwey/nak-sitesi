@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CATEGORIES } from "@/data/categories";
 import { getSiteSettings } from "@/server/modules/settings/service";
@@ -12,14 +11,10 @@ export async function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-12">
           {/* Brand Column */}
           <div className="space-y-5 lg:col-span-4">
-            <Link href="/" className="inline-block" aria-label="Tülay Birer Ana Sayfa">
-              <Image
-                src="/brand/tulay-birer-logo.png"
-                alt="Tülay Birer"
-                width={150}
-                height={135}
-                className="h-28 w-auto object-contain"
-              />
+            <Link href="/" className="inline-block" aria-label="Nakış Sitesi Ana Sayfa">
+              <span className="font-display text-[2rem] font-medium leading-none tracking-[-0.01em] text-[#F6F2EA]">
+                Nakış Sitesi
+              </span>
             </Link>
             <p className="max-w-[38ch] text-[0.9375rem] leading-relaxed text-[#CBBFA9]">
               PFAFF VP3 ve çoklu makine uyumlu özgün nakış desenleri, doğal keten ev tekstilleri ve kişiye özel monogram atölyesi.
@@ -161,7 +156,7 @@ export async function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-14 flex flex-col gap-3 border-t border-[#4A3B31] pt-6 text-[0.875rem] text-[#A89A84] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Tülay Birer. Tüm hakları saklıdır.</p>
+          <p>© {new Date().getFullYear()} Nakış Sitesi. Tüm hakları saklıdır.</p>
           <p>
             Tasarım önizleme sürümü: Katalog görselleri ve fiyatları yönetim panelinden güncellenebilir demo verileridir.
           </p>

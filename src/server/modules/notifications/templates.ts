@@ -23,7 +23,7 @@ function layout(opts: { title: string; paragraphs: string[]; cta?: { label: stri
   return `<!doctype html><html lang="tr"><body style="margin:0;padding:0;background:#FAF8F3">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#FAF8F3"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#FFFFFF;border:1px solid #EDE4D6">
-<tr><td style="padding:28px 32px 8px;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:26px;color:#4A372C;letter-spacing:.02em">Tülay Birer</td></tr>
+<tr><td style="padding:28px 32px 8px;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:26px;color:#4A372C;letter-spacing:.02em">Nakış Sitesi</td></tr>
 <tr><td style="padding:8px 32px 32px;font-family:Manrope,Arial,Helvetica,sans-serif">
 <h1 style="margin:16px 0;font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#242320">${esc(opts.title)}</h1>
 ${paras}${cta}${foot}

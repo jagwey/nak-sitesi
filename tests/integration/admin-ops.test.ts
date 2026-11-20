@@ -153,7 +153,7 @@ describe("settings and KVKK", () => {
     expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { instagramUrl: "javascript:alert(1)" } })).status).toBe(400);
     expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { announcementLink: "javascript:alert(1)" } })).status).toBe(400);
     expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { whatsapp: "https://evil.example/x" } })).status).toBe(400);
-    expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { instagramUrl: "https://instagram.com/tulaybirer" } })).status).toBe(200);
+    expect((await call(settingsPut, "PUT", "/api/admin/settings", { site: { instagramUrl: "https://instagram.com/nakissitesi" } })).status).toBe(200);
   });
 
   it("anonymize keeps order totals but removes personal data", async () => {

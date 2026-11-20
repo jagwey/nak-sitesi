@@ -387,7 +387,7 @@ export default async function HomePage() {
             </h2>
 
             <p className="max-w-[52ch] text-[1rem] leading-relaxed text-umber">
-              Tülay Birer atölyesinde her makine nakışı deseni yalnızca ekranda çizilip bırakılmaz; dikiş yönü, alt dikiş dengesi ve renk geçişleri doğal keten ile pamuklu kumaşlar üzerinde tek tek denenir.
+              Burada her makine nakışı deseni yalnızca ekranda çizilip bırakılmaz; dikiş yönü, alt dikiş dengesi ve renk geçişleri doğal keten ile pamuklu kumaşlar üzerinde tek tek denenir.
             </p>
 
             <p className="max-w-[52ch] text-[1rem] leading-relaxed text-umber">

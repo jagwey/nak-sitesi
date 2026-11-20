@@ -4,16 +4,16 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_USER: tulay
-      POSTGRES_PASSWORD: tulay_dev_password
-      POSTGRES_DB: tulay
+      POSTGRES_USER: nakis
+      POSTGRES_PASSWORD: nakis_dev_password
+      POSTGRES_DB: nakis
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./docker/init-db.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tulay -d tulay"]
+      test: ["CMD-SHELL", "pg_isready -U nakis -d nakis"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -26,8 +26,8 @@ services:
     restart: unless-stopped
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
-      MINIO_ROOT_USER: tulay_minio
-      MINIO_ROOT_PASSWORD: tulay_minio_dev_secret
+      MINIO_ROOT_USER: nakis_minio
+      MINIO_ROOT_PASSWORD: nakis_minio_dev_secret
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -39,8 +39,8 @@ services:
     depends_on: [minio]
     restart: on-failure
     environment:
-      MC_HOST_local: http://tulay_minio:tulay_minio_dev_secret@minio:9000
-    command: ["mb", "--ignore-existing", "local/tulay-private"]
+      MC_HOST_local: http://nakis_minio:nakis_minio_dev_secret@minio:9000
+    command: ["mb", "--ignore-existing", "local/nakis-private"]
 
   mc-public:
     image: cgr.dev/chainguard/minio-client:latest
@@ -49,8 +49,8 @@ services:
         condition: service_completed_successfully
     restart: on-failure
     environment:
-      MC_HOST_local: http://tulay_minio:tulay_minio_dev_secret@minio:9000
-    command: ["mb", "--ignore-existing", "local/tulay-public"]
+      MC_HOST_local: http://nakis_minio:nakis_minio_dev_secret@minio:9000
+    command: ["mb", "--ignore-existing", "local/nakis-public"]
 
   mc-policy:
     image: cgr.dev/chainguard/minio-client:latest
@@ -59,8 +59,8 @@ services:
         condition: service_completed_successfully
     restart: on-failure
     environment:
-      MC_HOST_local: http://tulay_minio:tulay_minio_dev_secret@minio:9000
-    command: ["anonymous", "set", "download", "local/tulay-public"]
+      MC_HOST_local: http://nakis_minio:nakis_minio_dev_secret@minio:9000
+    command: ["anonymous", "set", "download", "local/nakis-public"]
 
   mailpit:
     image: axllent/mailpit:latest

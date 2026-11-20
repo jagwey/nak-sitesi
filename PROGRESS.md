@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## 2026-11-19 — Logo nakış dosyaları (VP3)
-- [x] Duhanedoku + Tülay Birer logoları VP3'e dijitalize edildi (pyembroidery tabanlı kendi dijitalizer).
+- [x] Duhanedoku + site logoları VP3'e dijitalize edildi (pyembroidery tabanlı kendi dijitalizer).
 - Çıktı: `C:\Users\Osman\OneDrive\Belgeler\ChatGPT\Nakış desen üretimi\Profesyonel_v5\` (VP3 + önizleme PNG + OKUBENI.md + nakis_raporu.json)
 - Araç: `...\Nakış desen üretimi\araç\digitize.py`, `make_logos.py`
 - [ ] Gerçek makinede test dikişi (kullanıcı)
@@ -28,7 +28,7 @@
 - [ ] Açık: galeri yakınlaştır düğmesi fotoğraf üstünde, kart tür satırı mobilde kayıyor, bazı sayfalar PRODUCTS'ı doğrudan okuyor
 
 ## 2026-11-19 — Backend Faz A (temel)
-- [x] docker-compose (postgres:17 :5433 tulay+tulay_test, minio, mailpit), .env/.env.example, Prisma 7 şema + init migration (pg_trgm/unaccent GIN), seed (11 demo ürün, isDemo), `admin:create`
+- [x] docker-compose (postgres:17 :5433 nakis+nakis_test, minio, mailpit), .env/.env.example, Prisma 7 şema + init migration (pg_trgm/unaccent GIN), seed (11 demo ürün, isDemo), `admin:create`
 - [x] `src/server/*`: env, db, http `route()`, errors, rate-limit, audit, crypto; auth (argon2id, session, rbac), e-posta (Mailpit/console), account (adresler, IDOR güvenli); API: /api/auth/*, /api/me/*
 - [x] vitest: 20/20 (4 unit + 16 integration; npm test eski search testi dahil), lint temiz, build OK
 - [ ] Açık: ödeme/sipariş/indirme/admin API'leri sonraki faz; UI değişmedi
@@ -66,10 +66,15 @@
 11a: lint/test(97)/build OK
 11b: screenshots/phase3-ops (admin siparisler/ozel-siparisler/ayarlar + 6 sayfa + kisiye-ozel, 390/1440): overflow yok, konsol hatasi yok. D2 bitti. Not: dev DB'de d2shots@/d2shots2@example.com test adminleri var (parola kayitli degil).
 - 2026-11-20 — Faz D1+D2 doğrulandı (ana oturum): lint temiz, vitest 97/97 (13 dosya), build OK. Sıradaki: ajan E (şema düzeltme + E2E) ve DOCS paralel
-- [E] alt-görev 1: migration 20261120120000_phase3_custom_order_fields (CustomOrder sütunları, Category SEO, User.anonymizedAt + co.meta/co.token veri taşıma) tulay+tulay_test'e uygulandı; custom-orders/admin kategori/anonymize gerçek sütunlara geçti; testler yeşil
+- [E] alt-görev 1: migration 20261120120000_phase3_custom_order_fields (CustomOrder sütunları, Category SEO, User.anonymizedAt + co.meta/co.token veri taşıma) nakis+nakis_test'e uygulandı; custom-orders/admin kategori/anonymize gerçek sütunlara geçti; testler yeşil
 - 2026-11-20 — DOCS: DATABASE_SCHEMA.md ve API_DOCUMENTATION.md yazıldı (docs ajanı)
 - 2026-11-20 — DOCS: ARCHITECTURE, SECURITY, PAYMENT_INTEGRATION, DEPLOYMENT yazıldı; .env.example yorumları Türkçeleştirildi (docs ajanı)
 - [E] alt-görev 2: AnnouncementBar akışa alındı (layout: bar in-flow + sticky h-0 sarmalayıcı, Header absolute); 390/1440 ekran görüntüleri screenshots/phase3-e, taşma yok, bar tekrar kapatıldı (scripts/set-announce.ts on|off)
 - 2026-11-20 — DOCS: AGENTS.md (Faz 3 kuralları) güncellendi (docs ajanı)
 - 2026-11-20 — DOCS: README, BACKEND_REQUIREMENTS, PROJECT_STATUS, TEST_REPORT, ADMIN_GUIDE yazıldı; tüm belge listesi tamam (docs ajanı)
 - 2026-11-20 — [E] alt-görev 3-5: Playwright E2E 8 test yeşil (tests/e2e, seed tsx alt-süreçte); dev test adminleri silindi; lint temiz. Ek 7-10: güvenlik başlıkları (next.config.ts CSP/HSTS prod), env.ts doğrulama (simülasyon sırrı zorunlu, fallback yok, UPLOAD_MAX_MB uygulandı), new_custom_order admin e-postası, customer:write izni (status/resend/anonymize). vitest 14 dosya/100 test, build OK.
+
+## 2026-11-20 — Nötr yeniden adlandırma (Nakış Sitesi)
+- [x] Kişi/marka adı her yerden kaldırıldı; ad "Nakış Sitesi", slug `nakis-sitesi`, DB `nakis`/`nakis_test` (rol `nakis`), kovalar `nakis-private`/`nakis-public` (yerel altyapı taşındı, nesneler kopyalandı); Header/Footer/Admin/Hakkımızda metin wordmark; icon.tsx + opengraph-image.tsx nötr; logo/ ve public/brand/ git dışı (.gitignore, dosyalar diskte)
+- [x] AGENTS.md §2 ve DESIGN_SYSTEM.md logo kuralı güncellendi; lint, test 100/100, build, e2e 8/8 yeşil; ekran görüntüleri screenshots/rebrand/
+- 2026-11-20 — Nötr ad 'Nakış Sitesi' doğrulandı (ana oturum): grep boş, lint/test 100/100/e2e 8/8/build OK; git geçmişi tek kök commit'e indirildi, force push.

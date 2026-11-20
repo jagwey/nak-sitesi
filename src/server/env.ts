@@ -30,7 +30,7 @@ const schema = z
     SMTP_PORT: z.coerce.number().int().default(1025),
     SMTP_USER: z.string().default(""),
     SMTP_PASS: z.string().default(""),
-    SMTP_FROM: z.string().default("Tülay Birer <no-reply@localhost>"),
+    SMTP_FROM: z.string().default("Nakış Sitesi <no-reply@localhost>"),
     ADMIN_NOTIFY_EMAIL: z.union([z.literal(""), z.email()]).default(""),
 
     PAYMENT_PROVIDER: z.enum(["none", "simulated", "iyzico", "paytr"]).default("none"),

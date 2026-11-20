@@ -3,9 +3,9 @@
 Bu dosyayı oku, ardından `YAPILACAKLAR.md` (yapılan/yapılacak listesi) ve `PROGRESS.md` (adım adım ayrıntı) dosyalarına bak. Bağlayıcı kurallar `AGENTS.md` içinde: logo değişmez, yalnız iki font, sabit renk paleti, uydurma format/fiyat/yasal metin yok, fiyatlar `priceKurus` (tamsayı kuruş).
 
 ## Proje
-Tülay Birer nakış e-ticaret sitesi. Fiziksel ürünler, dijital nakış dosyaları (VP3/PES…) ve kişiye özel sipariş satıyor.
+Nakış Sitesi nakış e-ticaret sitesi. Fiziksel ürünler, dijital nakış dosyaları (VP3/PES…) ve kişiye özel sipariş satıyor.
 - **Uygulama:** Next.js (sürümü eğitim verisinden farklı, `node_modules/next/dist/docs/` oku), Tailwind, TypeScript.
-- **Veri:** Prisma 7 + PostgreSQL 17 (docker, port 5433; `tulay` ve `tulay_test` veritabanları), pg_trgm/unaccent arama.
+- **Veri:** Prisma 7 + PostgreSQL 17 (docker, port 5433; `nakis` ve `nakis_test` veritabanları), pg_trgm/unaccent arama.
 - **Dosya ve e-posta:** MinIO özel depolama, Mailpit e-posta.
 - **Test:** vitest (entegrasyon), Playwright.
 
@@ -29,7 +29,7 @@ npm run dev
 - **`npm run dev`:** siteyi http://localhost:3000, yönetim panelini /admin adresinde açar.
 
 `.env` doldurma: docker-compose.yml'deki yerel geliştirme değerleri `.env`'e yazılır.
-- `DATABASE_URL`, `DATABASE_URL_TEST`: kullanıcı `tulay`, parola compose dosyasındaki `POSTGRES_PASSWORD`, port 5433, veritabanları `tulay` ve `tulay_test`.
+- `DATABASE_URL`, `DATABASE_URL_TEST`: kullanıcı `nakis`, parola compose dosyasındaki `POSTGRES_PASSWORD`, port 5433, veritabanları `nakis` ve `nakis_test`.
 - `S3_ACCESS_KEY`, `S3_SECRET_KEY`: compose dosyasındaki `MINIO_ROOT_USER` ve `MINIO_ROOT_PASSWORD`.
 - `SESSION_SECRET`: en az 32 karakterlik rastgele bir değer.
 - `PAYMENT_PROVIDER=none`. Yerel testte `PAYMENT_SIMULATION_ENABLED=true` ve `PAYMENT_SIMULATION_SECRET` (rastgele bir değer) gerekir.
@@ -65,19 +65,12 @@ Bir oturumun hakkı veya tokeni her an bitebilir. Push edilmemiş iş kaybolmuş
 
 Son doğrulama: lint temiz, 97/97 test, build başarılı.
 
-**Push anında yarım kalan iş (ajan "E"):** Push bu iş bitmeden yapıldı. Yeni oturum önce lint, test ve build çalıştırıp durumu doğrulamalı. Kalemler:
-- Şema düzeltmesi ve migration `20261120120000_phase3_custom_order_fields`. Bitti.
-- Duyuru çubuğu çakışma düzeltmesi. Bitti.
-- Playwright E2E testleri.
-- Güvenlik başlıkları (CSP/HSTS).
-- Env doğrulaması ve sabit simülasyon sırrının kaldırılması.
-- Özel talep için admin e-postası.
-- Müşteri yetki uyumu.
-- TEST_REPORT'a E2E bölümü.
-- Dev veritabanındaki test yöneticilerinin silinmesi: `d1-admin@example.com`, `d2shots@example.com`, `d2shots2@example.com`.
+**Push anında yarım kalan iş:** yok. Ajan E kalemlerinin hepsi bitti. Son doğrulama (2026-11-20, nötr ad sonrası): `npm run lint` temiz, `npm test` 14 dosya / 100/100 (commerce eşzamanlı indirme testi MinIO yeniden başlatıldıktan hemen sonra 1 kez flaky fail verdi, tekrarında geçti), `npm run test:e2e` 8/8, `npm run build` OK.
+
+**Ad değişikliği:** site adı nötr "Nakış Sitesi"; logo ve sahip bilgisi yok (sonra eklenecek). Yerel DB `nakis`/`nakis_test`, kovalar `nakis-private`/`nakis-public`. `logo/` ve `public/brand/` diskte duruyor ama git dışı.
 
 ## Yapılacaklar (öncelik sırası)
-1. Ajan E kalemlerini bitir; `npm run lint`, `npx vitest run` ve `npm run build` yeşil olsun.
+1. ~~Ajan E kalemleri~~ bitti.
 2. Teknik borç: import döngüleri (cart↔orders, orders↔payments, settings↔orders). Bazı route'lar `route()` yerine doğrudan `Response.json` kullanıyor.
 3. Phase 2'den kalan küçük kusurlar: galerideki yakınlaştır düğmesi fotoğrafın üstünde; ürün kartındaki tür satırı mobilde kayıyor.
 4. Gerçek ödeme sağlayıcısı (iyzico/PayTR) bağlanacak; müşterinin hesap bilgileri gerekli. Rehber: `PAYMENT_INTEGRATION.md`.

@@ -52,7 +52,7 @@ Production'da `env.ts` şunları reddeder: `PAYMENT_SIMULATION_ENABLED=true`, `P
 - Not: yönetici bildirimi (`ADMIN_NOTIFY_EMAIL`) şu an kodda kullanılmıyor.
 
 ## 5. Zamanlanmış iş (cron)
-`npm run jobs:release-reservations` her **2–5 dakikada** bir çalıştırılmalı: süresi dolan stok rezervasyonlarını serbest bırakır, ödenmemiş siparişleri iptal eder. Örnek (Linux cron): `*/5 * * * * cd /app && npm run jobs:release-reservations >> /var/log/tulay-jobs.log 2>&1`. İş `DATABASE_URL`'ye ihtiyaç duyar. Çalışmazsa stok rezerve kalır.
+`npm run jobs:release-reservations` her **2–5 dakikada** bir çalıştırılmalı: süresi dolan stok rezervasyonlarını serbest bırakır, ödenmemiş siparişleri iptal eder. Örnek (Linux cron): `*/5 * * * * cd /app && npm run jobs:release-reservations >> /var/log/nakis-jobs.log 2>&1`. İş `DATABASE_URL`'ye ihtiyaç duyar. Çalışmazsa stok rezerve kalır.
 
 ## 6. Yedekleme
 - PostgreSQL: günlük otomatik yedek + zaman noktasına dönüş (PITR) tercih edilir; yedekten geri dönüşü **deneyin**.

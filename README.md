@@ -1,6 +1,6 @@
-# Tülay Birer — Nakış E-Ticaret Platformu
+# Nakış Sitesi — Nakış E-Ticaret Platformu
 
-Tülay Birer için dijital nakış desenleri ve el yapımı/kişiye özel ürünler satan e-ticaret sitesi ve yönetim paneli. Vitrin, sepet/ödeme akışı, hesabım, kişiye özel sipariş talepleri ve Tülay Hanım'ın günlük işini yönettiği admin paneli aynı projede çalışır.
+Dijital nakış desenleri ve el yapımı/kişiye özel ürünler satan e-ticaret sitesi ve yönetim paneli. Vitrin, sepet/ödeme akışı, hesabım, kişiye özel sipariş talepleri ve günlük işin yönetildiği admin paneli aynı projede çalışır.
 
 ## Teknoloji
 
@@ -54,8 +54,8 @@ src/server/modules/ alan modülleri (auth, catalog, cart, orders, payments, down
 prisma/             schema.prisma, migrations, seed.ts, script-client.ts
 scripts/            admin:create, rezervasyon işi, arama yeniden dizinleme
 tests/              unit, integration, fixtures, setup (+ e2e)
-public/brand/       logo dosyaları (değiştirilmez)
-logo/               orijinal logo (silinmez/değiştirilmez)
+public/brand/       (git dışı) ileride eklenecek logo dosyaları
+logo/               (git dışı) yerel orijinal logo (silinmez/değiştirilmez)
 docker/             Postgres ilk kurulum betiği
 ```
 
@@ -63,7 +63,7 @@ docker/             Postgres ilk kurulum betiği
 
 | Belge | İçerik |
 |---|---|
-| `ADMIN_GUIDE.md` | Tülay Hanım için panel kullanım kılavuzu (teknik olmayan) |
+| `ADMIN_GUIDE.md` | Mağaza yönetimi için panel kullanım kılavuzu (teknik olmayan) |
 | `ARCHITECTURE.md` | Mimari, modül haritası, istek akışı |
 | `DATABASE_SCHEMA.md` | Veritabanı modelleri ve kısıtlar |
 | `API_DOCUMENTATION.md` | Tüm API uçları |

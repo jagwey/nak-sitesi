@@ -1,4 +1,4 @@
-// Tulay Birer - production schema. Money is ALWAYS integer kurus (Int). Never Float/Decimal.
+// Nakış Sitesi - production schema. Money is ALWAYS integer kurus (Int). Never Float/Decimal.
 // Orders snapshot everything they need so archiving/changing catalog data never rewrites history.
 
 generator client {

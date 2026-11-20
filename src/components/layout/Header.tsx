@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -109,19 +108,11 @@ export function Header() {
 
             <Link
               href="/"
-              aria-label="Tülay Birer Ana Sayfa"
-              className="group flex shrink-0 items-center gap-2.5 py-1 sm:gap-3"
+              aria-label="Nakış Sitesi Ana Sayfa"
+              className="group flex min-h-8 shrink-0 items-center py-1 sm:min-h-11"
             >
-              <Image
-                src="/brand/tulay-birer-monogram.png"
-                alt="Tülay Birer TB monogram logosu"
-                width={44}
-                height={44}
-                priority
-                className="h-8 w-auto object-contain sm:h-11"
-              />
               <span className="font-display whitespace-nowrap text-[1.15rem] font-medium leading-none tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-gold-text sm:text-[1.6rem]">
-                Tülay Birer
+                Nakış Sitesi
               </span>
             </Link>
           </div>

@@ -1,4 +1,4 @@
-# Tülay Birer — Proje Durumu
+# Nakış Sitesi — Proje Durumu
 
 ## Genel durum
 - **Aşama 1–2 (ön yüz, tasarım incelemesi):** tamamlandı, müşteri onaylı vitrin.

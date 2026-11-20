@@ -1,7 +1,7 @@
-# Tülay Birer — Tasarım Sistemi (DESIGN_SYSTEM.md)
+# Nakış Sitesi — Tasarım Sistemi (DESIGN_SYSTEM.md)
 
 ## 1. Marka Karakteri ve Tasarım Felsefesi
-**Tülay Birer** çevrimiçi mağazası; *quiet luxury*, *editorial commerce*, *artisan craftsmanship* ve modern Avrupa butik tekstil estetiğini birleştirir.
+**Nakış Sitesi** çevrimiçi mağazası; *quiet luxury*, *editorial commerce*, *artisan craftsmanship* ve modern Avrupa butik tekstil estetiğini birleştirir.
 
 - Tasarım, yapay zekâ şablonlarından (neon degrade, her yerde glassmorphism, kart içi kart kutular, başlık üstü gereksiz rozetler, sahte satış/yorum rozetleri) bilinçli olarak arındırılmıştır.
 - Tüm hiyerarşi **doğal ışıkla çekilmiş nakış fotoğrafçılığı**, **mimari serif tipografi**, **ince `1px` çizgiler** ve **sıcak ham keten tonları** üzerine kuruludur.
@@ -9,9 +9,8 @@
 ## 2. Logo Kullanımı
 Orijinal logo dosyası `logo/WhatsApp Image 2026-11-19 at 21.35.42.jpeg` hiç değiştirilmeden korunur.
 
-- **Ana Şeffaf Logo**: `public/brand/tulay-birer-logo.png` (Masaüstü header, footer, hakkımızda sayfası) — orijinal oranlar, altın TB monogramı, makas figürü, *Tülay Birer* imzası ve alt süsleme korunmuştur.
-- **TB Monogram Simgesi**: `public/brand/tulay-birer-monogram.png` — küçük boyutlarda yüksek okunabilirlik için orijinal logonun üst TB + makas bölümü bozulmadan çıkarılmıştır (mobil header ve uygulama simgesi).
-- **Favicon**: `src/app/icon.png` (512×512 `#FAF8F3` zemin üzerinde ortalanmış TB monogramı).
+- **Logo ve sahip bilgisi**: Logo ve sahip bilgisi henüz yok, sonra eklenecek; uydurma logo çizilmez, yeni marka adı uydurulmaz. Header, footer ve hakkımızda sayfasında geçici olarak Cormorant Garamond metin wordmark'ı "Nakış Sitesi" kullanılır.
+- **Favicon**: `src/app/icon.tsx` (nötr "N" harfi, paletten) ve `src/app/opengraph-image.tsx` (nötr "Nakış Sitesi" metni); gerçek logo gelene kadar geçicidir.
 
 ## 3. Renk Paleti ve WCAG AA Kontrast Dengesi
 | Token | Değer | Kullanım |

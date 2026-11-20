@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: product.name,
     description: product.subtitle,
     openGraph: {
-      title: `${product.name} | Tülay Birer`,
+      title: `${product.name} | Nakış Sitesi`,
       description: product.subtitle,
       images: [{ url: product.images[0].url, alt: product.images[0].alt }],
     },
@@ -41,7 +41,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     image: product.images.map((i) => i.url),
     brand: {
       "@type": "Brand",
-      name: "Tülay Birer",
+      name: "Nakış Sitesi",
     },
     offers: {
       "@type": "Offer",

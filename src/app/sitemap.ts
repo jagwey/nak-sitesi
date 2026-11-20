@@ -5,7 +5,7 @@ import { INFO_PAGES } from "@/data/site-content";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://tulaybirer.com";
+  const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
 
   const staticRoutes = [
     "",

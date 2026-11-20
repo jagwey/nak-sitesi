@@ -17,3 +17,7 @@ test-results/
 playwright-report/
 docker-data/
 *.log
+
+# logo / marka dosyaları (sahip bilgisi ve logo sonra eklenecek)
+logo/
+public/brand/

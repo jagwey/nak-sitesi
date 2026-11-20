@@ -7,7 +7,7 @@ import { getSiteSettings } from "@/server/modules/settings/service";
 export const metadata: Metadata = {
   title: "Hakkımızda ve Atölye",
   description:
-    "Tülay Birer nakış atölyesinin üretim disiplini, dijital desen kalitesi ve doğal tekstil yaklaşımı.",
+    "Nakış Sitesi'nin üretim disiplini, dijital desen kalitesi ve doğal tekstil yaklaşımı.",
 };
 
 export default async function HakkimizdaPage() {
@@ -21,26 +21,22 @@ export default async function HakkimizdaPage() {
             Geleneksel zarafetle modern makine nakışının buluşma noktası.
           </h1>
           <p className="max-w-[58ch] text-[1.0625rem] leading-relaxed text-umber">
-            Tülay Birer, hem kendi makinesinde üretim yapan zanaatkârlara yönelik yüksek hassasiyetli dijital nakış dosyaları hem de evlere kalıcı sıcaklık katan işlemeli doğal tekstil ürünleri sunmak için tasarlanmış bir nakış atölyesidir.
+            Nakış Sitesi, hem kendi makinesinde üretim yapan zanaatkârlara yönelik yüksek hassasiyetli dijital nakış dosyaları hem de evlere kalıcı sıcaklık katan işlemeli doğal tekstil ürünleri sunmak için tasarlanmış bir nakış atölyesidir.
           </p>
           {about ? (
             <p className="max-w-[58ch] whitespace-pre-line text-[1.0625rem] leading-relaxed text-umber">{about}</p>
           ) : (
           <p className="text-[0.875rem] text-stone">
-            Not: Kurucunun kişisel biyografisi ve atölye hikâyesi yayın öncesinde yönetim panelinden doğrudan düzenlenebilir içerik alanı olarak güncellenecektir.
+            Marka adı ve sahip bilgisi yakında eklenecek. Atölye hikâyesi yayın öncesinde yönetim panelinden düzenlenebilir içerik alanı olarak güncellenecektir.
           </p>
           )}
         </div>
 
         <div className="flex justify-center lg:col-span-5">
           <div className="border border-hairline bg-surface p-10 sm:p-14">
-            <Image
-              src="/brand/tulay-birer-logo.png"
-              alt="Tülay Birer resmi logosu"
-              width={260}
-              height={234}
-              className="h-auto w-[220px] object-contain sm:w-[260px]"
-            />
+            <p className="font-display w-[220px] text-center text-[2.25rem] font-medium leading-tight tracking-[-0.01em] text-ink sm:w-[260px]">
+              Nakış Sitesi
+            </p>
           </div>
         </div>
       </div>
@@ -51,7 +47,7 @@ export default async function HakkimizdaPage() {
           <div className="relative aspect-[3/2] w-full overflow-hidden bg-linen">
             <Image
               src="/images/atelier-workbench.webp"
-              alt="Tülay Birer atölye çalışma masası ve makine nakışı uygulaması"
+              alt="Atölye çalışma masası ve makine nakışı uygulaması"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"

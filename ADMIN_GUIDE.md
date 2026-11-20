@@ -1,6 +1,6 @@
 # Yönetim Paneli Kullanım Kılavuzu
 
-Bu kılavuz Tülay Hanım ve mağazayı yönetecek kişiler içindir. Teknik bilgi gerekmez. Panelde bir şeyi yanlış yaparsanız çoğu işlem geri alınabilir; silme gibi geri dönüşü olmayan işlemlerde panel size önce sorar.
+Bu kılavuz mağazayı yönetecek kişiler içindir. Teknik bilgi gerekmez. Panelde bir şeyi yanlış yaparsanız çoğu işlem geri alınabilir; silme gibi geri dönüşü olmayan işlemlerde panel size önce sorar.
 
 ## 1. Giriş
 1. Tarayıcıda sitenin adresinin sonuna `/admin` yazın veya normal giriş sayfasından e-posta ve parolanızla girin.

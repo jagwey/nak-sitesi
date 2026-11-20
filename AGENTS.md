@@ -1,4 +1,4 @@
-# AGENTS.md — Tülay Birer E-Ticaret Platformu Geliştirme Rehberi
+# AGENTS.md — Nakış Sitesi E-Ticaret Platformu Geliştirme Rehberi
 
 Bu dosya, projeyi devralacak geliştirici veya yapay zekâ ajanları için bağlayıcı mimari ve tasarım kurallarını özetler.
 
@@ -13,7 +13,7 @@ Bu dosya, projeyi devralacak geliştirici veya yapay zekâ ajanları için bağl
 
 ## 2. Marka ve Logo Kuralı (Değiştirilemez)
 - Orijinal logo `logo/WhatsApp Image 2026-11-19 at 21.35.42.jpeg` dosyasında saklanır; asla silinmez veya değiştirilmez.
-- Şeffaf sürümler `public/brand/tulay-birer-logo.png` (tam logo) ve `public/brand/tulay-birer-monogram.png` (TB + makas simgesi) dosyalarındadır. Logoyu yeniden çizmeyin, oranlarını bozmayın, yeni logo uydurmayın.
+- Logo ve sahip bilgisi henüz yok, sonra eklenecek; uydurma logo çizilmez, yeni marka adı uydurulmaz.
 
 ## 3. Tasarım Sistemi Kuralları (`DESIGN_SYSTEM.md`)
 - Yalnızca iki font ailesi kullanılır: `Cormorant Garamond` (başlıklar) ve `Manrope` (gövde ve arayüz; sayısal değerlerde `tabular-nums`).

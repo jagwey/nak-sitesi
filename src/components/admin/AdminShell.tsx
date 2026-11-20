@@ -68,9 +68,8 @@ export function AdminShell({ permissions, userLabel, children }: { permissions: 
 
   const brand = (
     <Link href="/admin" className="flex items-center gap-3">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/tulay-birer-monogram.png" alt="Tülay Birer" className="h-9 w-auto" />
-      <span className="font-display text-lg leading-none text-ink">Yönetim</span>
+      <span className="font-display text-lg leading-none text-ink">Nakış Sitesi</span>
+      <span className="text-[0.8125rem] leading-none text-stone">Yönetim</span>
     </Link>
   );
 

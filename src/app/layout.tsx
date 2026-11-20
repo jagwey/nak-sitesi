@@ -26,15 +26,15 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tulaybirer.com"),
+  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "Tülay Birer | Makine Nakışı Desenleri ve İşlemeli Tekstil Atölyesi",
-    template: "%s | Tülay Birer",
+    default: "Nakış Sitesi | Makine Nakışı Desenleri ve İşlemeli Tekstil",
+    template: "%s | Nakış Sitesi",
   },
   description:
     "PFAFF VP3 ve çoklu makine uyumlu özgün dijital nakış desenleri, doğal keten işlemeli tekstil ürünleri ve kişiye özel monogram tasarımları.",
   openGraph: {
-    title: "Tülay Birer | Makine Nakışı Desenleri ve İşlemeli Tekstil",
+    title: "Nakış Sitesi | Makine Nakışı Desenleri ve İşlemeli Tekstil",
     description:
       "Özgün nakış desenlerini, özenle hazırlanan tekstil ürünlerini ve size özel tasarımları keşfedin.",
     locale: "tr_TR",
@@ -50,7 +50,7 @@ export default function RootLayout({
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Tülay Birer",
+    name: "Nakış Sitesi",
     description:
       "Makine nakışı desenleri, dijital nakış dosyaları, işlemeli tekstil ürünleri ve kişiye özel nakış atölyesi.",
   };

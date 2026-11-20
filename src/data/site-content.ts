@@ -60,8 +60,8 @@ export const EXAMPLE_SEARCHES = [
  * metinleri yayın öncesi yönetim panelinden tanımlanmalıdır.
  */
 export const STUDIO_SETTINGS = {
-  brandName: "Tülay Birer",
-  emailPlaceholder: "iletisim@tulaybirer.com (Yapılandırılabilir)",
+  brandName: "Nakış Sitesi",
+  emailPlaceholder: "E-posta adresi yakında eklenecek (yönetim panelinden yapılandırılır).",
   phonePlaceholder: "+90 (5XX) XXX XX XX (Yönetim panelinden tanımlanır)",
   addressPlaceholder: "Atölye adresi ve çalışma saatleri yayın öncesi yönetim panelinden eklenecektir.",
   freeShippingThresholdKurus: 150000, // 1.500,00 ₺
@@ -177,13 +177,13 @@ export const INFO_PAGES: Record<string, InfoPageContent> = {
   "kullanim-kosullari": {
     slug: "kullanim-kosullari",
     title: "Kullanım Koşulları",
-    lead: "Tülay Birer çevrimiçi mağazasının kullanımına ve fikri mülkiyet haklarına ilişkin genel esaslar.",
+    lead: "Nakış Sitesi çevrimiçi mağazasının kullanımına ve fikri mülkiyet haklarına ilişkin genel esaslar.",
     isLegalPlaceholder: true,
     sections: [
       {
         heading: "Fikri mülkiyet ve marka hakları",
         body: [
-          "Tülay Birer logosu, özgün nakış desenleri, dijital dosyalar ve görsel içerikler marka sahibine aittir; izinsiz çoğaltılamaz ve ticari amaçla dağıtılamaz.",
+          "Site logosu, özgün nakış desenleri, dijital dosyalar ve görsel içerikler marka sahibine aittir; izinsiz çoğaltılamaz ve ticari amaçla dağıtılamaz.",
         ],
       },
     ],
@@ -196,7 +196,7 @@ export const INFO_PAGES: Record<string, InfoPageContent> = {
       {
         heading: "Atölye iletişim bilgileri",
         body: [
-          "E-posta: iletisim@tulaybirer.com (Yönetim panelinden yapılandırılabilir)",
+          "E-posta: Yayın öncesi yönetim panelinden tanımlanacaktır.",
           "Telefon / WhatsApp: Yayın öncesi işletme sahibinin resmi hattı tanımlanacaktır.",
           "Adres: Resmi atölye adresi ve ziyaret saatleri yönetim panelinden güncellenecektir.",
         ],
