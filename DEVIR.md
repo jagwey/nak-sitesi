@@ -9,18 +9,50 @@ Tülay Birer nakış e-ticaret sitesi. Fiziksel ürünler, dijital nakış dosya
 - **Dosya ve e-posta:** MinIO özel depolama, Mailpit e-posta.
 - **Test:** vitest (entegrasyon), Playwright.
 
-## Çalıştırma
+## Kurulum (sıfırdan, Windows)
+Gerekenler: Node 20+, Docker Desktop, Git.
 ```bash
-docker compose up -d
+git clone https://github.com/jagwey/nak-sitesi.git && cd nak-sitesi
+cp .env.example .env
 npm install
-npx prisma migrate deploy
-npm run db:seed        # package.json'daki seed komutuna bak
-npm run dev            # site
-npm run lint           # tsc
-npx vitest run         # 97/97 test (son doğrulama)
+npm run db:up
+npm run db:deploy
+npm run db:seed
+npm run admin:create
+npm run search:reindex
+npm run dev
+```
+- **`npm install`:** `postinstall` adımında `prisma generate` kendiliğinden çalışır.
+- **`npm run db:up`:** Postgres (5433), MinIO (9000) ve Mailpit (1025 ve 8025) servislerini docker ile açar.
+- **`npm run db:seed`:** demo ürünleri yükler (`isDemo`).
+- **`npm run admin:create`:** ilk yönetici hesabını oluşturur. Parolayı kullanıcı kendisi girer.
+- **`npm run dev`:** siteyi http://localhost:3000, yönetim panelini /admin adresinde açar.
+
+`.env` doldurma: docker-compose.yml'deki yerel geliştirme değerleri `.env`'e yazılır.
+- `DATABASE_URL`, `DATABASE_URL_TEST`: kullanıcı `tulay`, parola compose dosyasındaki `POSTGRES_PASSWORD`, port 5433, veritabanları `tulay` ve `tulay_test`.
+- `S3_ACCESS_KEY`, `S3_SECRET_KEY`: compose dosyasındaki `MINIO_ROOT_USER` ve `MINIO_ROOT_PASSWORD`.
+- `SESSION_SECRET`: en az 32 karakterlik rastgele bir değer.
+- `PAYMENT_PROVIDER=none`. Yerel testte `PAYMENT_SIMULATION_ENABLED=true` ve `PAYMENT_SIMULATION_SECRET` (rastgele bir değer) gerekir.
+
+Canlı ortamın sırları repoya asla girmez.
+
+## Doğrulama (her iş sonunda)
+```bash
+npm run lint
+npm test
 npm run build
 ```
-Ortam değişkenleri: `.env.example` dosyasını `.env` olarak kopyala. Gerçek sırlar repoda yok.
+- `npm test`: arama testi ve vitest birlikte çalışır; son sonuç 97/97.
+- E2E testleri için `npm run test:e2e`; önce `npm run dev` açık olmalı.
+- Bunlardan biri kırmızıyken commit atılabilir, ama commit mesajında "WIP: kırmızı" yazmalı.
+
+## Anlık git kuralı (zorunlu)
+Her alt görev bitince şu üç adım yapılır:
+1. `PROGRESS.md`'ye bir satır ekle ve `YAPILACAKLAR.md`'de ilgili maddeyi işaretle.
+2. `git add -A && git commit -m "<kısa açıklama>"`
+3. `git push`
+
+Bir oturumun hakkı veya tokeni her an bitebilir. Push edilmemiş iş kaybolmuş sayılır.
 
 ## Durum
 **Bitti:**

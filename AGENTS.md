@@ -2,6 +2,9 @@
 
 Bu dosya, projeyi devralacak geliştirici veya yapay zekâ ajanları için bağlayıcı mimari ve tasarım kurallarını özetler.
 
+> **İlk iş (Codex dahil her yeni ajan):** `DEVIR.md`'yi oku. Kurulum, doğrulama ve sıradaki işler orada, açık iş listesi `YAPILACAKLAR.md`'de.
+> **Anlık git kuralı:** Her alt görev bitince sırasıyla `PROGRESS.md` ve `YAPILACAKLAR.md` güncellenir, `git add -A && git commit` yapılır, ardından `git push`. Uzak depo: https://github.com/jagwey/nak-sitesi (`main`). Sırlar (`.env`) asla commit edilmez.
+
 ## 1. Proje Durumu ve Aşama Kuralı
 - **Aktif Aşama**: Aşama 3 (backend + yönetim paneli) **onaylandı ve uygulandı**. Ön yüz tasarımı (Aşama 1–2) onaylıdır; ön yüz görünümünü onaysız değiştirmeyin.
 - Gerçek ödeme sağlayıcısı entegrasyonu, canlı veri ve canlıya alma müşteriden gelecek bilgilere bağlıdır (bkz. `PROJECT_STATUS.md`); bunları uydurmayın.
