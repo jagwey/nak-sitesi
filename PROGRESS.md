@@ -77,4 +77,4 @@
 ## 2026-11-20 — Nötr yeniden adlandırma (Nakış Sitesi)
 - [x] Kişi/marka adı her yerden kaldırıldı; ad "Nakış Sitesi", slug `nakis-sitesi`, DB `nakis`/`nakis_test` (rol `nakis`), kovalar `nakis-private`/`nakis-public` (yerel altyapı taşındı, nesneler kopyalandı); Header/Footer/Admin/Hakkımızda metin wordmark; icon.tsx + opengraph-image.tsx nötr; logo/ ve public/brand/ git dışı (.gitignore, dosyalar diskte)
 - [x] AGENTS.md §2 ve DESIGN_SYSTEM.md logo kuralı güncellendi; lint, test 100/100, build, e2e 8/8 yeşil; ekran görüntüleri screenshots/rebrand/
-- 2026-11-20 — Nötr ad 'Nakış Sitesi' doğrulandı (ana oturum): grep boş, lint/test 100/100/e2e 8/8/build OK; git geçmişi tek kök commit'e indirildi, force push.
+- 2026-11-20 — Nötr ad 'Nakış Sitesi' doğrulandı (ana oturum): grep boş, lint/test 100/100/e2e 8/8/build OK; eski commit geçmişi kullanıcı kararıyla olduğu gibi bırakıldı (sitede ad yok).

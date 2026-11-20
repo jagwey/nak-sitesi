@@ -8,7 +8,7 @@
 
 ## Yapılanlar
 - [x] Faz E — migration, E2E 8/8, güvenlik başlıkları, env doğrulama, özel talep e-postası, customer:write (lint temiz, test 100/100, build OK)
-- [x] Nötr ad "Nakış Sitesi": isim/logo kaldırıldı, sahip bilgisi yer tutucu, DB/kova `nakis`, ekran görüntüleri `screenshots/rebrand/` (yerel); git geçmişi tek kök commit
+- [x] Nötr ad "Nakış Sitesi": isim/logo kaldırıldı, sahip bilgisi yer tutucu, DB/kova `nakis`, ekran görüntüleri `screenshots/rebrand/` (yerel); eski git geçmişi kullanıcı kararıyla bırakıldı
 - [x] Phase 2 — premium tasarım incelemesi (lint temiz, test 10/10, build OK, 49/49 taşma yok)
 - [x] Faz A — altyapı: Docker (Postgres, MinIO, Mailpit), Prisma şema + migration, seed, auth/rol, e-posta (test 20/20)
 - [x] Faz B — katalog, arama, favori, depolama, dosya yükleme, nakış dosyası parse; UI veritabanına bağlı (test 68/68)
