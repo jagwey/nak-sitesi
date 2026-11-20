@@ -44,7 +44,7 @@
   --color-hairline-strong: var(--border-strong);
 
   --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
 }
 
 html {
@@ -59,15 +59,42 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.65;
+  font-size: 1.125rem;
+  line-height: 1.6;
   overflow-x: clip;
 }
 
 /* Strict editorial typography utilities */
 .font-display {
   font-family: var(--font-serif);
+  font-weight: 600;
   letter-spacing: -0.02em;
+}
+
+.btn-buy {
+  background-color: #85632B;
+  color: #FAF8F3;
+}
+
+.btn-buy:hover {
+  background-color: #6B4E22;
+}
+
+.badge-sale {
+  background-color: #85632B;
+  color: #FAF8F3;
+  font-weight: 650;
+  padding: 0.15rem 0.45rem;
+}
+
+/* Gövde ve arayüz metnini 17px altına düşürme. */
+.text-\[0\.75rem\] {
+  font-size: 0.875rem;
+}
+
+.text-\[0\.8125rem\],
+.text-\[0\.875rem\] {
+  font-size: 1.0625rem;
 }
 
 .tabular-nums {

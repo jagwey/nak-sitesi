@@ -26,9 +26,12 @@ export function CustomOrderStudio() {
   const initialText = searchParams.get("yazi") ?? "Defne";
   const printRequest = searchParams.get("talep") === "baski";
 
+  const hizmet = searchParams.get("hizmet");
   const [orderType, setOrderType] = useState<
     "İsim ve Monogram İşleme" | "Özel Dijital Nakış Dosyası" | "Kurumsal Logo Nakışı"
-  >("İsim ve Monogram İşleme");
+  >(
+    hizmet === "gorsel" ? "Özel Dijital Nakış Dosyası" : hizmet === "logo" ? "Kurumsal Logo Nakışı" : "İsim ve Monogram İşleme",
+  );
   const [surface, setSurface] =
     useState<MonogramPreviewConfig["surface"]>("towel");
   const [text, setText] = useState(initialText);
@@ -122,11 +125,19 @@ export function CustomOrderStudio() {
     <div className="mx-auto max-w-[1440px] px-4 pb-24 pt-[112px] sm:px-6 lg:px-10">
       <div className="border-b border-hairline pb-8">
         <div className="max-w-[66ch]">
-          <h1 className="font-display text-[clamp(2.2rem,4vw,3.35rem)] leading-[1.06] text-ink">
-            Kişiye Özel Nakış ve Tasarım Talebi
+          <h1 className="font-display text-[clamp(2.2rem,4vw,3.35rem)] font-semibold leading-[1.08] text-ink">
+            {hizmet === "gorsel"
+              ? "Görselden nakışa çevirme"
+              : hizmet === "parca"
+                ? "İsteğe özel parça siparişi"
+                : "Kişiye Özel Nakış ve Tasarım Talebi"}
           </h1>
-          <p className="mt-3 text-[1rem] text-umber">
-            İsim, monogram, kurum logosu veya kendi makineniz için özel dijital nakış dosyası talebinizi canlı önizleme ile hazırlayıp atölyemize iletebilirsiniz.
+          <p className="mt-3 text-[1.125rem] leading-relaxed text-umber">
+            {hizmet === "gorsel"
+              ? "Fotoğraf veya logonuzu yükleyin. Atölye inceler ve nakış dosyası için teklif verir. Yükleme otomatik dosya üretmez."
+              : hizmet === "parca"
+                ? "Havlu, keten veya giysi için yazı, ölçü ve adet yazın. Üretimden önce fiyat teklifi gelir."
+                : "İsim, monogram, kurum logosu veya kendi makineniz için özel dijital nakış dosyası talebinizi canlı önizleme ile hazırlayıp atölyemize iletebilirsiniz."}
           </p>
         </div>
       </div>

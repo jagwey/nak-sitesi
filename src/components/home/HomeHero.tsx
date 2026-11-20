@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import atelier from "../../../public/images/hero-atelier-linen.webp";
 import atelierMobile from "../../../public/images/hero-atelier-linen-mobile.webp";
 
-export const DEFAULT_HERO_TITLE = "Nakış makinesi desenleri ve el işi tekstiller";
+export { DEFAULT_HERO_TITLE } from "@/lib/hero";
 
 type HomeHeroProps = {
   title: string;
@@ -19,11 +19,11 @@ export function HomeHero({
     <section className="relative w-full overflow-hidden bg-[#F2EEE5] lg:flex lg:min-h-[82svh] lg:max-h-[860px] lg:items-center">
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 pb-8 pt-[104px] sm:px-6 lg:px-10 lg:py-24">
         <div className="max-w-[600px]">
-          <h1 className="font-display text-[clamp(2.4rem,4.8vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-ink">
+          <h1 className="font-display text-[clamp(2.35rem,4.4vw,4rem)] font-semibold leading-[1.08] tracking-[-0.02em] text-ink">
             {title}
           </h1>
 
-          <p className="mt-5 max-w-[52ch] text-[1.0625rem] leading-relaxed text-umber">
+          <p className="mt-5 max-w-[52ch] text-[1.125rem] leading-relaxed text-umber">
             {description}
           </p>
 

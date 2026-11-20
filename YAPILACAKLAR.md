@@ -6,6 +6,9 @@
 ## Şu an çalışan
 - (yok)
 
+## 2026-11-20 vitrin
+- [x] Okunabilir gövde (Inter, 18px), hizmet CTA’ları, kampanya bandı, kumaş önizlemesi, 32 özgün önizleme deseni. Deploy yok.
+
 ## Yapılanlar
 - [x] Faz E — migration, E2E 8/8, güvenlik başlıkları, env doğrulama, özel talep e-postası, customer:write (lint temiz, test 100/100, build OK)
 - [x] Nötr ad "Nakış Sitesi": isim/logo kaldırıldı, sahip bilgisi yer tutucu, DB/kova `nakis`, ekran görüntüleri `screenshots/rebrand/` (yerel); eski git geçmişi kullanıcı kararıyla bırakıldı

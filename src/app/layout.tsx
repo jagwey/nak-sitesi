@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import { ChromeGate } from "@/components/layout/ChromeGate";
 import { CartDrawer } from "@/components/layout/CartDrawer";
 import { FavoritesDrawer } from "@/components/layout/FavoritesDrawer";
@@ -21,10 +21,10 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const manrope = Manrope({
+const inter = Inter({
   subsets: ["latin", "latin-ext"],
   weight: "variable",
-  variable: "--font-manrope",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -67,7 +67,7 @@ export default async function RootLayout({
   return (
     <html
       lang="tr"
-      className={`${cormorant.variable} ${manrope.variable}`}
+      className={`${cormorant.variable} ${inter.variable}`}
     >
       <body className="min-h-screen bg-ivory font-sans text-ink antialiased">
         <script

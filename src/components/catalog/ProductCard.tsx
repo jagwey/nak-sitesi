@@ -116,7 +116,7 @@ export function ProductCard({ product, priority = false, fullImage = false, show
               <span className="tabular-nums text-[0.875rem] text-stone line-through">
                 {formatTRY(product.compareAtPriceKurus)}
               </span>
-              <span className="tabular-nums text-[0.875rem] font-medium text-gold-text">
+              <span className="badge-sale tabular-nums text-[0.875rem]">
                 %{discount} indirim
               </span>
             </>

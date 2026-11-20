@@ -27,6 +27,7 @@ import {
   THREAD_COLORS,
   type MonogramPreviewConfig,
 } from "@/components/custom/LiveMonogramPreview";
+import { FabricMockup } from "./FabricMockup";
 import { ProductGallery } from "./ProductGallery";
 import { DemoDataNote, ProductSpecs } from "./ProductSpecs";
 
@@ -124,6 +125,8 @@ export function ProductDetailClient({
 
   // Cart feedback: brief "added" state so the button never looks inert.
   const [justAdded, setJustAdded] = useState(false);
+  const ctaAnchorRef = useRef<HTMLDivElement>(null);
+  const [showDesktopBar, setShowDesktopBar] = useState(false);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
@@ -238,7 +241,7 @@ export function ProductDetailClient({
     );
 
   const ctaClass =
-    "flex items-center justify-center gap-2.5 bg-espresso px-5 text-[0.9375rem] font-semibold text-ivory transition-colors duration-200 hover:bg-cocoa disabled:cursor-not-allowed disabled:bg-hairline-strong disabled:text-ink";
+    "btn-buy flex items-center justify-center gap-2.5 px-5 text-[1.0625rem] font-semibold transition-colors duration-200 disabled:cursor-not-allowed disabled:bg-hairline-strong disabled:text-ink";
 
   const favoriteButton = (
     <button
@@ -251,6 +254,17 @@ export function ProductDetailClient({
       <Heart className={`h-5 w-5 ${fav ? "fill-cocoa text-cocoa" : ""}`} strokeWidth={1.6} />
     </button>
   );
+
+  useEffect(() => {
+    const node = ctaAnchorRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowDesktopBar(!entry.isIntersecting),
+      { threshold: 0.15 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [shopierUrl, showCartAction]);
 
   const physicalStockLine = product.physical
     ? product.physical.inStock
@@ -284,6 +298,14 @@ export function ProductDetailClient({
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="min-w-0 lg:col-span-7">
           <ProductGallery images={product.images} productName={product.name} />
+          {product.images[0] && (
+            <FabricMockup
+              imageUrl={product.images[0].url}
+              imageAlt={product.images[0].alt || product.name}
+              initialWidthMm={product.embroidery?.widthMm || 80}
+              initialHeightMm={product.embroidery?.heightMm || 80}
+            />
+          )}
         </div>
 
         <div className="min-w-0 lg:col-span-5">
@@ -314,7 +336,7 @@ export function ProductDetailClient({
                     <span className="tabular-nums text-[0.9375rem] text-stone line-through">
                       {formatTRY(product.compareAtPriceKurus)}
                     </span>
-                    <span className="tabular-nums text-[0.875rem] font-medium text-gold-text">
+                    <span className="badge-sale tabular-nums text-[1rem]">
                       %{discountPercent} indirim
                     </span>
                   </>
@@ -323,7 +345,7 @@ export function ProductDetailClient({
             </div>
 
             {shopierUrl && (
-              <div className="mt-4">
+              <div className="mt-4" ref={ctaAnchorRef}>
                 <div className="flex gap-3">
                   <a href={shopierUrl} className={`${ctaClass} h-13 min-w-0 flex-1`}>
                     <ShoppingBag className="h-[18px] w-[18px] shrink-0" strokeWidth={1.6} aria-hidden="true" />
@@ -812,7 +834,7 @@ export function ProductDetailClient({
             )}
 
             {/* Primary CTA + favourite */}
-            {!shopierUrl && <div className="mt-5 flex gap-3">
+            {!shopierUrl && <div className="mt-5 flex gap-3" ref={ctaAnchorRef}>
               {showCartAction && <button
                 type="button"
                 onClick={handleAddToCart}
@@ -935,7 +957,7 @@ export function ProductDetailClient({
       )}
 
       {/* Mobile sticky add-to-cart bar */}
-      {(shopierUrl || showCartAction) && <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-hairline bg-ivory/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+      {(shopierUrl || showCartAction) && <div className={`fixed inset-x-0 bottom-0 z-30 items-center justify-between gap-3 border-t border-cocoa bg-ivory/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(36,35,32,0.08)] backdrop-blur-md ${showDesktopBar ? "flex" : "flex lg:hidden"}`}>
         <div className="min-w-0">
           <p className="truncate text-[0.8125rem] text-umber">{product.name}</p>
           <p className="tabular-nums text-[1rem] font-semibold text-ink">

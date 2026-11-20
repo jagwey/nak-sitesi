@@ -114,7 +114,7 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
               className="group flex min-h-8 min-w-0 items-center gap-2 py-1 sm:min-h-11"
             >
               {logoUrl && <Image src={logoUrl} alt="" width={40} height={40} unoptimized className="h-7 w-7 shrink-0 object-contain sm:h-10 sm:w-10" />}
-              <span className="font-display truncate text-[1.15rem] font-medium leading-none tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-gold-text sm:text-[1.6rem]">
+              <span className="font-display truncate text-[1.25rem] font-semibold leading-none tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-gold-text sm:text-[1.7rem]">
                 {storeName}
               </span>
             </Link>
@@ -236,6 +236,22 @@ export function Header({ storeName, logoUrl }: { storeName: string; logoUrl: str
             </button>
 
             <div className="space-y-1 border-b border-hairline pb-6">
+              <Link
+                prefetch={false}
+                href="/kisiye-ozel?hizmet=gorsel"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block min-h-12 py-2 text-[1.35rem] font-semibold leading-tight text-ink"
+              >
+                Görselden nakışa çevirme
+              </Link>
+              <Link
+                prefetch={false}
+                href="/kisiye-ozel?hizmet=parca"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block min-h-12 py-2 text-[1.35rem] font-semibold leading-tight text-ink"
+              >
+                İsteğe özel parça
+              </Link>
               {PRIMARY_NAV.map((item) => (
                 <Link
                   key={item.href}
