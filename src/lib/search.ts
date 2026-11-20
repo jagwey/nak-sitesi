@@ -8,6 +8,8 @@ import type {
   UsageArea,
 } from "@/data/products";
 
+type SearchableProduct = Omit<Product, "type"> & { type?: ProductType };
+
 /**
  * Normalizes Turkish characters cleanly so searches like "gul", "gül", "ISIM", "işleme",
  * "kisiye ozel", "cicek" match seamlessly regardless of diacritics or Turkish dotted/dotless İ/ı.
@@ -114,14 +116,14 @@ export function hoopLabelToMm(label: string): [number, number] | null {
 }
 
 /** True when the design's stitch-out size fits inside the given hoop (rotation allowed). */
-export function designFitsHoop(product: Product, hoopMm: [number, number]): boolean {
+export function designFitsHoop(product: SearchableProduct, hoopMm: [number, number]): boolean {
   const e = product.embroidery;
   if (!e) return false;
   const [W, H] = hoopMm;
   return (e.widthMm <= W && e.heightMm <= H) || (e.widthMm <= H && e.heightMm <= W);
 }
 
-function isPersonalMatch(product: Product): boolean {
+function isPersonalMatch(product: SearchableProduct): boolean {
   if (product.personalizable) return true;
   const tags = normalizeTurkish(product.tags.join(" "));
   return /\b(isim|monogram|harf|alfabe)/.test(tags);
@@ -157,7 +159,7 @@ function levenshtein(a: string, b: string): number {
   return prev[b.length];
 }
 
-function buildProductSearchCorpus(product: Product): {
+function buildProductSearchCorpus(product: SearchableProduct): {
   primaryText: string;
   secondaryText: string;
   words: string[];
@@ -213,7 +215,7 @@ const GENERIC_QUERY_WORDS = new Set([
  * and embroidery domain synonym matching. Generic store nouns act as boosters
  * rather than diluting specific motif queries like "VP3 gül nakışı".
  */
-export function scoreProductMatch(product: Product, rawQuery: string): number {
+export function scoreProductMatch(product: SearchableProduct, rawQuery: string): number {
   const norm = normalizeTurkish(rawQuery);
   if (!norm) return 1;
 
@@ -386,10 +388,10 @@ export function serializeFiltersToParams(filters: CatalogFilterState): URLSearch
   return params;
 }
 
-export function filterAndSortProducts(
-  products: Product[],
+export function filterAndSortProducts<T extends SearchableProduct>(
+  products: T[],
   filters: CatalogFilterState
-): Product[] {
+): T[] {
   const minKurus = filters.minFiyat ? Number(filters.minFiyat) * 100 : null;
   const maxKurus = filters.maxFiyat ? Number(filters.maxFiyat) * 100 : null;
 

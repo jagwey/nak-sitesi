@@ -27,7 +27,9 @@
 - [x] Üretim Docker imajı, sağlık kontrolü, robots.txt, sitemap.xml ve dağıtım rehberi
 - [x] Ücretsiz Cloudflare için Shopier bağlantılı vitrin derlemesi
 - [x] Ücretsiz Cloudflare Workers vitrini yayını ve HTTPS kontrolü
+- [x] Canlı vitrinde mevcut siteyle uyumlu menü, Hakkımızda, Kişiye Özel Tasarım önizlemesi, arama ve demo ürün sayfaları
 - [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
+- [ ] Canlı vitrinde kişiye özel talepler için işletmenin doğrulanmış iletişim kanalı
 - [x] Mağaza adı, logo, işletme sahibi ve iletişim ayarları tek kayıtta; güncellemeler vitrinde, başlıklarda ve e-postada doğrulandı
 - [x] GitHub: `git init`, `.gitignore` (node_modules, .next, .env*, tsconfig.tsbuildinfo), sır kontrolü, ilk commit `main`, push → https://github.com/jagwey/nak-sitesi
 - [ ] Gerçek ödeme sağlayıcısı (iyzico/PayTR) — müşterinin hesap bilgileri gerekli

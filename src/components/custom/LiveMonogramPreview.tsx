@@ -228,7 +228,10 @@ export function LiveMonogramPreview({
  * Compact interactive preview widget embedded on the Homepage to let visitors try
  * live personalization right away before heading to the full /kisiye-ozel studio.
  */
-export function HomeMonogramTeaser({ onContinueHref }: { onContinueHref?: string }) {
+export function HomeMonogramTeaser({ onContinueHref, mode = "order" }: {
+  onContinueHref?: string;
+  mode?: "order" | "storefront" | "preview";
+}) {
   const [text, setText] = useState("Elif");
   const [fontStyle, setFontStyle] = useState<MonogramPreviewConfig["fontStyle"]>("serif");
   const [threadIdx, setThreadIdx] = useState(0);
@@ -257,7 +260,9 @@ export function HomeMonogramTeaser({ onContinueHref }: { onContinueHref?: string
           İsminizi ve baş harfinizi nakış üzerinde canlı görün.
         </h2>
         <p className="max-w-[54ch] text-[1rem] text-umber">
-          Havlular, bebek battaniyeleri, keten peçeteler veya kendi nakış makineniz için kişiye özel monogram tasarımlarınızı sipariş öncesinde deneyebilirsiniz.
+          {mode === "order"
+            ? "Havlular, bebek battaniyeleri, keten peçeteler veya kendi nakış makineniz için kişiye özel monogram tasarımlarınızı sipariş öncesinde deneyebilirsiniz."
+            : "Bir isim yazın, harf biçimini ve ipliği seçin, kumaş üzerindeki yerleşimi deneyin."}
         </p>
 
         <div className="space-y-4 pt-2">
@@ -293,6 +298,7 @@ export function HomeMonogramTeaser({ onContinueHref }: { onContinueHref?: string
                   <button
                     key={f.id}
                     type="button"
+                    aria-pressed={fontStyle === f.id}
                     onClick={() => setFontStyle(f.id)}
                     className={`h-10 text-[0.875rem] transition-colors duration-200 ${
                       fontStyle === f.id
@@ -319,6 +325,7 @@ export function HomeMonogramTeaser({ onContinueHref }: { onContinueHref?: string
                   <button
                     key={m.id}
                     type="button"
+                    aria-pressed={motif === m.id}
                     onClick={() => setMotif(m.id)}
                     className={`h-10 text-[0.875rem] transition-colors duration-200 ${
                       motif === m.id
@@ -382,14 +389,16 @@ export function HomeMonogramTeaser({ onContinueHref }: { onContinueHref?: string
           </div>
         </div>
 
-        <div className="pt-2">
-          <a
-            href={onContinueHref ?? `/kisiye-ozel?yazi=${encodeURIComponent(text)}`}
-            className="inline-flex h-12 items-center bg-cocoa px-7 text-[0.9375rem] font-medium text-[#FAF8F3] transition-colors duration-200 hover:bg-cocoa-hover"
-          >
-            Özel Sipariş Formuna Geç
-          </a>
-        </div>
+        {mode !== "preview" && (
+          <div className="pt-2">
+            <a
+              href={onContinueHref ?? (mode === "storefront" ? "/kisiye-ozel/" : `/kisiye-ozel?yazi=${encodeURIComponent(text)}`)}
+              className="inline-flex h-12 items-center bg-cocoa px-7 text-[0.9375rem] font-medium text-[#FAF8F3] transition-colors duration-200 hover:bg-cocoa-hover"
+            >
+              {mode === "storefront" ? "Tasarım stüdyosunu aç" : "Özel Sipariş Formuna Geç"}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

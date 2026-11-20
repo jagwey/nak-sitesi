@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { storefrontCatalogSchema } from "../../storefront/catalog";
+import { buildStorefrontProducts, storefrontCatalogSchema } from "../../storefront/catalog";
 
 const product = {
   name: "Test deseni",
@@ -12,6 +12,30 @@ const product = {
 describe("storefront catalog", () => {
   it("supports opening with an empty catalog", () => {
     expect(storefrontCatalogSchema.parse({ storeName: "Nakış Sitesi", products: [] }).products).toEqual([]);
+  });
+
+  it("renders existing samples as demos without a purchase link", () => {
+    const samples = buildStorefrontProducts({ storeName: "Nakış Sitesi", products: [] });
+    expect(samples).toHaveLength(11);
+    expect(samples.every((sample) => sample.isDemo && !sample.shopierUrl)).toBe(true);
+  });
+
+  it("replaces demo products when the first purchasable product is configured", () => {
+    const products = buildStorefrontProducts({ storeName: "Test", products: [product] });
+    expect(products).toHaveLength(1);
+    expect(products[0]).toMatchObject({
+      slug: "test-deseni",
+      priceKurus: product.priceKurus,
+      shopierUrl: product.shopierUrl,
+    });
+    expect(products[0].isDemo).toBeUndefined();
+  });
+
+  it("rejects a product URL shared by two catalog entries", () => {
+    expect(() => buildStorefrontProducts({
+      storeName: "Test",
+      products: [product, { ...product, slug: "test-deseni" }],
+    })).toThrow(/test-deseni/);
   });
 
   it("accepts a local product image, a kuruş price and a Shopier link", () => {

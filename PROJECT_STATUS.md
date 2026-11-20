@@ -7,7 +7,7 @@
 - **Tam e-ticaret uygulaması:** canlıya alınması için gerçek ödeme, gerçek ürün/dosya, yasal metinler ve altyapı bilgileri bekleniyor.
 
 ## Tamamlananlar
-- Shopier için bağımsız statik vitrin (`npm run build:storefront`) [ücretsiz Cloudflare adresinde](https://nakis-vitrin.nakis-sitesi.workers.dev/) yayında. İlk koleksiyon mesajı gösteriliyor. Satın alma düğmeleri için gerçek ürünler, fiyatlar, fotoğraflar ve Shopier bağlantıları bekleniyor.
+- Shopier için bağımsız statik vitrin (`npm run build:storefront`) [ücretsiz Cloudflare adresinde](https://nakis-vitrin.nakis-sitesi.workers.dev/) yayında. Mevcut siteyle uyumlu menü, Hakkımızda, canlı monogram önizlemesi, arama/filtreleme ve 11 etiketli demo ürün var. Satın alma düğmeleri gerçek ürünleri ve Shopier bağlantılarını bekliyor. Monogram önizlemesi tarayıcıda çalışır, sipariş talebi alma kanalı henüz tanımlı değil.
 - Docker (Postgres 17, MinIO, Mailpit), Prisma şema + migration, seed.
 - Canlı kullanım için Docker imajı, PostgreSQL sağlık kontrolü, robots.txt, site haritası ve demo ürünsüz referans seed. Kurulum adımları `DEPLOYMENT.md` dosyasında.
 - Kayıt/giriş/e-posta doğrulama/parola sıfırlama, roller ve izinler (RBAC), oturumlar.
