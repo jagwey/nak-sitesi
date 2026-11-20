@@ -48,6 +48,7 @@
 - [ ] Gerçek ödeme sağlayıcısı (iyzico/PayTR) — müşterinin hesap bilgileri gerekli
 - [x] Dijital nakış kataloğuna gerçek desenler, fiyatları ve doğrulanmış formatlar eklendi. Demo ürünler arşivlendi.
 - [x] Canlı katalogdaki 11 demo ürün kalıcı olarak silindi. 12 gerçek desen için Shopier yükleme paketi ve ürün bağlantısı alanı hazırlandı.
+- [x] Shopier bağlantısı alanı ve satın alma düğmesi olan sürüm canlıya alındı.
 
 ## Açık küçük kusurlar (Phase 2'den)
 - [x] Galeri yakınlaştırma düğmesi fotoğrafın altında ve 390/1440 px genişlikte klavyeyle çalışıyor

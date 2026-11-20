@@ -119,3 +119,4 @@
 - [x] Mağaza sahibine 12 ayrı VP3/PES/DST teslim arşivi, 36 JPEG önizleme, açıklamalar ve yükleme kılavuzu paketlendi.
 - [x] Yönetim paneline doğrulanan Shopier ürün adresi ve mağazaya masaüstü/mobil satın alma bağlantısı eklendi. Bağlantılı ürünler yerel sepetten ayrıldı.
 - [x] Tip kontrolü, 124/124 Vitest ve üretim derlemesi başarılı.
+- [x] `bdb9802` Oracle'a dağıtıldı ve Shopier bağlantısı migration'ı uygulandı. Yerel tarayıcıda masaüstü ve mobil bağlantı davranışı doğrulandı. Canlıda 12 desen, 36 erişilebilir önizleme, eski demo için 404 API yanıtı ve bağlantısız ürünlerin satış hazırlığı görünümü 390 ve 1440 px genişlikte doğrulandı.
