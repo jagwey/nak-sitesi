@@ -157,3 +157,5 @@
 
 - [x] Ana başlıkta görselden nakışa çevirme ve isteğe özel parça, Inter gövde (18px), altın satın alma düğmesi, kumaş önizlemesi ve 32 özgün önizleme deseni (A–Z + 6 motif). Dosyalar pyembroidery VP3/PES/DST/JEF. Satışa kapalı; kumaş provası yok. Canlıya deploy edilmedi.
 - [x] Aynı iyileştirmeler statik `storefront/` vitrinine taşındı. Shopier bandı site içi sepet indirimini vaat etmez. Deploy edilmedi.
+- [x] Statik vitrin `https://nakis-vitrin.nakis-sitesi.workers.dev/` adresine yayınlandı (Worker sürümü `5f347784-85fa-48b2-bcd7-f2f93733f695`). Ana başlık, `/onizleme` (200) ve Shopier sepet-indirimi uyarısı canlıda doğrulandı. Not: bu yayın önceki Oracle proxy Worker’ının yerine geçti; tam mağaza (sepet/admin) için proxy sürümüne (`f7fd3fdc`) veya Oracle imaj çekimine dönülmeli.
+- [x] Kullanıcı isteğiyle statik yayın geri alındı. Trafik yeniden Oracle proxy sürümüne (`f7fd3fdc`, deployment `4638f8d7`) verildi. Canlıda `/api/health` 200 (`via: Caddy`), gerçek ürünler, `/giris` + `/kayit` (Hesap oluştur) doğrulandı.
