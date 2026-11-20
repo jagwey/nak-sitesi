@@ -29,8 +29,9 @@ Orijinal logo dosyası `logo/WhatsApp Image 2026-11-19 at 21.35.42.jpeg` hiç de
 
 ## 4. Tipografi (En Fazla 2 Font Ailesi)
 - **Başlık ve Editoryal Serif**: `Cormorant Garamond` (`latin` + `latin-ext` Türkçe tam destek) — sıkı harf aralığı (`-0.02em`), mimari vurgu.
-- **Gövde ve Arayüz Sans**: `Manrope` (`latin` + `latin-ext` Türkçe tam destek) — fiyat, dikiş sayısı ve kasnak ölçülerinde `font-variant-numeric: tabular-nums`.
-- **Boyut Disiplini**: Hero `<h1>` ve marka logosu dışında gövdede düzenli 3 aşamalı hiyerarşi (bölüm başlığı, `1rem` gövde, `0.875rem` arayüz metni). Üst alanda `< 13px` metin kullanılmaz.
+- **Gövde ve Arayüz Sans**: `Inter` (`latin` + `latin-ext`, `font-display: swap`, Next font ile self-host). Gövde 18px. Fiyat, dikiş sayısı ve kasnak ölçülerinde `font-variant-numeric: tabular-nums`.
+- **Başlık aksanı**: `Cormorant Garamond` kalır; gövde metninde kullanılmaz. Başlık kalınlığı 600.
+- **Boyut Disiplini**: Arayüz metni 17px altına düşmez. Satın alma düğmesi altın-kahve `#85632B` (beyaz metinle AA).
 
 ## 5. Etkileşim ve Hareket İlkeleri
 - Yalnızca işlevsel geçişler (`transform`, `opacity`, `color`, `background-color`, `border-color`) açıkça tanımlanır; `transition: all` kullanılmaz.

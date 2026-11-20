@@ -28,7 +28,7 @@ export function Footer({ site }: { site: SiteSettings }) {
                 {site.contactEmail && <p><a href={`mailto:${site.contactEmail}`} className="wrap-anywhere hover:text-[#F6F2EA]">{site.contactEmail}</a></p>}
                 <p className="flex gap-4 pt-1">
                   {site.instagramUrl && <a href={site.instagramUrl} rel="noopener noreferrer" target="_blank" className="hover:text-[#F6F2EA]">Instagram</a>}
-                  {site.whatsapp && <a href={site.whatsapp} rel="noopener noreferrer" target="_blank" className="hover:text-[#F6F2EA]">WhatsApp</a>}
+                  {site.whatsapp && <a href={site.whatsapp} rel="noopener noreferrer" target="_blank" className="inline-flex min-h-11 items-center hover:text-[#F6F2EA]">WhatsApp ile yazın</a>}
                 </p>
               </address>
             ) : (
@@ -67,10 +67,28 @@ export function Footer({ site }: { site: SiteSettings }) {
               <li>
                 <Link
                   prefetch={false}
-                  href="/kisiye-ozel"
-                  className="transition-colors duration-200 hover:text-[#F6F2EA]"
+                  href="/kisiye-ozel?hizmet=gorsel"
+                  className="inline-flex min-h-11 items-center transition-colors duration-200 hover:text-[#F6F2EA]"
                 >
-                  Kişiye Özel Sipariş
+                  Görselden nakışa çevirme
+                </Link>
+              </li>
+              <li>
+                <Link
+                  prefetch={false}
+                  href="/kisiye-ozel?hizmet=parca"
+                  className="inline-flex min-h-11 items-center transition-colors duration-200 hover:text-[#F6F2EA]"
+                >
+                  İsteğe özel parça
+                </Link>
+              </li>
+              <li>
+                <Link
+                  prefetch={false}
+                  href="/#sss"
+                  className="inline-flex min-h-11 items-center transition-colors duration-200 hover:text-[#F6F2EA]"
+                >
+                  Sık sorulan sorular
                 </Link>
               </li>
               <li>

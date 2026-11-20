@@ -3,14 +3,16 @@ import Link from "next/link";
 import { ArrowRight, Search } from "lucide-react";
 import { getAvailableEmbroideryOffers, getFlagDesigns, getHomepageData } from "@/server/modules/catalog";
 import { HomeMonogramTeaser } from "@/components/custom/LiveMonogramPreview";
-import { DEFAULT_HERO_TITLE, HomeHero } from "@/components/home/HomeHero";
+import { CampaignBanner } from "@/components/home/CampaignBanner";
+import { OpenLicenseShowcase } from "@/components/home/OpenLicenseShowcase";
+import { TrustAndFaq } from "@/components/home/TrustAndFaq";
+import { HomeHero } from "@/components/home/HomeHero";
 import { EmbroideryOffer } from "@/components/catalog/EmbroideryOffer";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { HomeShowcaseTabs } from "@/components/home/HomeClient";
 import { formatTRY } from "@/lib/format";
+import { resolveHeroTitle } from "@/lib/hero";
 import { getSiteSettings } from "@/server/modules/settings/service";
-
-const FORMAT_LIST = "VP3, PES ve DST";
 
 const QUICK_CHIPS = [
   { label: "VP3 desenler", href: "/koleksiyon?format=VP3" },
@@ -22,20 +24,25 @@ const QUICK_CHIPS = [
 
 const PATHS = [
   {
-    title: "Dijital desenler",
-    sub: "İndirilebilir dosya, kendi makinende işle.",
+    title: "Görselden nakışa çevirme",
+    sub: "Fotoğraf veya logonuzu makine dosyasına dönüştürelim.",
+    href: "/kisiye-ozel?hizmet=gorsel",
+  },
+  {
+    title: "İsteğe özel parça",
+    sub: "Havlu, keten veya giysi için ölçü ve yazı belirleyin.",
+    href: "/kisiye-ozel?hizmet=parca",
+  },
+  {
+    title: "Hazır nakış desenleri",
+    sub: "VP3, PES ve DST dosyasını kendi makinenizde işleyin.",
     href: "/koleksiyon?tur=dijital",
   },
-  {
-    title: "İşlemeli tekstiller",
-    sub: "Kumaş, ölçü ve adet için teklif iste.",
-    href: "/kisiye-ozel",
-  },
-  {
-    title: "Kişiye özel sipariş",
-    sub: "İsim, monogram ve özel tasarım talebi.",
-    href: "/kisiye-ozel",
-  },
+];
+
+const SERVICE_CTAS = [
+  { href: "/kisiye-ozel?hizmet=gorsel", label: "Fotoğraf veya logo yükle" },
+  { href: "/kisiye-ozel?hizmet=parca", label: "İsteğe özel parça siparişi" },
 ];
 
 export const dynamic = "force-dynamic";
@@ -55,9 +62,25 @@ export default async function HomePage() {
     <>
       {/* 1. HERO */}
       <HomeHero
-        title={site?.heroTitle || DEFAULT_HERO_TITLE}
-        description={site?.heroText || `${FORMAT_LIST} formatlarında indirilebilir desenler; kişiye özel işlemeli havlu ve keten ürünler.`}
+        title={resolveHeroTitle(site?.heroTitle)}
+        description={site?.heroText || "Fotoğraf veya logonuzu nakış dosyasına çeviririz. Havlu, keten ve giysi için ölçüye özel parça da hazırlanır. Pfaff için VP3; üründe varsa PES, DST ve JEF."}
       >
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          {SERVICE_CTAS.map((cta, index) => (
+            <Link
+              key={cta.href}
+              href={cta.href}
+              prefetch={false}
+              className={
+                index === 0
+                  ? "btn-buy inline-flex min-h-12 items-center justify-center px-5 text-[1.0625rem] font-semibold"
+                  : "inline-flex min-h-12 items-center justify-center border border-cocoa bg-ivory px-5 text-[1.0625rem] font-semibold text-cocoa transition-colors duration-200 hover:bg-cocoa hover:text-ivory"
+              }
+            >
+              {cta.label}
+            </Link>
+          ))}
+        </div>
         <form
           action="/koleksiyon"
           method="get"
@@ -98,6 +121,8 @@ export default async function HomePage() {
           ))}
         </ul>
       </HomeHero>
+
+      <CampaignBanner />
 
       {/* 2. ÜÇ GİRİŞ YOLU */}
       <section
@@ -253,6 +278,8 @@ export default async function HomePage() {
         </section>
       )}
 
+      <OpenLicenseShowcase />
+
       {/* 4. ÜRÜN VİTRİNLERİ */}
       <div className="border-y border-hairline bg-linen/45">
         <HomeShowcaseTabs tabs={home.tabs} />
@@ -280,6 +307,7 @@ export default async function HomePage() {
                 src="/images/atelier-workbench.webp"
                 alt="Gün ışığı alan atölyede doğal keten kumaş üzerine altın ve kahverengi iplikle botanik nakış işleyen makine"
                 fill
+                loading="lazy"
                 sizes="(max-width: 1024px) 100vw, 58vw"
                 className="object-cover"
               />
@@ -334,6 +362,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <TrustAndFaq />
     </>
   );
 }

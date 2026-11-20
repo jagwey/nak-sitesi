@@ -16,7 +16,7 @@ Bu dosya, projeyi devralacak geliştirici veya yapay zekâ ajanları için bağl
 - Logo ve sahip bilgisi henüz yok, sonra eklenecek; uydurma logo çizilmez, yeni marka adı uydurulmaz.
 
 ## 3. Tasarım Sistemi Kuralları (`DESIGN_SYSTEM.md`)
-- Yalnızca iki font ailesi kullanılır: `Cormorant Garamond` (başlıklar) ve `Manrope` (gövde ve arayüz; sayısal değerlerde `tabular-nums`).
+- Yalnızca iki font ailesi kullanılır: `Cormorant Garamond` (başlık aksanı) ve `Inter` (gövde ve arayüz, en az 18px; sayısal değerlerde `tabular-nums`).
 - Renk paleti: `#FAF8F3`, `#EDE4D6`, `#B18A49` (seçici vurgu; metin için WCAG AA uyumlu `#85632B`), `#4A372C`, `#242320`, `#2B211B`, `#FFFFFF`.
 - Anti-AI-slop: Mor/mavi gradient, başlık üstü eyebrow rozetleri, fotoğraf üstü dekoratif etiketler, kart içi kart kutular, sahte satış/yorum sayıları ve `transition: all` yasaktır.
 

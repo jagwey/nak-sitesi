@@ -152,3 +152,7 @@
 - [x] İlk sürüm `52cb6ad` Oracle'a dağıtıldı. Dört boy ürünü canlı kataloğa aktarıldı ve 390/1440 px genişliklerde Filistin Bayrağı ile birlikte görüntülendi.
 - [x] Kullanıcı talebiyle yeni bayraklar tek üründe iki boya geçirildi. Her bayrağın `Satis-paketleri` klasöründe iki boyu ve toplam altı gerçek makine dosyasını içeren bir ZIP'i var. Site içi ödemede müşteriye seçilen formatın iki boyu için ayrı, kısa ömürlü indirme bağlantıları açılır. Yönetim panelindeki ek dosya adı bu boyları ayrı sürümler halinde saklar.
 - [x] Bir satın alımla iki dosya, aynı formatta dosya sürümleme, tip kontrolü, 159/159 Vitest testi ve üretim derlemesi başarılı.
+
+## 2026-11-20 — Vitrin okunabilirliği ve önizleme kataloğu
+
+- [x] Ana başlıkta görselden nakışa çevirme ve isteğe özel parça, Inter gövde (18px), altın satın alma düğmesi, kumaş önizlemesi ve 32 özgün önizleme deseni (A–Z + 6 motif). Dosyalar pyembroidery VP3/PES/DST/JEF. Satışa kapalı; kumaş provası yok. Canlıya deploy edilmedi.
