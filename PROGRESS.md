@@ -72,3 +72,4 @@
 - [E] alt-görev 2: AnnouncementBar akışa alındı (layout: bar in-flow + sticky h-0 sarmalayıcı, Header absolute); 390/1440 ekran görüntüleri screenshots/phase3-e, taşma yok, bar tekrar kapatıldı (scripts/set-announce.ts on|off)
 - 2026-11-20 — DOCS: AGENTS.md (Faz 3 kuralları) güncellendi (docs ajanı)
 - 2026-11-20 — DOCS: README, BACKEND_REQUIREMENTS, PROJECT_STATUS, TEST_REPORT, ADMIN_GUIDE yazıldı; tüm belge listesi tamam (docs ajanı)
+- 2026-11-20 — [E] alt-görev 3-5: Playwright E2E 8 test yeşil (tests/e2e, seed tsx alt-süreçte); dev test adminleri silindi; lint temiz. Ek 7-10: güvenlik başlıkları (next.config.ts CSP/HSTS prod), env.ts doğrulama (simülasyon sırrı zorunlu, fallback yok, UPLOAD_MAX_MB uygulandı), new_custom_order admin e-postası, customer:write izni (status/resend/anonymize). vitest 14 dosya/100 test, build OK.

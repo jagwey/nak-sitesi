@@ -9,7 +9,7 @@ Tarih: 2026-11-20. Sonuçlar ana oturumun son doğrulamasından alınmıştır (
 | `npm test` — Vitest | **97/97 geçti, 13 dosya, ~27,8 sn** |
 | `tests/search.test.ts` (eski betik testi) | `npm test` içinde çalışır |
 | `npm run build` | Başarılı |
-| E2E (Playwright) | E2E: ajan E tarafından ekleniyor (`test:e2e` şu an yer tutucu) |
+| E2E (Playwright) | 8 test / 6 dosya, hepsi geçti (`npm run test:e2e`, Chromium, dev sunucu) |
 
 Entegrasyon testleri gerçek Postgres (`DATABASE_URL_TEST`) ve MinIO üzerinde çalışır; `tests/setup/` veritabanını hazırlar.
 
@@ -67,6 +67,6 @@ npm test
 ```
 
 ## Açık / kapsam dışı
-- E2E: ajan E tarafından ekleniyor.
+- E2E: arama-sepet, kayıt/giriş/çıkış, fiziksel ödeme (PENDING_PAYMENT), simüle ödeme + indirme hakkı, admin erişimi (müşteri 404), mobil akış, güvenlik başlıkları. Vitest: 14 dosya / 100 test.
 - Gerçek ödeme sağlayıcısı testleri yok (sağlayıcı bağlı değil).
 - Yük ve güvenlik (penetrasyon) testi yapılmadı; AV taraması yok.

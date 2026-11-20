@@ -4,8 +4,13 @@ test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true
 
 test("mobil: ana sayfa -> menü -> koleksiyon -> filtre -> fiziksel ürün -> sepet çekmecesi", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Menüyü aç" }).click();
-  await page.getByRole("link", { name: /koleksiyon/i }).first().click();
+  const link = page.getByRole("link", { name: "Nakış Desenleri" }).first();
+  // The menu button may be clicked before hydration; retry until the menu is open.
+  await expect(async () => {
+    await page.getByRole("button", { name: "Menüyü aç" }).click();
+    await expect(link).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: 20_000 });
+  await link.click();
   await page.waitForURL(/\/koleksiyon/);
 
   await page.getByRole("button", { name: /Filtre/i }).first().click();
