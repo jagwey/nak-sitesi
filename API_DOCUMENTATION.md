@@ -76,7 +76,7 @@ Arama motoru: Postgres (ILIKE + `pg_trgm` + `unaccent`); `SearchEngine` arayüz�
 | `DELETE /api/cart/items/[id]` | optional | — | 60/dk |
 | `POST /api/cart/coupon` | optional | `{ code }` | 15/dk |
 | `DELETE /api/cart/coupon` | optional | — | 15/dk |
-| `POST /api/checkout` | optional | `email?`, `phone?`, `addressId?`, `shippingAddress?`, `customerNote?` | 10/10 dk. **Tek transaction:** sepet kilidi → katalogdan yeniden fiyatlama → atomik stok rezervasyonu → atomik kupon kullanımı → `Order` (PENDING_PAYMENT) + kalem snapshot'ları → `Payment` (PENDING) → sepeti boşalt. Hiçbir zaman PAID üretmez. `201` yanıtı: `{ order, payment: { provider, status, canSimulate, message, redirectUrl }, guestAccessToken }`. Misafir erişim tokenı **yalnızca bir kez** döner (DB'de özeti saklanır) |
+| `POST /api/checkout` | optional | `email?`, `phone?`, `addressId?`, `shippingAddress?`, `customerNote?` | 10/10 dk. **Tek transaction:** sepet kilidi → katalogdan yeniden fiyatlama → atomik stok rezervasyonu → atomik kupon kullanımı → `Order` (PENDING_PAYMENT) + kalem snapshot'ları → `Payment` (PENDING) → sepeti boşalt. Üretimde demo ürün içeren sepet `400 VALIDATION` ile reddedilir ve sepet korunur. Hiçbir zaman PAID üretmez. `201` yanıtı: `{ order, payment: { provider, status, canSimulate, message, redirectUrl }, guestAccessToken }`. Misafir erişim tokenı **yalnızca bir kez** döner (DB'de özeti saklanır) |
 | `GET /api/orders/[number]` | optional | `?guestToken=` | 30/10 dk. Sahibi (oturum) veya geçerli misafir tokenı; aksi hâlde `404` |
 | `POST /api/orders/[number]/cancel` | user | — | 10/10 dk. Sahibi kendi **ödenmemiş** siparişini iptal eder; rezervasyon serbest kalır |
 

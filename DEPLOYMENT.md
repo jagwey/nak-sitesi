@@ -16,6 +16,22 @@ Shopier akışı için `npm run build:storefront` komutu `storefront/out` dizini
 - Docker (BuildKit), PostgreSQL 17, S3 uyumlu depolama, SMTP sağlayıcı ve TLS'li alan adı.
 - Kod: `npm ci` → `npm run lint` → `npm test` → `npm run build` yeşil olmalı.
 
+### Tam siteyi sunucuda çalıştırma
+
+`docker-compose.prod.yml`, `localhost:3000`'deki Next.js uygulamasını ve ona ait ayrı PostgreSQL 17 veritabanını çalıştırır. Geliştirme veritabanı, yerel kullanıcılar ve test yöneticileri aktarılmaz. PostgreSQL yalnızca konteyner ağında, web uygulaması sunucunun `127.0.0.1:3100` adresinde dinler. Herkese açık HTTPS adresini ters vekille bu adrese bağlayın. Statik vitrin ve tam uygulama ayrı dağıtımlardır.
+
+1. Sunucuda `.env.example` ve bölüm 1'i kullanarak `.env.production` dosyasını hazırlayın. Üretime özel `SESSION_SECRET` ve `POSTGRES_PASSWORD` üretin. `DATABASE_URL=postgresql://nakis:<url-kodlanmış-parola>@postgres:5432/nakis` değerinde aynı parolayı kullanın. `APP_URL` ziyaretçilerin kullanacağı HTTPS adresi olmalı. Dosyanın erişimini sunucu kullanıcısıyla sınırlayın.
+2. Kalıcı veritabanını başlatın ve migration işlemini uygulayın.
+
+   ```sh
+   docker compose --env-file .env.production -f docker-compose.prod.yml build web tools
+   docker compose --env-file .env.production -f docker-compose.prod.yml up -d --wait postgres
+   docker compose --env-file .env.production -f docker-compose.prod.yml run --rm tools npm run db:deploy
+   ```
+
+3. Bu mağazanın ilk yayını için, **boş veritabanında** `docker compose --env-file .env.production -f docker-compose.prod.yml run --rm tools npm run db:seed` ile 11 demo ürünü yükleyin. Bu ürünler aramada, makine/format/kasnak filtrelerinde ve sepette denenebilir. Üretimde demo ürün içeren sepet siparişe dönüşmez. Gerçek ürünle çalışan bir veritabanına tam demo seed uygulamayın.
+4. `docker compose --env-file .env.production -f docker-compose.prod.yml up -d --wait web` ile uygulamayı başlatın. SMTP ve kova ayarlarını bölümler 3–4'e göre doğrulayın. HTTPS adresinde sağlık, kayıt, giriş, e-posta doğrulama, filtreler ve sepeti kontrol edin. Aynı `workers.dev` adresi kullanılacaksa, mevcut Worker'ı yalnızca bu kontrollerden sonra doğrulanmış HTTPS yayınına bağlayın.
+
 ## 1. Ortam değişkenleri (`src/server/env.ts`)
 
 Çalışma zamanı değerlerini sunucunun gizli değer deposundan verin. `.env.example` alanları listeler. `docker run --env-file` için dosyayı repo dışında tutun ve değerleri tırnaksız `AD=değer` biçiminde yazın. Yalnızca herkese açık `S3_PUBLIC_BASE_URL` değeri derleme argümanı olarak da kullanılır.
@@ -93,8 +109,8 @@ docker run --rm --env-file /secure/nakis.env nakis-tools npm run jobs:release-re
 3. Giriş yapıp parolayı doğrulayın, ardından bu iki değişkeni ortamdan **silin**.
 4. Diğer yöneticileri panelden (Yöneticiler) davet edin; her kişiye ayrı hesap.
 
-## 8. Demo ürünlerin kaldırılması
-Geliştirme için kullanılan tam seed 11 demo ürünü `isDemo=true` ile ekler. Yeni bir canlı veritabanında bölüm 2'deki referans seed komutunu kullanın. Mevcut demo verisi taşındıysa canlıdan önce aşağıdaki kontrolleri yapın.
+## 8. Gerçek ürünlere geçiş
+Tam seed 11 demo ürünü `isDemo=true` ile ekler. Demo katalog yayını için bölüm 0'daki kurulum kullanılır. Gerçek satışa geçerken aşağıdaki kontrolleri yapın.
 1. Panelden gerçek ürünleri girin (veya CSV ile toplu yükleyin).
 2. Demo ürünleri arşivleyin/silin (Ürünler → demo etiketli olanlar; `isDemo` işaretlidir, "demo" etiketi vardır).
 3. Hiçbir demo ürünün `ACTIVE` kalmadığını mağaza vitrininde ve arama sonuçlarında kontrol edin; sonra `npm run search:reindex`.
@@ -118,7 +134,7 @@ docker run -d --name nakis-web --restart unless-stopped \
 ## 11. Canlıya geçiş öncesi son kontrol
 - [ ] `npm run lint`, `npm test`, `npm run build` yeşil
 - [ ] Docker imajı derlendi ve `/api/health`, `/robots.txt`, `/sitemap.xml` üretim adresinde doğrulandı
-- [ ] `db:deploy` uygulandı, seed (yalnızca referans veri) çalıştı, demo ürünler kaldırıldı
+- [ ] `db:deploy` uygulandı ve hedeflenen katalog yüklendi. Demo yayında demo siparişi engelleniyor. Gerçek satışta demo ürünler arşivlendi.
 - [ ] Private kova herkese kapalı, imzasız erişim `403`
 - [ ] SMTP e-postaları ulaşıyor (SPF/DKIM)
 - [ ] Cron çalışıyor

@@ -61,6 +61,9 @@ export async function checkout(user: { id: string; email: string; phone?: string
           details: { issues: v.items.filter((i) => i.blocking).map((i) => ({ id: i.id, issues: i.issues })) },
         });
       }
+      if (env.NODE_ENV === "production" && priced.lines.some((line) => line.resolved.product.isDemo)) {
+        throw new AppError("VALIDATION", "Sepetiniz demo ürün içeriyor. Demo ürünler siparişe açık değil.");
+      }
       // Digital deliveries are bound to an account (entitlement + re-download), so guests cannot buy them.
       if (v.hasDigital && !user) {
         throw new AppError("VALIDATION", "Dijital ürünler için giriş yapmalı veya hesap oluşturmalısınız.", { details: { requiresAccount: true } });

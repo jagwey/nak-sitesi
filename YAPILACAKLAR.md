@@ -28,6 +28,9 @@
 - [x] Ücretsiz Cloudflare için Shopier bağlantılı vitrin derlemesi
 - [x] Ücretsiz Cloudflare Workers vitrini yayını ve HTTPS kontrolü
 - [x] Canlı vitrinde mevcut siteyle uyumlu menü, Hakkımızda, Kişiye Özel Tasarım önizlemesi, arama ve demo ürün sayfaları
+- [x] Tam mağaza için üretim kurulumu ve 11 demo ürünle yerel HTTPS provası, demo checkout koruması, üyelik ve sepet doğrulaması
+- [ ] Ücretsiz sunucu hesabına erişim, kalıcı HTTPS kurulumu ve tam mağazanın mevcut Cloudflare adresinden yayımlanması
+- [ ] Canlı e-posta doğrulaması ve parola sıfırlama için SMTP göndereni ayarla
 - [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
 - [ ] Canlı vitrinde kişiye özel talepler için işletmenin doğrulanmış iletişim kanalı
 - [x] Mağaza adı, logo, işletme sahibi ve iletişim ayarları tek kayıtta; güncellemeler vitrinde, başlıklarda ve e-postada doğrulandı

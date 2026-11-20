@@ -3,13 +3,13 @@
 ## Genel durum
 - **Aşama 1–2 (ön yüz, tasarım incelemesi):** tamamlandı, müşteri onaylı vitrin.
 - **Aşama 3 (backend + yönetim paneli):** uygulandı. Faz A (altyapı, auth), B (katalog, arama, depolama), C (sepet, ödeme akışı, sipariş, indirme), D1 (admin ürün/dosya/stok/CSV), D2 (admin sipariş/müşteri/kupon/ayar/CMS/özel talep) bitti.
-- Son doğrulama: lint temiz, Vitest 103/103 (15 dosya), Playwright 12/12, build ve Docker dağıtım provası başarılı.
-- **Tam e-ticaret uygulaması:** canlıya alınması için gerçek ödeme, gerçek ürün/dosya, yasal metinler ve altyapı bilgileri bekleniyor.
+- Son doğrulama: lint temiz, Vitest 114/114, Playwright 12/12, build ve yerel HTTPS üzerinde Docker dağıtım provası başarılı.
+- **Tam e-ticaret uygulaması:** 11 demo ürünle yayın kurulumu hazır. Ücretsiz sunucu hesabına erişim bekleniyor. Satışın başlaması için gerçek ödeme, ürün/dosya ve yasal metinler ayrıca gerekiyor.
 
 ## Tamamlananlar
 - Shopier için bağımsız statik vitrin (`npm run build:storefront`) [ücretsiz Cloudflare adresinde](https://nakis-vitrin.nakis-sitesi.workers.dev/) yayında. Mevcut siteyle uyumlu menü, Hakkımızda, canlı monogram önizlemesi, arama/filtreleme ve 11 etiketli demo ürün var. Satın alma düğmeleri gerçek ürünleri ve Shopier bağlantılarını bekliyor. Monogram önizlemesi tarayıcıda çalışır, sipariş talebi alma kanalı henüz tanımlı değil.
 - Docker (Postgres 17, MinIO, Mailpit), Prisma şema + migration, seed.
-- Canlı kullanım için Docker imajı, PostgreSQL sağlık kontrolü, robots.txt, site haritası ve demo ürünsüz referans seed. Kurulum adımları `DEPLOYMENT.md` dosyasında.
+- Canlı kullanım için üretim Compose dosyası, Docker imajı, PostgreSQL sağlık kontrolü, robots.txt, site haritası ve demo ürünsüz referans seed. Demo yayın seçeneğinde test ürünleri listelenir ve sepete eklenebilir, üretimde siparişe dönüşmez. Kurulum adımları `DEPLOYMENT.md` dosyasında.
 - Kayıt/giriş/e-posta doğrulama/parola sıfırlama, roller ve izinler (RBAC), oturumlar.
 - Katalog, Postgres trigram arama, favoriler, adresler, sepet (misafir birleştirme), kupon, checkout, stok rezervasyonu.
 - Ödeme sağlayıcı arayüzü, imzalı idempotent webhook, manuel ödeme, iade; simülasyon (yalnızca geliştirme).

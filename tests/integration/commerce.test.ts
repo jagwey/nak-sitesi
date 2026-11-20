@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { call, jar, sent } from "./helpers";
 import { seedCatalog } from "./catalog-fixtures";
 import { __resetEnvForTests } from "@/server/env";
@@ -97,6 +97,29 @@ async function placeDigitalOrder() {
 }
 
 describe("checkout + payments", () => {
+  it("keeps demo products in the cart but never creates an order for them in production", async () => {
+    const { rose } = await seedWithFile();
+    await db.product.update({ where: { id: rose.id }, data: { isDemo: true } });
+    const { email } = await signup();
+    const user = await db.user.findUniqueOrThrow({ where: { email } });
+    await addItem({ userId: user.id }, { productId: rose.id, format: "VP3", license: "PERSONAL", quantity: 1 });
+
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("APP_URL", "https://nakis.example.com");
+    vi.stubEnv("PAYMENT_PROVIDER", "none");
+    vi.stubEnv("PAYMENT_SIMULATION_ENABLED", "false");
+    __resetEnvForTests();
+    try {
+      await expect(checkout(user, {})).rejects.toThrow("Demo ürünler siparişe açık değil.");
+      expect(await db.order.count()).toBe(0);
+      expect(await db.payment.count()).toBe(0);
+      expect(await db.cartItem.count()).toBe(1);
+    } finally {
+      vi.unstubAllEnvs();
+      __resetEnvForTests();
+    }
+  });
+
   it("creates a PENDING_PAYMENT order with snapshots; later price change does not alter it", async () => {
     const { rose, body } = await placeDigitalOrder();
     expect(body.order.status).toBe("PENDING_PAYMENT");
