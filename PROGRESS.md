@@ -89,3 +89,4 @@
 
 ## 2026-11-20 — Shopier vitrini
 - [x] Mevcut ana sayfa görseli ve tasarım sistemiyle Cloudflare Pages için bağımsız vitrin derlemesi. Demo ürünler dosyalara alınmadı. Shopier bağlantısı, görsel yolu ve kuruş fiyatı derlemede doğrulanıyor. Lint, test 110/110, ana uygulama ve vitrin derlemeleri başarılı. Yerel Pages önizlemesi 390/1440 px, görseller, font, gezinti ve güvenlik başlıkları kontrol edildi.
+- [x] Ücretsiz vitrin `https://nakis-vitrin.nakis-sitesi.workers.dev/` adresinde yayımlandı (`b26ae693-85a4-47ee-a093-95f7b161ed3a`). `pages.dev` adresi yerel bağlantıdan açılmadığı için Cloudflare Workers Static Assets kullanıldı. Canlı HTTPS yanıtı, 390/1440 px tarayıcı görünümü, görseller, yazı tipi, bağlantılar ve `/admin` için 404 doğrulandı.

@@ -4,10 +4,10 @@
 - **Aşama 1–2 (ön yüz, tasarım incelemesi):** tamamlandı, müşteri onaylı vitrin.
 - **Aşama 3 (backend + yönetim paneli):** uygulandı. Faz A (altyapı, auth), B (katalog, arama, depolama), C (sepet, ödeme akışı, sipariş, indirme), D1 (admin ürün/dosya/stok/CSV), D2 (admin sipariş/müşteri/kupon/ayar/CMS/özel talep) bitti.
 - Son doğrulama: lint temiz, Vitest 103/103 (15 dosya), Playwright 12/12, build ve Docker dağıtım provası başarılı.
-- **Canlıya hazır değil:** gerçek ödeme, gerçek ürün/dosya, yasal metinler ve altyapı bilgileri bekleniyor.
+- **Tam e-ticaret uygulaması:** canlıya alınması için gerçek ödeme, gerçek ürün/dosya, yasal metinler ve altyapı bilgileri bekleniyor.
 
 ## Tamamlananlar
-- Shopier ödemeli vitrin için bağımsız statik derleme (`npm run build:storefront`). Ücretsiz Cloudflare Pages yayını Cloudflare hesap erişimini, satış bağlantıları gerçek ürünleri bekliyor.
+- Shopier için bağımsız statik vitrin (`npm run build:storefront`) [ücretsiz Cloudflare adresinde](https://nakis-vitrin.nakis-sitesi.workers.dev/) yayında. İlk koleksiyon mesajı gösteriliyor. Satın alma düğmeleri için gerçek ürünler, fiyatlar, fotoğraflar ve Shopier bağlantıları bekleniyor.
 - Docker (Postgres 17, MinIO, Mailpit), Prisma şema + migration, seed.
 - Canlı kullanım için Docker imajı, PostgreSQL sağlık kontrolü, robots.txt, site haritası ve demo ürünsüz referans seed. Kurulum adımları `DEPLOYMENT.md` dosyasında.
 - Kayıt/giriş/e-posta doğrulama/parola sıfırlama, roller ve izinler (RBAC), oturumlar.

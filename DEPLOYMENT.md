@@ -2,14 +2,14 @@
 
 Bu liste, uygulamayı gerçek bir sunucuya almadan önce yapılması gerekenleri sıralar. Müşteriden gelmesi gereken bilgiler `PROJECT_STATUS.md` içindedir.
 
-## Ücretsiz Cloudflare Pages vitrini
+## Ücretsiz Cloudflare vitrini
 
-Shopier akışı için `npm run build:storefront` komutu `storefront/out` dizinine statik bir vitrin çıkarır. Ödeme ve siparişler Shopier’de yönetilir. Yönetim paneli ve sunucu altyapısı için aşağıdaki Docker kurulumu kullanılır.
+Shopier akışı için `npm run build:storefront` komutu `storefront/out` dizinine statik bir vitrin çıkarır. Canlı vitrin [Cloudflare Workers adresinde](https://nakis-vitrin.nakis-sitesi.workers.dev/) yayımlanır. Ödeme ve siparişler Shopier’de yönetilir. Yönetim paneli ve sunucu altyapısı için aşağıdaki Docker kurulumu kullanılır.
 
 - Yayımlanacak ürünleri `storefront/catalog.json` dosyasına `name`, `description`, `image`, `priceKurus` ve `shopierUrl` alanlarıyla ekleyin. `image` değeri `/products/` altında olmalı. İlgili görselleri `storefront/public/products/` dizinine koyun. Yalnızca herkese açık ürün görselleri ekleyin.
 - `priceKurus` değerini ve Shopier bağlantısını güncel ürün kaydıyla karşılaştırın. Koleksiyon boşsa vitrin hazırlık mesajı gösterir.
-- Derlemeden sonra yalnızca `storefront/out` klasörünü Cloudflare Pages’e yükleyin. Hesap bağlantısı yetkilendikten ve proje açıldıktan sonra tekrar yayımlamak için `npx wrangler@4 pages deploy storefront/out --project-name <proje-adı>` komutunu kullanabilirsiniz.
-- Yayımlanan adreste HTTPS’i, mobil görünümü, ürün görsellerini ve Shopier düğmelerini kontrol edin.
+- Cloudflare hesabına `npx wrangler@4.85.0 login` ile bağlanın. Derlemeden sonra proje kökünde `npx wrangler@4.85.0 deploy --config storefront/wrangler.jsonc` çalıştırın. Bu komut yalnızca `storefront/out` dizinini yükler. İlk yayında bağlama adımı bu sürümle doğrulandı.
+- Yayımlanan adreste HTTPS’i, mobil görünümü ve görselleri kontrol edin. Katalog doldurulduğunda Shopier düğmelerinin doğru ürünlere ulaştığını doğrulayın.
 
 ## 0. Ön koşullar
 - Docker (BuildKit), PostgreSQL 17, S3 uyumlu depolama, SMTP sağlayıcı ve TLS'li alan adı.
