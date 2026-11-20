@@ -1,0 +1,19 @@
+node_modules
+.next
+out
+.env
+.env.*
+!.env.example
+storage/
+.storage/
+uploads/
+*.tsbuildinfo
+src/generated/
+coverage/
+
+# local artifacts
+screenshots/
+test-results/
+playwright-report/
+docker-data/
+*.log

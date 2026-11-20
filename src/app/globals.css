@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #FAF8F3;
+  --bg-secondary: #EDE4D6;
+  --bg-surface: #FFFFFF;
+  --bg-deep: #2B211B;
+  --bg-deep-soft: #382B23;
+
+  --text-primary: #242320;
+  --text-secondary: #5A5047;
+  --text-muted: #6E6359;
+  --text-on-deep: #F6F2EA;
+  --text-on-deep-muted: #CBBFA9;
+
+  --brand-brown: #4A372C;
+  --brand-brown-hover: #36271F;
+  --brand-gold: #B18A49;
+  --brand-gold-text: #85632B;
+  --brand-gold-soft: #D9C39A;
+
+  --border-subtle: #E2D8C8;
+  --border-strong: #C9B9A1;
+  --border-deep: #4A3B31;
+
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@theme inline {
+  --color-ivory: var(--bg-primary);
+  --color-linen: var(--bg-secondary);
+  --color-surface: var(--bg-surface);
+  --color-espresso: var(--bg-deep);
+  --color-espresso-soft: var(--bg-deep-soft);
+  --color-ink: var(--text-primary);
+  --color-umber: var(--text-secondary);
+  --color-stone: var(--text-muted);
+  --color-cocoa: var(--brand-brown);
+  --color-cocoa-hover: var(--brand-brown-hover);
+  --color-gold: var(--brand-gold);
+  --color-gold-text: var(--brand-gold-text);
+  --color-gold-soft: var(--brand-gold-soft);
+  --color-hairline: var(--border-subtle);
+  --color-hairline-strong: var(--border-strong);
+
+  --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
+}
+
+html {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-x: clip;
+}
+
+/* Strict editorial typography utilities */
+.font-display {
+  font-family: var(--font-serif);
+  letter-spacing: -0.02em;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Accessible focus styling */
+:focus-visible {
+  outline: 2px solid var(--brand-gold);
+  outline-offset: 2px;
+}
+
+/* Remove browser-default blue clear icon on search inputs */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Subtle tactile linen weave overlay for monogram live studio canvas */
+.linen-canvas-surface {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(74, 55, 44, 0.025) 0px,
+      rgba(74, 55, 44, 0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(74, 55, 44, 0.025) 0px,
+      rgba(74, 55, 44, 0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+
+.terry-canvas-surface {
+  background-image:
+    radial-gradient(rgba(74, 55, 44, 0.065) 1px, transparent 1px),
+    radial-gradient(rgba(74, 55, 44, 0.04) 1px, transparent 1px);
+  background-size: 6px 6px;
+  background-position: 0 0, 3px 3px;
+}
+
+/* Clean scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

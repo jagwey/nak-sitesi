@@ -1,0 +1,37 @@
+# YAPILACAKLAR — Tülay Birer
+
+> Token/limit biterse yeni oturum buradan devam eder. Her alt görev bitince **hemen** güncellenir.
+> Kural: `[x]` bitti, `[~]` devam ediyor, `[ ]` yapılacak. Ayrıntı ve dosya yolları → `PROGRESS.md`.
+
+## Şu an çalışan
+- [~] Ajan "E" — şema düzeltmesi (CustomOrder alanları, Category SEO, User.anonymizedAt), duyuru çubuğu çakışması, Playwright E2E, test admin temizliği
+- [~] Ajan "E" ek: güvenlik başlıkları (CSP/HSTS), env doğrulama + sabit simülasyon sırrı kaldırma, özel talep admin e-postası, müşteri yetki uyumu, TEST_REPORT E2E
+
+## Yapılanlar
+- [x] Phase 2 — premium tasarım incelemesi (lint temiz, test 10/10, build OK, 49/49 taşma yok)
+- [x] Faz A — altyapı: Docker (Postgres, MinIO, Mailpit), Prisma şema + migration, seed, auth/rol, e-posta (test 20/20)
+- [x] Faz B — katalog, arama, favori, depolama, dosya yükleme, nakış dosyası parse; UI veritabanına bağlı (test 68/68)
+- [x] Faz C — sepet, kupon, ödeme akışı (simüle), sipariş, stok, kargo, dijital indirme; hesap sayfaları (test 68/68, build OK)
+
+## Yapılacaklar
+- [x] Faz D1 — admin kabuğu, panel, ürün CRUD, VP3/PES yükleme, kategori/koleksiyon/etiket, stok, CSV içe aktarma (test 97/97, build OK)
+- [ ] Dev DB'deki test yöneticisi `d1-admin@example.com` (yalnız yerel) — yayın öncesi silinmeli
+- [x] Faz D2 — admin sipariş/müşteri/kupon/indirme kaydı, yöneticiler, denetim, ayarlar + CMS, kişiye özel talep akışı (test 97/97, build OK)
+- [ ] Dev DB test yöneticileri `d2shots@example.com`, `d2shots2@example.com` — silinmeli (ajan E)
+- [x] Faz B+C sonrası doğrulama (ana oturum): lint temiz, test 68/68, build OK, ekran görüntüleri tasarımla uyumlu
+- [ ] Faz D sonrası lint + test + build + ekran görüntüsü kontrolü
+- [x] Dokümanlar: README, AGENTS, ARCHITECTURE, DATABASE_SCHEMA, API_DOCUMENTATION, BACKEND_REQUIREMENTS, SECURITY, ADMIN_GUIDE, PROJECT_STATUS, TEST_REPORT, DEPLOYMENT, PAYMENT_INTEGRATION, .env.example
+- [ ] Bilinen teknik borç: modül import döngüleri (cart↔orders, orders↔payments, settings↔orders); bazı route'lar route() dışı Response.json
+- [ ] GitHub: `git init`, `.gitignore` (node_modules, .next, .env*, tsconfig.tsbuildinfo), sır kontrolü, ilk commit `main`, push → https://github.com/jagwey/nak-sitesi
+- [ ] Gerçek ödeme sağlayıcısı (iyzico/PayTR) — müşterinin hesap bilgileri gerekli
+- [ ] Gerçek ürünler: fotoğraf, fiyat, yalnız gerçekten var olan formatlar (demo ürünler `isDemo`)
+
+## Açık küçük kusurlar (Phase 2'den)
+- [ ] Galeri yakınlaştır düğmesi fotoğraf üstünde
+- [ ] Ürün kartı tür satırı mobilde kayıyor
+
+## Nakış dosyaları (ayrı iş, `Belgeler\ChatGPT\Nakış desen üretimi\`)
+- [x] Referans stil 140 mm: `Referans_Stil_140mm\` (Duhanedoku 9.369 dikiş, Tülay 7.270 dikiş)
+- [ ] Duhanedoku "HANDMADE WITH LOVE" küçük yazı bozuk, papatya konturu köşeli
+- [ ] `Referans_Stil_140mm\OKUBENI.md`
+- [ ] Gerçek makinede test dikişi (kullanıcı)
