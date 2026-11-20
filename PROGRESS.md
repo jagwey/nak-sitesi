@@ -163,7 +163,7 @@
 - [x] Kök neden: 1 GB Oracle thrashing + `force-dynamic` SSR + auth/cart ilk boyamayla yarışıyor; edge home cache yazılmıyordu.
 - [x] Sunucu: dnf/pmlogger kapatıldı, dakikalık localhost warm-up cron.
 - [x] Kod: homepage `unstable_cache` 60s, idle auth/cart, Worker anonim home cache, Caddy `header_down` anonymous-home. Layout `force-dynamic` kaldı (build-time env prerender kırığı).
-- [~] GHCR rebuild + Oracle web imajı yenileme.
+- [x] GHCR `e33cc99` yeşil; Oracle web imajı yenilendi. Anonim home edge HIT ~0.2s; koleksiyon ~0.8s.
 
 ## 2026-11-20 — Vitrin okunabilirliği ve önizleme kataloğu
 
