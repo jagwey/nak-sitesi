@@ -156,6 +156,7 @@
 ## 2026-11-20 — İsteğe özel parça / görsel talep
 
 - [x] `CustomOrderStudio`: `hizmet=parca|gorsel` için hafif akış (canlı monogram tuvali yok). Referans görseller formda ve solda önizlenir; isteğe bağlı blok (kumaş notu, telefon, tarih, bütçe, ek not) açıldı. Ürün tipi `İsteğe özel parça` şemaya eklendi. Talepler mevcut `/api/custom-orders` ile private kovaya + `CustomOrder` kaydına gider; admin `/admin/ozel-siparisler` listesinde görsel sayısı, detayda notlar ve ekler. Yeni mail entegrasyonu yok (mevcut bildirimler duruyor). Lint yeşil; birim + özel sipariş entegrasyon testleri geçti.
+- [x] `main`’e pushlandı (`320b06b`). GHCR `nakis-sitesi-web:latest` derlemesi başarılı (Actions `44811656275`). Oracle’da `docker pull` + web recreate için SSH anahtarı bu ortamda yok; canlı konteyner yenilemesi bekliyor.
 
 ## 2026-11-20 — Vitrin okunabilirliği ve önizleme kataloğu
 
