@@ -7,8 +7,9 @@
 - (yok)
 
 ## 2026-11-20 vitrin
-- [x] Okunabilir gövde (Inter, 18px), hizmet CTA’ları, kampanya bandı, kumaş önizlemesi, 32 özgün önizleme deseni. Deploy yok.
-- [x] Statik vitrine taşındı. Shopier’de sepet indirimi vaat edilmez. Deploy yok.
+- [x] Okunabilir gövde (Inter, 18px), hizmet CTA’ları, kampanya bandı, kumaş önizlemesi, 32 özgün önizleme deseni.
+- [x] Statik vitrine taşındı. Shopier’de sepet indirimi vaat edilmez.
+- [x] Canlı Worker’a yayınlandı (`5f347784`); `/` ve `/onizleme` doğrulandı. Tam mağaza için Oracle proxy’ye dönüş ayrı iş.
 
 ## Yapılanlar
 - [x] Faz E — migration, E2E 8/8, güvenlik başlıkları, env doğrulama, özel talep e-postası, customer:write (lint temiz, test 100/100, build OK)
