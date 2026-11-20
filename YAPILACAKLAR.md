@@ -45,7 +45,7 @@
 - [x] Mağaza adı, logo, işletme sahibi ve iletişim ayarları tek kayıtta; güncellemeler vitrinde, başlıklarda ve e-postada doğrulandı
 - [x] GitHub: `git init`, `.gitignore` (node_modules, .next, .env*, tsconfig.tsbuildinfo), sır kontrolü, ilk commit `main`, push → https://github.com/jagwey/nak-sitesi
 - [ ] Gerçek ödeme sağlayıcısı (iyzico/PayTR) — müşterinin hesap bilgileri gerekli
-- [ ] Gerçek ürünler: fotoğraf, fiyat, yalnız gerçekten var olan formatlar (demo ürünler `isDemo`)
+- [x] Dijital nakış kataloğuna gerçek desenler, fiyatları ve doğrulanmış formatlar eklendi. Demo ürünler arşivlendi.
 
 ## Açık küçük kusurlar (Phase 2'den)
 - [x] Galeri yakınlaştırma düğmesi fotoğrafın altında ve 390/1440 px genişlikte klavyeyle çalışıyor
@@ -60,5 +60,5 @@
 ## Özgün makine nakışı koleksiyonu
 - [x] 12 özgün dijital desenin VP3, PES ve DST dosyaları, ürün başına üç dikiş önizlemesi ve fiyatları canlı panele taslak olarak aktarıldı.
 - [x] Sepet desen kampanyası ve fiziksel/baskı ürünleri için kişiye özel teklif akışı hazır.
-- [ ] Yeni mağaza sürümünü Oracle'a dağıt, gerçek koleksiyonu yayımla ve canlı sayfaları doğrula.
+- [x] Yeni mağaza sürümü Oracle'a dağıtıldı. 12 desen, 36 önizleme, VP3/PFAFF/10×10 kasnak filtresi ve sepet kampanyası canlıda doğrulandı.
 - [ ] Fiziksel makinede prova dikişi yap.

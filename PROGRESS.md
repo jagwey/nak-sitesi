@@ -111,3 +111,4 @@
 ## 2026-11-20 — Özgün makine nakışı koleksiyonu
 - [x] 12 desen için 36 gerçek VP3, PES ve DST dosyası, 36 dikiş önizlemesi ve teslim arşivi hazırlandı. Her dosya yeniden okunarak dikişleri ve 100 × 100 mm kasnağa sığdığı kontrol edildi. Ürünler gerçek dosyaları ve 155–200 TL fiyatlarıyla canlı yönetim paneline taslak aktarıldı.
 - [x] 3 farklı desene %10, 5 farklı desene %20 sepet indirimi eklendi. İndirim fiziksel ürünlere ve demolara uygulanmaz. Fiziksel ve baskı alışverişi için kişiye özel teklif akışı eklendi. Ödeme sağlayıcısı kapalıyken sipariş oluşturulmaz. Lint, 122/122 test ve üretim derlemesi başarılı.
+- [x] `e3bb928` Oracle'a dağıtıldı. 12 özgün dijital desen yayımlandı ve 11 demo ürün arşivlendi. Canlıda 36 görsel, VP3/PFAFF/10×10 kasnak filtresi, %10/%20 sepet tutarları ve sağlayıcısız sipariş engeli doğrulandı. Katalog, ürün, teklif ve ödeme ekranları 390 ve 1440 px genişliklerde kontrol edildi.
