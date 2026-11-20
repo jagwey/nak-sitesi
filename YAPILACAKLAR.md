@@ -30,7 +30,8 @@
 - [x] Canlı vitrinde mevcut siteyle uyumlu menü, Hakkımızda, Kişiye Özel Tasarım önizlemesi, arama ve demo ürün sayfaları
 - [x] Tam mağaza için üretim kurulumu ve 11 demo ürünle yerel HTTPS provası, demo checkout koruması, üyelik ve sepet doğrulaması
 - [x] Chrome'da Oracle Cloud hesabına erişim ve ücretsiz sunucu formunun hazırlanması
-- [ ] Ücretsiz disk kotasının doğrulanması, kullanıcı onayıyla Oracle sunucusunun açılması ve tam mağazanın mevcut Cloudflare adresinden yayımlanması
+- [x] Ücretsiz disk kotası, kullanıcı onayı ve tam mağaza için Cloudflare yönlendirme yapılandırması
+- [ ] Oracle sunucusunun açılması ve tam mağazanın mevcut Cloudflare adresinden yayımlanması
 - [ ] Canlı e-posta doğrulaması ve parola sıfırlama için SMTP göndereni ayarla
 - [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
 - [ ] Canlı vitrinde kişiye özel talepler için işletmenin doğrulanmış iletişim kanalı

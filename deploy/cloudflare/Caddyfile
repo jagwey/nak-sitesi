@@ -1,0 +1,16 @@
+{$NAKIS_ORIGIN_HOST} {
+	@storefront header Nakis-Origin-Token {$NAKIS_ORIGIN_TOKEN}
+	handle @storefront {
+		reverse_proxy 127.0.0.1:3100 {
+			header_up Host {$NAKIS_PUBLIC_HOST}
+			header_up X-Forwarded-Host {$NAKIS_PUBLIC_HOST}
+			header_up X-Forwarded-Proto https
+			header_up X-Forwarded-For {http.request.header.Nakis-Client-IP}
+			header_up -Nakis-Origin-Token
+			header_up -Nakis-Client-IP
+		}
+	}
+	handle {
+		respond 404
+	}
+}

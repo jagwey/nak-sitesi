@@ -95,4 +95,6 @@
 ## 2026-11-20 — Tam mağazanın yayın hazırlığı
 - [x] Yerel mağazanın aynı kaynak kodu için üretim Compose kurulumu ve demo checkout koruması hazır. Lint, Vitest 114/114, Playwright 12/12, Next.js ve Docker derlemeleri başarılı. Yerel üretim provasında HTTPS, temiz PostgreSQL kurulumu, 11 demo ürün, VP3/PFAFF filtreleri, sepet, üyelik, Mailpit üzerinden doğrulama, giriş ve demo siparişin reddi doğrulandı.
 - [x] Chrome'da Oracle Cloud oturumu doğrulandı. Frankfurt'ta ayrı ağda Always Free uyumlu Ubuntu 24.04 Arm sunucusu için form hazırlandı.
-- [ ] Hesapta kalan ücretsiz disk kotasını doğrula. Yeni sunucuya SSH anahtarı ve HTTPS erişimi için kullanıcı onayı bekleniyor. Sunucu henüz oluşturulmadı. Mevcut Cloudflare adresinde bağımsız vitrin yayını sürüyor.
+- [x] Frankfurt'ta 200 GB ücretsiz disk kotasının 153 GB'ı kullanılabilir. Yeni sunucuya SSH ve HTTPS erişimi kullanıcı tarafından onaylandı.
+- [x] Tam mağaza için Cloudflare yönlendirmesi ve Caddy yapılandırması hazır. İmzalanmış oturum çerezleri, yönlendirmeler ve istemci IP başlıkları için testler eklendi. Lint, 120/120 test, Worker prova derlemesi ve Caddy yapılandırma kontrolü geçti.
+- [ ] Oracle sunucusunu oluşturup tam mağazayı HTTPS üzerinden doğrula ve Cloudflare adresine bağla. Mevcut adreste bağımsız vitrin yayını sürüyor.

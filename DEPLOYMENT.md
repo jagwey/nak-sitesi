@@ -32,6 +32,12 @@ Shopier akışı için `npm run build:storefront` komutu `storefront/out` dizini
 3. Bu mağazanın ilk yayını için, **boş veritabanında** `docker compose --env-file .env.production -f docker-compose.prod.yml run --rm tools npm run db:seed` ile 11 demo ürünü yükleyin. Bu ürünler aramada, makine/format/kasnak filtrelerinde ve sepette denenebilir. Üretimde demo ürün içeren sepet siparişe dönüşmez. Gerçek ürünle çalışan bir veritabanına tam demo seed uygulamayın.
 4. `docker compose --env-file .env.production -f docker-compose.prod.yml up -d --wait web` ile uygulamayı başlatın. SMTP ve kova ayarlarını bölümler 3–4'e göre doğrulayın. HTTPS adresinde sağlık, kayıt, giriş, e-posta doğrulama, filtreler ve sepeti kontrol edin. Aynı `workers.dev` adresi kullanılacaksa, mevcut Worker'ı yalnızca bu kontrollerden sonra doğrulanmış HTTPS yayınına bağlayın.
 
+### Mevcut Cloudflare adresini tam mağazaya bağlama
+
+1. Sunucuda `deploy/cloudflare/Caddyfile` dosyasını kullanın. `NAKIS_ORIGIN_HOST` geçerli TLS sertifikası olan sunucu adı, `NAKIS_PUBLIC_HOST` ziyaretçinin kullandığı Worker adı ve `NAKIS_ORIGIN_TOKEN` yalnızca Caddy ile Worker'ın bildiği rastgele bir değer olmalı. Sırrı sunucunun erişimi kısıtlı ortam dosyasında saklayın. Uygulama ve veritabanı portlarını internete açmayın. Doğrudan sunucu isteği token olmadan `404` dönmeli.
+2. `npx wrangler@4.85.0 versions upload --config deploy/cloudflare/wrangler.jsonc --var NAKIS_ORIGIN:https://<sunucu-adı> --secrets-file <erişimi-kısıtlı-dosya>` ile yeni Worker sürümünü hazırlayın. Sırlar dosyası `NAKIS_ORIGIN_TOKEN` içermeli ve depo dışında olmalı. Sunucunun TLS adresi Worker'dan farklı olmalı. Yükleme mevcut yayını değiştirmez.
+3. `npx wrangler@4.85.0 versions deploy <yeni-sürüm>@100% --config deploy/cloudflare/wrangler.jsonc` ile trafiği yönlendirin. Canlı adreste kayıt, oturum, filtre ve sepeti tekrar deneyin. Gerekirse `npx wrangler@4.85.0 rollback <önceki-sürüm> --config deploy/cloudflare/wrangler.jsonc` ile önceki yayına dönün.
+
 ## 1. Ortam değişkenleri (`src/server/env.ts`)
 
 Çalışma zamanı değerlerini sunucunun gizli değer deposundan verin. `.env.example` alanları listeler. `docker run --env-file` için dosyayı repo dışında tutun ve değerleri tırnaksız `AD=değer` biçiminde yazın. Yalnızca herkese açık `S3_PUBLIC_BASE_URL` değeri derleme argümanı olarak da kullanılır.
