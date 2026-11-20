@@ -47,7 +47,7 @@ services:
     network_mode: host
     env_file: .env.caddy
     volumes:
-      - ./deploy/cloudflare/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./deploy/cloudflare/Caddyfile:/etc/caddy/Caddyfile:ro,Z
       - caddy-data:/data
       - caddy-config:/config
     depends_on:

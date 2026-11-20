@@ -12,11 +12,14 @@ param(
   [Parameter(Mandatory = $true)]
   [string]$ServerIp,
 
-  [string]$SshUser = "ubuntu",
+  [string]$SshUser = "opc",
   [string]$SshKey = (Join-Path $HOME ".ssh\nakis-oci"),
   [string]$PublicHost = "nakis-vitrin.nakis-sitesi.workers.dev",
   [string]$OriginHost = "",
   [string]$Platform = "linux/amd64",
+  [ValidateSet("local", "ghcr")]
+  [string]$ImageSource = "ghcr",
+  [string]$GhcrOwner = "jagwey",
   [switch]$SeedDemo,
   [switch]$SkipBuild,
   [switch]$SkipWorkerDeploy
@@ -42,7 +45,8 @@ $SecretsFile = Join-Path $SecretsDir ("oracle-" + ($ServerIp -replace '[^0-9a-zA
 
 function New-RandomSecret([int]$Bytes = 32) {
   $buf = New-Object byte[] $Bytes
-  [System.Security.Cryptography.RandomNumberGenerator]::Fill($buf)
+  $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+  try { $rng.GetBytes($buf) } finally { $rng.Dispose() }
   return ([Convert]::ToBase64String($buf) -replace '\+', '-' -replace '/', '_' -replace '=', '')
 }
 
@@ -60,16 +64,19 @@ if (Test-Path $SecretsFile) {
 }
 
 $S3PublicBaseUrl = "$PublicUrl/images"
-$WebImage = "nakis-sitesi-web:prod"
-$ToolsImage = "nakis-sitesi-tools:prod"
+$ownerLower = $GhcrOwner.ToLowerInvariant()
+$WebImage = if ($ImageSource -eq "ghcr") { "ghcr.io/$ownerLower/nak-sitesi-web:latest" } else { "nakis-sitesi-web:prod" }
+$ToolsImage = if ($ImageSource -eq "ghcr") { "ghcr.io/$ownerLower/nak-sitesi-tools:latest" } else { "nakis-sitesi-tools:prod" }
 
-if (-not $SkipBuild) {
+if ($ImageSource -eq "local" -and -not $SkipBuild) {
   Write-Host "[1/6] Yerelde $Platform Docker imajları derleniyor (1 GB sunucuda RAM harcamamak için)..."
   docker buildx build --platform $Platform --target tools --load -t $ToolsImage .
   if ($LASTEXITCODE -ne 0) { throw "tools imajı derlenemedi" }
 
   docker buildx build --platform $Platform --target app --build-arg "S3_PUBLIC_BASE_URL=$S3PublicBaseUrl" --load -t $WebImage .
   if ($LASTEXITCODE -ne 0) { throw "web imajı derlenemedi" }
+} else {
+  Write-Host "[1/6] Hazır imaj kaynağı kullanılıyor ($ImageSource): $WebImage"
 }
 
 $SshTarget = "$SshUser@$ServerIp"
@@ -148,21 +155,27 @@ try {
   ssh @SshArgs $SshTarget "chmod 600 /opt/nakis/.env.production /opt/nakis/.env.caddy && sed -i 's/\r$//' /opt/nakis/deploy/cloudflare/Caddyfile"
   if ($LASTEXITCODE -ne 0) { throw "Dosya izinleri ayarlanamadı" }
 
-  Write-Host "[4/6] Sıkıştırılmış Docker imajları SSH üzerinden sunucuya yükleniyor..."
-  $TarPath = Join-Path $TmpDir "nakis-images.tar"
-  $TarGzPath = Join-Path $TmpDir "nakis-images.tar.gz"
-  docker save -o $TarPath $WebImage $ToolsImage
-  if ($LASTEXITCODE -ne 0) { throw "docker save başarısız" }
+  if ($ImageSource -eq "ghcr") {
+    Write-Host "[4/6] Hazır Docker imajları GHCR üzerinden doğrudan sunucuya çekiliyor..."
+    ssh @SshArgs $SshTarget "sudo docker pull $WebImage && sudo docker pull $ToolsImage"
+    if ($LASTEXITCODE -ne 0) { throw "Sunucuda GHCR docker pull başarısız (paket gizliyse GHCR görünürlüğünü açın veya -ImageSource local kullanın)" }
+  } else {
+    Write-Host "[4/6] Sıkıştırılmış Docker imajları SSH üzerinden sunucuya yükleniyor..."
+    $TarPath = Join-Path $TmpDir "nakis-images.tar"
+    $TarGzPath = Join-Path $TmpDir "nakis-images.tar.gz"
+    docker save -o $TarPath $WebImage $ToolsImage
+    if ($LASTEXITCODE -ne 0) { throw "docker save başarısız" }
 
-  node -e "const fs=require('fs'),zlib=require('zlib'); fs.createReadStream(process.argv[1]).pipe(zlib.createGzip({level:1})).pipe(fs.createWriteStream(process.argv[2]));" $TarPath $TarGzPath
-  if ($LASTEXITCODE -ne 0) { throw "Docker imaj arşivi sıkıştırılamadı" }
-  Remove-Item -Force $TarPath -ErrorAction SilentlyContinue
+    node -e "const fs=require('fs'),zlib=require('zlib'),{pipeline}=require('stream'); pipeline(fs.createReadStream(process.argv[1]),zlib.createGzip({level:1}),fs.createWriteStream(process.argv[2]),e=>{if(e){console.error(e);process.exit(1);}});" $TarPath $TarGzPath
+    if ($LASTEXITCODE -ne 0) { throw "Docker imaj arşivi sıkıştırılamadı" }
+    Remove-Item -Force $TarPath -ErrorAction SilentlyContinue
 
-  scp -i $SshKey -o StrictHostKeyChecking=accept-new $TarGzPath "${SshTarget}:/tmp/nakis-images.tar.gz"
-  if ($LASTEXITCODE -ne 0) { throw "Docker imaj arşivi aktarılamadı" }
+    scp -i $SshKey -o StrictHostKeyChecking=accept-new $TarGzPath "${SshTarget}:/tmp/nakis-images.tar.gz"
+    if ($LASTEXITCODE -ne 0) { throw "Docker imaj arşivi aktarılamadı" }
 
-  ssh @SshArgs $SshTarget "gunzip -c /tmp/nakis-images.tar.gz | sudo docker load && rm -f /tmp/nakis-images.tar.gz"
-  if ($LASTEXITCODE -ne 0) { throw "Sunucuda docker load başarısız" }
+    ssh @SshArgs $SshTarget "gunzip -c /tmp/nakis-images.tar.gz | sudo docker load && rm -f /tmp/nakis-images.tar.gz"
+    if ($LASTEXITCODE -ne 0) { throw "Sunucuda docker load başarısız" }
+  }
 
   Write-Host "[5/6] PostgreSQL, migration, seed, web ve Caddy başlatılıyor..."
   $seedCmd = if ($SeedDemo) { "npm run db:seed" } else { "npm run db:seed -- -- --reference-only" }
