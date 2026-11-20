@@ -29,7 +29,7 @@
 
 ## Açık küçük kusurlar (Phase 2'den)
 - [x] Galeri yakınlaştırma düğmesi fotoğrafın altında ve 390/1440 px genişlikte klavyeyle çalışıyor
-- [ ] Ürün kartı tür satırı mobilde kayıyor
+- [x] 390 px mobil katalogda ürün türü hizalı ve tek satır, kart yükseklikleri eşit
 
 ## Nakış dosyaları (ayrı iş, `Belgeler\ChatGPT\Nakış desen üretimi\`)
 - [x] Referans stil 140 mm: `Referans_Stil_140mm\` (Duhanedoku 9.369 dikiş, Diğer logo 7.270 dikiş)

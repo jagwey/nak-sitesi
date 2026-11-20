@@ -33,7 +33,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       : "Atölye üretimi";
 
   return (
-    <article className="group flex flex-col">
+    <article className="group flex min-w-0 flex-col">
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-linen">
         <Link
           href={`/urun/${product.slug}`}
@@ -81,7 +81,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
       <div className="mt-3.5 flex flex-1 flex-col justify-between gap-1.5">
         <div>
-          <h3 className="font-display text-[1.2rem] leading-snug text-ink">
+          <h3 className="line-clamp-2 min-h-[2lh] break-words font-display text-[1.2rem] leading-snug text-ink sm:line-clamp-none sm:min-h-0">
             <Link
               href={`/urun/${product.slug}`}
               className="transition-colors duration-200 hover:text-gold-text"
@@ -89,7 +89,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               {product.name}
             </Link>
           </h3>
-          <p className="mt-1 text-[0.875rem] font-medium text-cocoa">{typeLine}</p>
+          <p className="mt-1 truncate text-[0.8125rem] font-medium text-cocoa sm:text-[0.875rem]">{typeLine}</p>
           <p className="mt-0.5 truncate text-[0.8125rem] text-umber">{metaLine}</p>
         </div>
 

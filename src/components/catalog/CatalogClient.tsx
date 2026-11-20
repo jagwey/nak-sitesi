@@ -436,7 +436,7 @@ export function CatalogClient({ products, total, page, pageSize, facets, emptySu
         <section aria-label="Ürün listesi" className="lg:col-span-9">
           {total > 0 ? (
             <>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3">
+              <div className="grid auto-rows-fr grid-cols-2 gap-x-4 gap-y-10 sm:auto-rows-auto sm:gap-x-6 md:grid-cols-3">
                 {products.map((product, index) => (
                   <ProductCard
                     key={product.id}
