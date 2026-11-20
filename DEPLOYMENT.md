@@ -38,6 +38,20 @@ Shopier akışı için `npm run build:storefront` komutu `storefront/out` dizini
 2. `npx wrangler@4.85.0 versions upload --config deploy/cloudflare/wrangler.jsonc --var NAKIS_ORIGIN:https://<sunucu-adı> --secrets-file <erişimi-kısıtlı-dosya>` ile yeni Worker sürümünü hazırlayın. Sırlar dosyası `NAKIS_ORIGIN_TOKEN` içermeli ve depo dışında olmalı. Sunucunun TLS adresi Worker'dan farklı olmalı. Yükleme mevcut yayını değiştirmez.
 3. `npx wrangler@4.85.0 versions deploy <yeni-sürüm>@100% --config deploy/cloudflare/wrangler.jsonc` ile trafiği yönlendirin. Canlı adreste kayıt, oturum, filtre ve sepeti tekrar deneyin. Gerekirse `npx wrangler@4.85.0 rollback <önceki-sürüm> --config deploy/cloudflare/wrangler.jsonc` ile önceki yayına dönün.
 
+### Oracle Always Free (`VM.Standard.E2.1.Micro`, 1 GB RAM) kurulumu
+
+Frankfurt'ta `VM.Standard.A1.Flex` (Arm) kapasitesi doluyken tam mağaza Oracle'ın diğer Always Free şekli olan **`VM.Standard.E2.1.Micro`** (1 GB RAM, AMD x86_64, 47 GB SSD) üzerinde çalışacak şekilde doğrulandı:
+
+- `deploy/oracle/docker-compose.micro.yml` dosyası PostgreSQL 17 bellek parametrelerini (`shared_buffers=32MB`, `max_connections=25`), Next.js heap sınırını (`--max-old-space-size=280`) ve Caddy ters vekilini 1 GB RAM bütçesine göre sınırlar (yerel Docker ölçümü: Postgres ~78 MiB, Next.js ~217 MiB, Caddy ~12 MiB; toplam ~307 MiB, OOM yok).
+- `deploy/oracle/setup-vm.sh` sunucuda 2 GB SSD swap alanı, Docker Engine, Ubuntu `iptables` 80/443 kuralları ve 3 dakikalık rezervasyon temizleme cron işini kurar.
+- Next.js derlemesi 1 GB sunucuda yapılmaz; `scripts/deploy-oracle.ps1` `linux/amd64` imajlarını yerelde derler, SSH ile aktarır, origin HTTPS (`<ip-tireli>.sslip.io`, tokensız `404` / tokenlı `200`) doğrulamasını geçtikten sonra Cloudflare Worker'ı (`nakis-vitrin.nakis-sitesi.workers.dev`) canlıya alır:
+
+  ```powershell
+  .\scripts\deploy-oracle.ps1 -ServerIp <ORACLE_PUBLIC_IP> -SeedDemo
+  ```
+
+  Ön koşul: Oracle VCN Security List üzerinde TCP `22`, `80` ve `443` giriş kuralları açık olmalı ve sunucu `~/.ssh/nakis-oci.pub` ortak anahtarıyla oluşturulmuş olmalıdır. Sırlar yalnızca git dışındaki `.deploy-secrets/` klasöründe tutulur.
+
 ## 1. Ortam değişkenleri (`src/server/env.ts`)
 
 Çalışma zamanı değerlerini sunucunun gizli değer deposundan verin. `.env.example` alanları listeler. `docker run --env-file` için dosyayı repo dışında tutun ve değerleri tırnaksız `AD=değer` biçiminde yazın. Yalnızca herkese açık `S3_PUBLIC_BASE_URL` değeri derleme argümanı olarak da kullanılır.

@@ -14,6 +14,7 @@ src/generated/
 coverage/
 
 # local artifacts
+.deploy-secrets/
 screenshots/
 test-results/
 playwright-report/

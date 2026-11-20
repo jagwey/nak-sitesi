@@ -31,7 +31,8 @@
 - [x] Tam mağaza için üretim kurulumu ve 11 demo ürünle yerel HTTPS provası, demo checkout koruması, üyelik ve sepet doğrulaması
 - [x] Chrome'da Oracle Cloud hesabına erişim ve ücretsiz sunucu formunun hazırlanması
 - [x] Ücretsiz disk kotası, kullanıcı onayı ve tam mağaza için Cloudflare yönlendirme yapılandırması
-- [ ] Oracle sunucusunun açılması ve tam mağazanın mevcut Cloudflare adresinden yayımlanması
+- [x] Oracle Always Free `VM.Standard.E2.1.Micro` (1 GB RAM) bellek provası (~307 MiB toplam, OOM yok) ve tek komutluk dağıtım kiti (`deploy/oracle/*`, `scripts/deploy-oracle.ps1`)
+- [ ] Oracle sunucusunun (`VM.Standard.E2.1.Micro` veya `A1.Flex`) açılması ve `scripts/deploy-oracle.ps1` ile tam mağazanın mevcut Cloudflare adresinden yayımlanması
 - [ ] Canlı e-posta doğrulaması ve parola sıfırlama için SMTP göndereni ayarla
 - [ ] Gerçek ürün fotoğrafları, fiyatları ve Shopier ürün bağlantılarıyla vitrin güncellemesi
 - [ ] Canlı vitrinde kişiye özel talepler için işletmenin doğrulanmış iletişim kanalı

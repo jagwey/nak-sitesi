@@ -1,0 +1,60 @@
+# Oracle Cloud Always Free VM.Standard.E2.1.Micro (1 GB RAM, AMD x86_64) overlay.
+# Usage on the server (from /opt/nakis):
+#   docker compose --env-file .env.production \
+#     -f docker-compose.prod.yml -f deploy/oracle/docker-compose.micro.yml up -d
+#
+# Measured working set under full-store load: ~307 MiB total
+# (Postgres ~78 MiB + Next.js ~217 MiB + Caddy ~12 MiB) with 2 GB SSD swap headroom.
+
+services:
+  postgres:
+    command:
+      - postgres
+      - -c
+      - shared_buffers=32MB
+      - -c
+      - work_mem=2MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - effective_cache_size=128MB
+      - -c
+      - max_connections=25
+      - -c
+      - max_wal_size=128MB
+    mem_limit: 192m
+    memswap_limit: 512m
+
+  web:
+    image: ${NAKIS_WEB_IMAGE:-nakis-sitesi-web:prod}
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: "--max-old-space-size=280"
+    mem_limit: 448m
+    memswap_limit: 1024m
+
+  tools:
+    image: ${NAKIS_TOOLS_IMAGE:-nakis-sitesi-tools:prod}
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: "--max-old-space-size=320"
+    mem_limit: 384m
+    memswap_limit: 1024m
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env.caddy
+    volumes:
+      - ./deploy/cloudflare/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - web
+    mem_limit: 64m
+    memswap_limit: 128m
+
+volumes:
+  caddy-data:
+  caddy-config:
