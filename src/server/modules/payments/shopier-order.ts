@@ -7,6 +7,7 @@ import { sendEmail } from "../notifications/email";
 import { nextOrderNumber } from "../orders/numbering";
 import { loadPolicy } from "../settings/service";
 import { parseShopierOsb, ShopierOsbError, verifyShopierOsb, type ShopierOsbNotice } from "../../shopier/osb";
+import { decideShopierWebhook, verifyShopierWebhook } from "../../shopier/webhook";
 
 const DIGITAL = new Set(["DIGITAL_EMBROIDERY", "DIGITAL_PRINT", "BUNDLE"]);
 
@@ -171,6 +172,11 @@ export async function handleShopierOsb(fields: { res?: string; hash?: string }):
     throw err;
   }
 
+  return fulfillShopierNotice(notice, "success");
+}
+
+/** Shared by OSB and the REST webhook. Idempotent on the Shopier order id. */
+export async function fulfillShopierNotice(notice: ShopierOsbNotice, okBody: ShopierOsbResponse["body"] = "success"): Promise<ShopierOsbResponse> {
   let recorded: Awaited<ReturnType<typeof recordNotice>>;
   try {
     recorded = await db.$transaction((tx) => recordNotice(tx as unknown as DbClient, notice), { timeout: 20_000, maxWait: 10_000 });
@@ -185,5 +191,26 @@ export async function handleShopierOsb(fields: { res?: string; hash?: string }):
       await sendEmail("downloads_ready", notice.email, { orderNumber: recorded.number, url: "/hesabim?tab=indirmeler" }, { userId: recorded.userId });
     }
   }
-  return { status: 200, body: "success" };
+  return { status: 200, body: okBody };
+}
+
+/**
+ * Shopier REST webhook. Signature is HMAC-SHA256 over the raw body with SHOPIER_WEBHOOK_SECRET
+ * (the `token` returned once when the subscription is created). 200 is required within 5 seconds.
+ */
+export async function handleShopierWebhook(input: { rawBody: string; signature: string | null; event: string | null }): Promise<ShopierOsbResponse> {
+  const token = getEnv().SHOPIER_WEBHOOK_SECRET;
+  if (!token) return { status: 503, body: "unconfigured" };
+  if (input.rawBody.length > 100_000) return { status: 400, body: "bad request" };
+  if (!verifyShopierWebhook(input.rawBody, input.signature, token)) return { status: 403, body: "forbidden" };
+  let body: unknown;
+  try {
+    body = JSON.parse(input.rawBody);
+  } catch {
+    return { status: 400, body: "bad request" };
+  }
+  const decision = decideShopierWebhook(body, input.event);
+  if (decision.action === "ignore") return { status: 200, body: "success" };
+  if (decision.action === "invalid") return { status: 400, body: "bad request" };
+  return fulfillShopierNotice(decision.notice, "success");
 }

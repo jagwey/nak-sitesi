@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
     env_file: .env.production
     # Shopier değişkenleri (SHOPIER_OSB_USERNAME, SHOPIER_OSB_KEY, SHOPIER_PAT,
-    # SHOPIER_STORE_URL, SHOPIER_API_BASE_URL) .env.production üzerinden env_file
+    # SHOPIER_WEBHOOK_SECRET, SHOPIER_STORE_URL, SHOPIER_API_BASE_URL) .env.production üzerinden env_file
     # ile geçer. Boş ${VAR:-} burada yazılmaz; env_file değerinin üstüne biner.
     environment:
       NODE_ENV: production

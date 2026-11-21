@@ -48,8 +48,10 @@ const schema = z
     SHOPIER_OSB_USERNAME: z.string().default(""),
     /** Shopier OSB şifresi. HMAC anahtarıdır; koda yazılmaz. */
     SHOPIER_OSB_KEY: z.string().default(""),
-    /** Shopier kişisel erişim anahtarı. Yalnızca `npm run shopier:sync` kullanır. */
+    /** Shopier kişisel erişim anahtarı. Yalnızca sync ve webhook kayıt betikleri kullanır. */
     SHOPIER_PAT: z.string().default(""),
+    /** Shopier webhook token. Abonelik oluşturulurken bir kez döner; Shopier-Signature anahtarıdır. */
+    SHOPIER_WEBHOOK_SECRET: z.string().default(""),
     /** Ürün bağlantısı yokken satın alma düğmesinin gideceği mağaza adresi. */
     SHOPIER_STORE_URL: z.string().default("https://www.shopier.com/Jagnakis"),
     /** Shopier REST kökü. Sync betiği okur. */

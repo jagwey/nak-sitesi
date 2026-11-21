@@ -37,6 +37,6 @@ COPY --from=build /app/tools/embroidery/parse.py ./tools/embroidery/parse.py
 COPY --chown=node:node --from=build /app/.next ./.next
 USER node
 EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=6s --start-period=15s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=6s --start-period=90s --retries=3 \
   CMD ["node", "-e", "fetch('http://127.0.0.1:' + process.env.PORT + '/api/health', { signal: AbortSignal.timeout(5000) }).then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
 CMD ["node", "node_modules/next/dist/bin/next", "start", "--hostname", "0.0.0.0"]
