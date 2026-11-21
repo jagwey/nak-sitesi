@@ -91,3 +91,4 @@
 - [x] Sepet desen kampanyası ve fiziksel/baskı ürünleri için kişiye özel teklif akışı hazır.
 - [x] Yeni mağaza sürümü Oracle'a dağıtıldı. 12 desen, 36 önizleme, VP3/PFAFF/10×10 kasnak filtresi ve sepet kampanyası canlıda doğrulandı.
 - [ ] Fiziksel makinede prova dikişi yap.
+- [ ] Paket 01 (6 TASLAK ürün, PK01-*): fiyatı onayla, açıklamadaki taslak satırını sil, Pfaff'ta fiziksel prova dikişi yap, sonra yayınla. Kategori/koleksiyon `geleneksel-turk-motifleri*` pasif; ürünler yayınlanınca etkinleştir. BUNDLE ürünü için BundleItem admin servisi gerekir.
