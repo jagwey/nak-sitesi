@@ -152,6 +152,8 @@
 - [x] İlk sürüm `52cb6ad` Oracle'a dağıtıldı. Dört boy ürünü canlı kataloğa aktarıldı ve 390/1440 px genişliklerde Filistin Bayrağı ile birlikte görüntülendi.
 - [x] Kullanıcı talebiyle yeni bayraklar tek üründe iki boya geçirildi. Her bayrağın `Satis-paketleri` klasöründe iki boyu ve toplam altı gerçek makine dosyasını içeren bir ZIP'i var. Site içi ödemede müşteriye seçilen formatın iki boyu için ayrı, kısa ömürlü indirme bağlantıları açılır. Yönetim panelindeki ek dosya adı bu boyları ayrı sürümler halinde saklar.
 - [x] Bir satın alımla iki dosya, aynı formatta dosya sürümleme, tip kontrolü, 159/159 Vitest testi ve üretim derlemesi başarılı.
+- [x] `d43f924` Oracle'a dağıtıldı ve `20261120220000_digital_file_download_label` migration'ı uygulandı. 14 etkin ürün içinde iki yeni bayrak 185 TL'lik birer ürün olarak yayına alındı. Her iki boy ürün kartı ve açıklamada gösteriliyor. Altışar görsel ve dosya doğrulandı. Eski Mini kayıtları arşive alındı ve sayfaları ana kayda yönleniyor. Girişsiz dosya yönetimi ve imzasız VP3 erişimi reddedildi. Yayın sonrası yedek `nakis-2026-11-20T193525Z.dump`.
+- [x] Ana sayfa, Filistin Bayrağı sayfasından ilgili ürünlere geçiş ve iki boyun tek alıma dahil olduğunu belirten açıklamalar 390 ve 1440 pikselde doğrulandı. Bayrak ürünlerinin Shopier bağlantıları yayın sırasında boştu.
 
 ## 2026-11-20 — İsteğe özel parça / görsel talep
 

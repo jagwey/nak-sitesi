@@ -71,7 +71,7 @@
 - [x] Türk Bayrağı ve Doğu Türkistan Bayrağı nakış dosyalarını iki ölçüde hazırla ve Bayrak desenleri bölümüyle birlikte test et.
 - [x] İlk Bayrak desenleri bölümünü canlıya al ve tarayıcıda doğrula.
 - [x] Türk Bayrağı ve Doğu Türkistan Bayrağı için Standart ve Mini boyları tek satın alımla teslim et ve satış ZIP'lerini hazırla.
-- [~] İki boylu bayrak ürünlerini canlıya al ve eski Mini bağlantılarının ana ürünlere yönlendiğini doğrula.
+- [x] İki boylu bayrak ürünlerini canlıya al ve eski Mini bağlantılarının ana ürünlere yönlendiğini doğrula.
 - [ ] En az üç desen Shopier’de satışa açıldığında gerçek sepet indiriminin ödeme adımında uygulandığını doğrula ve öne çıkan duyuruya ekle.
 
 ## Açık küçük kusurlar (Phase 2'den)
