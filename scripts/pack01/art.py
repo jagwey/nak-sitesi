@@ -11,10 +11,12 @@ from shapely import affinity
 
 NAVY = (27, 48, 92); RED = (192, 40, 45); DRED = (128, 24, 38); CORAL = (226, 100, 78)
 GOLD = (212, 168, 76); TEAL = (30, 142, 150); GRN = (68, 112, 64); CREAM = (240, 226, 196)
-ORDER = [("Krem", CREAM, 45), ("Turkuaz", TEAL, 60), ("Yesil", GRN, 100), ("Koyu kirmizi", DRED, 80),
-         ("Kirmizi", RED, 45), ("Mercan", CORAL, 120), ("Altin", GOLD, 20), ("Lacivert kontur", NAVY, 0)]
+ORDER = [("Krem", CREAM, 45), ("Turkuaz", TEAL, 75), ("Yesil", GRN, 75), ("Koyu kirmizi", DRED, 60),
+         ("Kirmizi", RED, 60), ("Mercan", CORAL, 60), ("Altin", GOLD, 20), ("Lacivert kontur", NAVY, 0)]
 KEYS = {"cream": 0, "teal": 1, "grn": 2, "dred": 3, "red": 4, "coral": 5, "gold": 6, "navy": 7}
-OW = 1.7  # contour width
+OW = 1.3  # contour width (authored units; ~1.1 mm at L)
+MINW = 0.0  # minimum feature width (authored units), set per size by make.py
+AUTH = {}
 
 
 def bz3(p0, p1, p2, p3, n=60):
@@ -43,6 +45,7 @@ def blade(c, w, pw=0.7):
 
 
 def stroke(pts, w):
+    w = max(w, MINW)
     return LineString(np.asarray(pts, float)).buffer(w / 2, cap_style=1, join_style=1, resolution=12)
 
 
@@ -54,8 +57,31 @@ def U(*g):
     return unary_union(list(g))
 
 
-def rim(g, w=OW):
+def rim(g, w=None):
+    w = max(OW if w is None else w, MINW)
     return g.buffer(w / 2).difference(g.buffer(-w / 2))
+
+
+def tri(p, tip, wb):
+    p = np.asarray(p, float); tip = np.asarray(tip, float)
+    d = tip - p; d /= np.hypot(*d) + 1e-9
+    t = np.array([-d[1], d[0]]) * max(wb, MINW) / 2
+    b = p - d * 1.2
+    return Polygon([tuple(b - t), tuple(b + t), tuple(tip)]).buffer(0.25).buffer(-0.25)
+
+
+def rays(c, w, side, n=9, frac=.8, rw=1.7, pw=.62, lean=.5, t0=.12, t1=.9):
+    """Toothed shading: tapered blades leaning out from a centre curve to one side."""
+    c = np.asarray(c, float)
+    out = []
+    for i, t in enumerate(np.linspace(t0, t1, n)):
+        k = int(t * (len(c) - 1)); k0, k1 = max(k - 1, 0), min(k + 1, len(c) - 1)
+        d = c[k1] - c[k0]; d /= np.hypot(*d) + 1e-9
+        nrm = side * np.array([-d[1], d[0]])
+        ln = w / 2 * math.sin(math.pi * t) ** pw * frac * (1 if i % 2 == 0 else .62)
+        tip = c[k] + nrm * ln + d * ln * lean
+        out.append(tri(c[k] - nrm * 0.5, tip, rw))
+    return U(*out)
 
 
 def mirror(g):
@@ -85,12 +111,13 @@ def rosette(c, r, petals=8, pw=.6):
 
 def hancer(curve, w):
     body = blade(curve, w, 0.62)
-    mid = blade(np.asarray(curve)[3:-3], w * 0.36, 0.5)
-    vein = stroke(np.asarray(curve)[2:-4], 1.2)
+    mid = blade(np.asarray(curve)[3:-3], w * 0.30, 0.5)
+    mid = U(mid, rays(curve, w, 1, n=6, frac=.8, rw=3.6, t0=.18, t1=.85))
+    vein = stroke(np.asarray(curve)[2:-4], 1.0)
     return body, mid, vein
 
 
-def paint(items, ow=OW):
+def paint(items, ow=None):
     """items: (key, geom, outline) back to front -> list of layers."""
     vis = {k: [] for k in KEYS}
     for i, (k, g, o) in enumerate(items):
@@ -99,7 +126,11 @@ def paint(items, ow=OW):
             vis["navy"].append(g)
         else:
             vis[k].append(g.difference(later))
-        if o:
+        if isinstance(o, tuple):
+            w, rk = o
+            w = max(w, MINW)
+            vis[rk].append(g.buffer(w).difference(g).difference(later))
+        elif o:
             vis["navy"].append(rim(g, ow).difference(later))
     out = []
     for name, rgb, ang in ORDER:
@@ -135,8 +166,9 @@ def tulip(s=1.0, dx=0.0, dy=0.0, flip=False):
     Gi = blade(line((0, -16), (0, -72), 40), 7, .55)
     cal = blade(bz3((-21, -3), (-9, 9), (9, 9), (21, -3)), 9, .5)
     dots = U(circ((0, -82), 2.0))
-    veinL = stroke(bz3((0, -20), (-18, -24), (-19, -54), (-17, -80)), 1.1)
-    items = [("red", L, True), ("red", R, True), ("coral", C, True), ("dred", Li, False), ("dred", Ri, False),
+    cvL = bz3((0, -16), (-27, -17), (-26, -52), (-24, -76))
+    rL = rays(cvL, 30, -1, n=6, frac=.95, rw=3.4, lean=.7, t0=.15, t1=.88)
+    items = [("red", L, True), ("red", R, True), ("coral", C, True), ("dred", U(Li, rL), False), ("dred", U(Ri, mirror(rL)), False),
              ("gold", Gi, True), ("gold", cal, True)]
     out = []
     for k, g, o in items:
@@ -161,7 +193,7 @@ def lale():
     # side tendrils and rosettes
     for sg in (1, -1):
         sp = spiral((sg * 44, 104), 1.5, 9.5, math.pi if sg > 0 else 0, 1.7, sgn=sg)
-        items.append(("navy", stroke(sp, 1.8), False))
+        items.append(("navy", stroke(sp, 1.3), False))
         items.append(("gold", circ((sg * 44, 104), 3.4), True))
     return paint(items)
 
@@ -185,11 +217,11 @@ def karanfil():
               ("coral", fan(c, -34, 34, 40, 5, 5), True)]
     for a in (-40, -20, 0, 20, 40):
         r = math.radians(a)
-        items.append(("navy", stroke(line((c[0] + 8 * math.sin(r), c[1] - 8 * math.cos(r)), (c[0] + 40 * math.sin(r), c[1] - 40 * math.cos(r))), 1.2), False))
+        items.append(("navy", stroke(line((c[0] + 8 * math.sin(r), c[1] - 8 * math.cos(r)), (c[0] + 40 * math.sin(r), c[1] - 40 * math.cos(r))), 1.0), False))
     cal = U(blade(line((0, 92), (0, 62)), 15, .55), blade(line((0, 84), (-12, 66)), 9, .5), blade(line((0, 84), (12, 66)), 9, .5))
     items.append(("gold", cal, True))
     for sg in (1, -1):
-        items.append(("navy", stroke(spiral((sg * 30, 118), 1.2, 7.5, 0, 1.6, sgn=sg), 1.7), False))
+        items.append(("navy", stroke(spiral((sg * 30, 118), 1.2, 7.5, 0, 1.6, sgn=sg), 1.3), False))
     return paint(items)
 
 
@@ -204,6 +236,16 @@ def nar():
     items.append(("red", body, True))
     shade = body.difference(affinity.translate(body, -9, -7))
     items.append(("dred", shade.buffer(-0.3).buffer(0.3), False))
+    arc = affinity.translate(body, -9, -7).exterior.intersection(body.buffer(-1.2))
+    rr = []
+    for g in (arc.geoms if hasattr(arc, "geoms") else [arc]):
+        if g.is_empty or g.geom_type != "LineString" or g.length < 4:
+            continue
+        for i, dd in enumerate(np.arange(g.length * 0.18, g.length * 0.82, 5.4)):
+            q = g.interpolate(dd); ln = 9 if i % 2 == 0 else 5.5
+            u = np.array([-9., -7.]); u /= np.hypot(*u)
+            rr.append(tri((q.x, q.y), (q.x + u[0] * ln, q.y + u[1] * ln), 4.2))
+    items.append(("dred", U(*rr).intersection(body.buffer(-1.0)), False))
     # crown (calyx)
     crown = []
     for ang, ln in ((-72, 20), (-40, 27), (0, 31), (40, 27), (72, 20)):
@@ -227,17 +269,16 @@ def nar():
             if cleft.buffer(-4.5).contains(p):
                 seeds.append(circ((x, y), 4.0))
     for sd in seeds:
-        items.append(("red", sd, True))
+        items.append(("red", sd, (0.95, "dred")))
     items += [("gold", U(*[circ((s.centroid.x - 1.3, s.centroid.y - 1.3), 1.0) for s in seeds]), False)]
     return paint(items)
 
 
 def hatayi_kose():
     items = []
-    # vine arm
     cv = bz3((20, 20), (54, 2), (84, 44), (122, 26))
-    vine = stroke(cv, 3.4)
-    arm = [("navy", vine, False)]
+    vine = stroke(cv, 2.4)
+    arm = [("grn", vine, True)]
     for i, t in enumerate((0.22, 0.42, 0.62, 0.8)):
         k = int(t * (len(cv) - 1)); p = cv[k]; d = cv[min(k + 1, len(cv) - 1)] - cv[k - 1]
         d /= np.hypot(*d); nr = np.array([-d[1], d[0]]) * (1 if i % 2 == 0 else -1)
@@ -246,26 +287,27 @@ def hatayi_kose():
         arm = [("teal", b, True), ("grn", m, False), ("navy", v, False)] + arm
     arm += [("red", rosette((72, 30), 11, 8), True), ("coral", rosette((72, 30), 6.5, 8), True), ("gold", circ((72, 30), 2.8), True),
             ("red", rosette((112, 18), 8, 6), True), ("gold", circ((112, 18), 2.2), True),
-            ("navy", stroke(spiral((124, 40), 1.4, 11, -math.pi / 2, 1.9, sgn=1), 3.0), False),
+            ("navy", stroke(spiral((124, 40), 1.4, 11, -math.pi / 2, 1.9, sgn=1), 1.5), False),
             ("gold", circ((124, 40), 3.6), True)]
-    # corner palmette
+    # corner palmette: five slender layered petals (rumi/hatayi), drawn once (it is symmetric on the diagonal)
+    base = np.array([5.0, 5.0])
     pal = []
-    for off, ln in zip((-76, -38, 0, 38, 76), (36, 48, 56, 48, 36)):
+    for off, ln, col, inner in ((-68, 38, "teal", "grn"), (68, 38, "teal", "grn"), (-34, 50, "gold", "red"), (34, 50, "gold", "red"), (0, 62, "red", "coral")):
         r = math.radians(45 + off)
-        tip = (6 + ln * math.cos(r), 6 + ln * math.sin(r))
-        pal.append(blade(line((6, 6), tip), 10, .6))
-    pal_items = [("gold", g, True) for g in pal]
-    for off, ln in zip((-76, -38, 0, 38, 76), (36, 48, 56, 48, 36)):
-        r = math.radians(45 + off)
-        pal_items.append(("coral", blade(line((14, 14), (6 + 0.75 * ln * math.cos(r), 6 + 0.75 * ln * math.sin(r))), 5, .55), False))
-        pass  # ("red", blade(line((12, 12), (6 + 0.5 * ln * math.cos(r), 6 + 0.5 * ln * math.sin(r))), 3.4, .55), False))
-    pal_items.append(("dred", circ((8, 8), 7), True))
+        d = np.array([math.cos(r), math.sin(r)]); nr = np.array([-d[1], d[0]])
+        bend = (-1 if off < 0 else 1) * 0.10 * ln if off else 0
+        cvp = bez(base + d * 7, base + d * ln * 0.55 + nr * bend, base + d * ln, 40)
+        wid = 11.0 if col != "teal" else 8.5
+        pal.append((col, blade(cvp, wid, .5), True))
+        pal.append((inner, blade(cvp[5:-8], wid * .38, .5), False))
+    pal.append(("dred", circ(tuple(base + 2), 8.5), True))
+    pal.append(("gold", circ(tuple(base + 2), 3.0), True))
     sw = [0, 1, 1, 0, 0, 0]
-    for k, g, o in arm + pal_items:
+    items += pal
+    for k, g, o in arm:
         items.append((k, g, o))
-    for k, g, o in arm + pal_items:
+    for k, g, o in arm:
         items.append((k, affinity.affine_transform(g, sw), o))
-    # order: navy lines last are handled by paint()
     return paint(items)
 
 
@@ -313,7 +355,7 @@ def monogram():
     items += tulip(0.52, 0, -ry - 2)
     for sg in (1, -1):
         sp = spiral((sg * 20, -ry - 2), 1.2, 7, math.pi if sg > 0 else 0, 1.6, sgn=sg)
-        items.append(("navy", stroke(sp, 1.7), False))
+        items.append(("navy", stroke(sp, 1.3), False))
     bow = U(blade(bez((0, ry), (-14, ry + 8), (-30, ry + 2)), 9, .5), blade(bez((0, ry), (14, ry + 8), (30, ry + 2)), 9, .5))
     items += [("red", bow, True), ("gold", circ((0, ry), 4.4), True)]
     return paint(items)

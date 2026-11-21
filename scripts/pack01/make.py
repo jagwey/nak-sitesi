@@ -12,6 +12,7 @@ import pyembroidery as pe
 OUT = sys.argv[1]
 ONLY = sys.argv[2].split(",") if len(sys.argv) > 2 else list(art.DESIGNS)
 MMPP = 0.07
+FILLW = 2.6
 STYLE = dict(fill_min_w=7.0, centre_smooth=1.0, satin_max_w=6.8, satin_step=0.35, run_max_w=0.55,
              fill_spacing=0.38, pull_fill=0.25, pull_satin=0.25)
 
@@ -45,13 +46,19 @@ def raster(geom, W, H):
 
 def make(key, tag, size):
     D = art.DESIGNS[key]
+    art.MINW = 0.0
+    layers = art.stack(D["fn"]())
+    allg = unary_union([l["geom"] for l in layers])
+    x0, y0, x1, y1 = allg.bounds
+    s0 = size / ((y1 - y0) if D["fit"] == "h" else (x1 - x0))
+    art.MINW = 1.0 / s0  # no stroked detail thinner than ~1.0 mm in the final size
     layers = art.stack(D["fn"]())
     layers, (wmm, hmm) = norm_layers(layers, size, D["fit"])
     W, H = int(wmm / MMPP) + 1, int(hmm / MMPP) + 1
     ls = []
     for l in layers:
         m = raster(l["geom"], W, H)
-        ls.append(dict(name=l["name"], rgb=l["rgb"], mask=m, angle=l["angle"]))
+        ls.append(dict(name=l["name"], rgb=l["rgb"], mask=m, angle=l["angle"], parts=[(None, {} if l["name"].startswith("Lacivert") else {"fill_min_w": FILLW})]))
     path = os.path.join(OUT, f"{key}_{tag}.vp3")
     pat, st = build(ls, MMPP, path, STYLE)
     # preview mask (flat artwork) for the normal image

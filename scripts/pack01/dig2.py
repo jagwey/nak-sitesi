@@ -298,6 +298,21 @@ def smooth(pts, k=5):
 # ---------------- per-colour digitizing ----------------
 
 
+def _fill_angle(poly, default):
+    """Elongated shapes are filled along their long axis; compact ones keep the layer angle."""
+    try:
+        r = poly.minimum_rotated_rectangle
+        xy = list(r.exterior.coords)
+        e1 = (xy[1][0] - xy[0][0], xy[1][1] - xy[0][1]); e2 = (xy[2][0] - xy[1][0], xy[2][1] - xy[1][1])
+        l1, l2 = math.hypot(*e1), math.hypot(*e2)
+        if max(l1, l2) / max(min(l1, l2), 1e-6) < 1.7:
+            return default
+        e = e1 if l1 >= l2 else e2
+        return math.degrees(math.atan2(e[1], e[0])) % 180
+    except Exception:
+        return default
+
+
 def digitize_layer(mask, mmpp, P, angle):
     objs = []
     px = 1.0 / mmpp
@@ -308,6 +323,10 @@ def digitize_layer(mask, mmpp, P, angle):
     rk = int(round(thick_r))
     thick = cv2.dilate(core, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * rk + 1, 2 * rk + 1))) & m8
     # absorb thin slivers hugging thick parts
+    # slivers hugging a thick fill join it (no mismatched satin/fill patches along fill edges)
+    hug = cv2.dilate(thick, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (int(P['fill_min_w'] * px) | 1,) * 2))
+    thick = cv2.morphologyEx(((thick | (m8 & hug)) & m8).astype(np.uint8), cv2.MORPH_OPEN,
+                             cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (int(1.6 * px) | 1,) * 2))
     thin = (m8 & (1 - thick)).astype(np.uint8)
     thin = cv2.morphologyEx(thin, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
     # fills

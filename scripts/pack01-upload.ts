@@ -60,6 +60,11 @@ async function main() {
       `İplik sırası: ${L.threads.map(([n]) => n).join(", ")} (${L.colors} renk).`, "",
       "Önizleme görselleri dikiş dosyasından üretilmiş bilgisayar simülasyonudur. Fiziksel kumaş provası henüz yapılmamıştır; kumaş, tela ve iplik türüne göre sıklık/çekme ayarı gerekebilir.",
     ].join("\n");
+    const embroidery = {
+      designWidthMm: Math.round(L.width_mm), designHeightMm: Math.round(L.height_mm), stitchCount: L.stitches, colorCount: L.colors, colorChanges: L.color_changes,
+      hoopSizeId: hoopId.get(smallestHoop(L)) ?? null, technique: "Sıkı saten ve katmanlı dolgu", fabricRecommendations: "Orta ağırlıkta pamuk, keten veya havlu kumaşı; uygun tela ile. Fiziksel prova yapılmamıştır.",
+      downloadTerms: null, usageInstructions: ["Pfaff makinelerde VP3 dosyasını doğrudan açın.", "Küçük veya büyük ölçüyü kasnağınıza göre seçin."],
+    };
     let product = await db.product.findUnique({ where: { sku: d.sku }, select: { id: true } });
     if (!product) {
       const created = await createProduct({
@@ -67,21 +72,14 @@ async function main() {
         usageAreas: d.usage, priceKurus: PLACEHOLDER_PRICE_KURUS, compareAtPriceKurus: null, shopierUrl: null, seoTitle: null, seoDescription: null,
         personalizable: false, isNew: true, isFeatured: false, categoryId: category.id, collectionIds: [collection.id], tagIds: [], licenseIds: license ? [license.id] : [], formatCodes: ["VP3"],
         variants: [], options: [], physicalInfo: null,
-        embroidery: {
-          designWidthMm: Math.round(L.width_mm), designHeightMm: Math.round(L.height_mm), stitchCount: L.stitches, colorCount: L.colors, colorChanges: L.color_changes,
-          hoopSizeId: hoopId.get(smallestHoop(L)) ?? null, technique: "Sıkı saten ve katmanlı dolgu", fabricRecommendations: "Orta ağırlıkta pamuk, keten veya havlu kumaşı; uygun tela ile. Fiziksel prova yapılmamıştır.",
-          downloadTerms: null, usageInstructions: ["Pfaff makinelerde VP3 dosyasını doğrudan açın.", "Küçük veya büyük ölçüyü kasnağınıza göre seçin."],
-        },
+        embroidery,
       }, actor);
       product = { id: created.id };
       console.log("oluşturuldu", d.sku);
     } else {
       // Yeniden çalıştırma: açıklama ve nakış üst verisi güncel dikiş değerleriyle yenilenir (DRAFT/fiyat korunur).
-      await db.product.update({ where: { sku: d.sku }, data: { description, shortDescription: d.blurb } });
-      await db.embroideryMetadata.updateMany({
-        where: { productId: product.id },
-        data: { designWidthMm: Math.round(L.width_mm), designHeightMm: Math.round(L.height_mm), stitchCount: L.stitches, colorCount: L.colors, colorChanges: L.color_changes, hoopSizeId: hoopId.get(smallestHoop(L)) ?? null },
-      });
+      // Servis üzerinden güncellenir: writeAudit (AuditLog) ve arama dizini yenilemesi çalışır.
+      await updateProduct(product.id, { description, shortDescription: d.blurb, embroidery }, actor);
       console.log("güncellendi", d.sku);
     }
     ids.push(product.id);
@@ -108,7 +106,7 @@ async function main() {
     }
   }
   await setCollectionProducts(collection.id, ids, actor);
-  void updateProduct; // yayınlama bilinçli olarak yapılmaz (DRAFT kalır)
+  // yayınlama bilinçli olarak yapılmaz (DRAFT kalır)
   console.log("bitti: 6 ürün DRAFT");
   await db.$disconnect();
 }
