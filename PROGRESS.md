@@ -171,3 +171,8 @@
 
 - [x] Ana başlıkta görselden nakışa çevirme ve isteğe özel parça, Inter gövde (18px), altın satın alma düğmesi, kumaş önizlemesi ve 32 özgün önizleme deseni (A–Z + 6 motif). Dosyalar pyembroidery VP3/PES/DST/JEF. Satışa kapalı; kumaş provası yok. Canlıya deploy edilmedi.
 - [x] Aynı iyileştirmeler statik `storefront/` vitrinine taşındı. Shopier bandı site içi sepet indirimini vaat etmez. Deploy edilmedi.
+
+## 2026-11-21 — Logo tasarımı
+
+- [x] Kasnak, iğne, iplik ve tek yapraktan oluşan harfsiz logo hazırlandı. Düzenlenebilir SVG ve şeffaf 512 × 512 PNG `assets/brand/` klasöründe. Tasarım dosyaları teslim edildi.
+- [x] PNG boyutu, şeffaflık ve 40 piksel önizleme kontrol edildi. Tip kontrolü geçti. Mevcut katalog testindeki `unstable_cache` hatası nedeniyle Vitest sonucu 170/171. Bu teslimde uygulama ve test koduna değişiklik girmedi.
