@@ -32,9 +32,10 @@ def thread_layer(pattern, target=2000, margin_mm=7):
                     cv2.line(img, a, b, tuple(float(v) for v in base), max(2, tw - 2), cv2.LINE_AA)
                     cv2.line(img, a, b, lite, max(1, tw // 3), cv2.LINE_AA)
                     cv2.line(alpha, a, b, 255, tw, cv2.LINE_AA)
-            if cmd in (pe.STITCH, pe.JUMP):
+            if cmd == pe.STITCH or (cmd == pe.JUMP and prev is not None):
                 prev = (x, y)
-            elif cmd == pe.TRIM:
+            elif cmd in (pe.TRIM, pe.COLOR_CHANGE):
+                # thread is cut: the next move (VP3 long move, read as STITCH) is travel, not thread
                 prev = None
     img = cv2.resize(img, (W, H), interpolation=cv2.INTER_AREA)
     alpha = cv2.resize(alpha, (W, H), interpolation=cv2.INTER_AREA).astype(np.float32) / 255

@@ -57,6 +57,12 @@ def make(key, tag, size):
     W, H = int(wmm / MMPP) + 1, int(hmm / MMPP) + 1
     ls = []
     for l in layers:
+        g = l["geom"]
+        if not l["name"].startswith("Lacivert") and not g.is_empty:
+            g = g.buffer(-0.5).buffer(0.5)  # drop hairline crumbs (< 1 mm wide) left after stacking
+            if g.geom_type == "MultiPolygon":
+                g = unary_union([p for p in g.geoms if p.area > 1.5])
+            l["geom"] = g
         m = raster(l["geom"], W, H)
         ls.append(dict(name=l["name"], rgb=l["rgb"], mask=m, angle=l["angle"], parts=[(None, {} if l["name"].startswith("Lacivert") else {"fill_min_w": FILLW})]))
     path = os.path.join(OUT, f"{key}_{tag}.vp3")

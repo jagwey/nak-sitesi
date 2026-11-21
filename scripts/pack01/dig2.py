@@ -447,7 +447,7 @@ def emit(pattern, seq, P, cx, cy):
         p0 = run[0]
         if pos is not None:
             d = dist(pos, p0)
-            inside = region is not None and region.contains(LineString([pos, p0])) if d > 0.01 else True
+            inside = region is not None and region.buffer(-0.6).contains(LineString([pos, p0])) if d > 0.01 else True  # travel only well inside the fill (never along hairline tails)
             if d <= P["max_travel"] or (kind == "under" and inside):
                 for q in run_points([pos, p0], 2.5)[1:]:
                     put(pe.STITCH, q)

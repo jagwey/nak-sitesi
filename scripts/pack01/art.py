@@ -110,11 +110,10 @@ def rosette(c, r, petals=8, pw=.6):
 
 
 def hancer(curve, w):
+    """Leaf: body + one smooth tapered green vein along the axis (no teeth, no navy vein)."""
     body = blade(curve, w, 0.62)
-    mid = blade(np.asarray(curve)[3:-3], w * 0.30, 0.5)
-    mid = U(mid, rays(curve, w, 1, n=6, frac=.8, rw=3.6, t0=.18, t1=.85))
-    vein = stroke(np.asarray(curve)[2:-4], 1.0)
-    return body, mid, vein
+    mid = blade(np.asarray(curve)[3:-3], w * 0.34, 0.5)
+    return body, mid, Polygon()
 
 
 def paint(items, ow=None):
@@ -137,6 +136,11 @@ def paint(items, ow=None):
         key = [k for k, v in KEYS.items() if ORDER[v][0] == name][0]
         if vis[key]:
             g = unary_union(vis[key])
+            if key != "navy" and not g.is_empty:
+                r_ = 1.0 if key in ("red", "dred", "coral") else 0.55
+                g = g.buffer(-r_).buffer(r_)  # remove crumbs/slivers narrower than ~1.1 units
+                if g.geom_type == "MultiPolygon":
+                    g = unary_union([p for p in g.geoms if p.area > 5])
             if not g.is_empty:
                 out.append(dict(name=name, rgb=rgb, geom=g, angle=ang))
     return out
@@ -168,7 +172,7 @@ def tulip(s=1.0, dx=0.0, dy=0.0, flip=False):
     dots = U(circ((0, -82), 2.0))
     cvL = bz3((0, -16), (-27, -17), (-26, -52), (-24, -76))
     rL = rays(cvL, 30, -1, n=6, frac=.95, rw=3.4, lean=.7, t0=.15, t1=.88)
-    items = [("red", L, True), ("red", R, True), ("coral", C, True), ("dred", U(Li, rL), False), ("dred", U(Ri, mirror(rL)), False),
+    items = [("red", L, True), ("red", R, True), ("coral", C, True), ("dred", Li, False), ("dred", Ri, False),
              ("gold", Gi, True), ("gold", cal, True)]
     out = []
     for k, g, o in items:
@@ -234,18 +238,9 @@ def nar():
     body = U(circ((0, 90), 42), blade(line((0, 50), (0, 100)), 60, .35).intersection(circ((0, 90), 55)))
     body = body.intersection(Polygon([(-60, 50), (60, 50), (60, 140), (-60, 140)]))
     items.append(("red", body, True))
-    shade = body.difference(affinity.translate(body, -9, -7))
-    items.append(("dred", shade.buffer(-0.3).buffer(0.3), False))
-    arc = affinity.translate(body, -9, -7).exterior.intersection(body.buffer(-1.2))
-    rr = []
-    for g in (arc.geoms if hasattr(arc, "geoms") else [arc]):
-        if g.is_empty or g.geom_type != "LineString" or g.length < 4:
-            continue
-        for i, dd in enumerate(np.arange(g.length * 0.18, g.length * 0.82, 5.4)):
-            q = g.interpolate(dd); ln = 9 if i % 2 == 0 else 5.5
-            u = np.array([-9., -7.]); u /= np.hypot(*u)
-            rr.append(tri((q.x, q.y), (q.x + u[0] * ln, q.y + u[1] * ln), 4.2))
-    items.append(("dred", U(*rr).intersection(body.buffer(-1.0)), False))
+    shade = body.difference(affinity.translate(body, -8, -6))
+    shade = shade.buffer(-2.6).buffer(2.6)  # smooth crescent; thin tips rounded off, no ragged slivers
+    items.append(("dred", shade, False))
     # crown (calyx)
     crown = []
     for ang, ln in ((-72, 20), (-40, 27), (0, 31), (40, 27), (72, 20)):
@@ -277,7 +272,7 @@ def nar():
 def hatayi_kose():
     items = []
     cv = bz3((20, 20), (54, 2), (84, 44), (122, 26))
-    vine = stroke(cv, 2.4)
+    vine = stroke(cv, 3.0)
     arm = [("grn", vine, True)]
     for i, t in enumerate((0.22, 0.42, 0.62, 0.8)):
         k = int(t * (len(cv) - 1)); p = cv[k]; d = cv[min(k + 1, len(cv) - 1)] - cv[k - 1]
@@ -308,7 +303,7 @@ def hatayi_kose():
         items.append((k, g, o))
     for k, g, o in arm:
         items.append((k, affinity.affine_transform(g, sw), o))
-    return paint(items)
+    return paint(items, ow=1.05)
 
 
 def bordur(n=5, unit=38.0):
