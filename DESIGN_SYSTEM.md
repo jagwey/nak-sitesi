@@ -10,7 +10,7 @@
 Orijinal logo dosyası `logo/WhatsApp Image 2026-11-19 at 21.35.42.jpeg` hiç değiştirilmeden korunur.
 
 - **Logo ve sahip bilgisi**: Yönetim panelindeki Ayarlar alanından girilir. Logo eklenene kadar üst bilgi, alt bilgi ve Hakkımızda sayfası Cormorant Garamond ile mağaza adını kullanır.
-- **Favicon ve paylaşım görseli**: `src/app/icon.tsx` nötr simgeyi, `src/app/opengraph-image.tsx` ise güncel mağaza adını kullanır.
+- **Favicon ve paylaşım görseli**: `src/app/icon.svg` kasnak işaretini, `src/app/opengraph-image.tsx` ise güncel mağaza adını kullanır. Başlık yanındaki işaret `public/logo.svg` dosyasıdır.
 
 ## 3. Renk Paleti ve WCAG AA Kontrast Dengesi
 | Token | Değer | Kullanım |

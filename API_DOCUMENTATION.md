@@ -88,7 +88,8 @@ Arama motoru: Postgres (ILIKE + `pg_trgm` + `unaccent`); `SearchEngine` arayüz�
 
 | Metot ve yol | Auth | Notlar |
 |---|---|---|
-| `POST /api/payments/webhook/[provider]` | none, `csrf:false` | 300/dk. Başlık `x-signature`; imza **ham gövde** üzerinden doğrulanır (ham gövde < 100.000 karakter). `provider` yolu `PAYMENT_PROVIDER` env'i ile eşleşmeli. Olay `WebhookEvent (provider, eventId)` benzersizliği ile idempotent işlenir. `payment.succeeded` siparişi PAID yapan **tek** yoldur. Tutar uyuşmazlığı reddedilir. İptal edilmiş siparişe gelen ödeme kaydedilir, teslim edilmez, `payment.after_cancel` denetim kaydı yazılır ve manuel iade gerekir |
+| `POST /api/payments/webhook/[provider]` | none, `csrf:false` | 300/dk. Başlık `x-signature`; imza **ham gövde** üzerinden doğrulanır (ham gövde < 100.000 karakter). `provider` yolu `PAYMENT_PROVIDER` env'i ile eşleşmeli. Olay `WebhookEvent (provider, eventId)` benzersizliği ile idempotent işlenir. Checkout PAID üretmez. `payment.succeeded` doğrulanmış sağlayıcı olayı siparişi PAID yapar. Tutar uyuşmazlığı reddedilir. İptal edilmiş siparişe gelen ödeme kaydedilir, teslim edilmez, `payment.after_cancel` denetim kaydı yazılır ve manuel iade gerekir |
+| `POST /api/shopier/osb` | none, `csrf:false` | 120/dk. Shopier OSB form gövdesi `res` + `hash`. İmza `HMAC-SHA256(res + SHOPIER_OSB_USERNAME, SHOPIER_OSB_KEY)` hex. Geçerli ve TRY bildirim, `shopierProductId` ile ürünü bulur, siparişi PAID kaydeder, dijital kalem için indirme hakkı ve `downloads_ready` e-postası üretir. Yanıt gövdesi `success`. Aynı Shopier sipariş numarası ikinci kez işlenmez. Ürün henüz eşlenmemişse `retry` (409) |
 | `POST /api/dev/payments/simulate` | none | 30/dk. Gövde: `orderNumber`, `outcome` (`success`\|`failure`), `guestToken?`. **Simülasyon kapalıysa `404`** (`NODE_ENV!=production` + `PAYMENT_SIMULATION_ENABLED=true` + `PAYMENT_PROVIDER=simulated` gerekir) |
 
 ## 5. İndirme

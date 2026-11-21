@@ -338,6 +338,7 @@ model Product {
   isFeatured          Boolean       @default(false)
   isDemo              Boolean       @default(false) // seeded demo data; never real stock/pricing
   shopierUrl          String?
+  shopierProductId    String?       @unique // Shopier REST product id; OSB eşlemesi
   physicalInfo        Json? // colors, sizes, material, productionTime, careInstructions...
   searchText          String        @default("") // normalized (folded Turkish) text for trigram search
   categoryId          String?

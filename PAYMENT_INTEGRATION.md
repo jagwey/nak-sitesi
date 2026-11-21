@@ -1,11 +1,11 @@
 # PAYMENT_INTEGRATION.md — Ödeme Entegrasyonu
 
-Durum: **Gerçek bir ödeme sağlayıcısı bağlı değildir.** Varsayılan sağlayıcı `none`'dır: sipariş oluşur, ödeme beklenir, hiçbir şey otomatik "ödendi" olmaz. iyzico ve PayTR için yalnızca iskelet (StubProvider) vardır ve çağrılırsa "yapılandırılmadı" hatası verir.
+Durum: Varsayılan sağlayıcı `none`'dır: sipariş oluşur, ödeme beklenir, checkout hiçbir şeyi otomatik "ödendi" yapmaz. `shopier`, tahsilatı Shopier mağaza sayfasına bırakır. iyzico ve PayTR için yalnızca iskelet (StubProvider) vardır ve çağrılırsa "yapılandırılmadı" hatası verir.
 
 ## Temel kurallar
 
 1. **Sipariş otomatik ödenmiş sayılmaz.** Checkout yalnızca `PENDING_PAYMENT` sipariş ve `PENDING` ödeme kaydı üretir.
-2. Siparişi `PAID` yapan **tek yol** doğrulanmış `payment.succeeded` webhook olayıdır (ya da yetkili yöneticinin kayıtlı manuel ödeme girişi).
+2. Checkout siparişi `PAID` yapmaz. `PAID` yalnızca doğrulanmış `payment.succeeded` olayı, imzası doğrulanmış Shopier OSB bildirimi veya yetkili yöneticinin kayıtlı manuel ödemesiyle oluşur.
 3. Kart numarası/CVV/son kullanma tarihi **hiçbir yerde alınmaz, loglanmaz, saklanmaz.** Ödeme sağlayıcının barındırdığı sayfada/formda gerçekleşir. `Payment.raw` yalnızca asgari sağlayıcı yanıtını tutar.
 4. Fiyat istemciden alınmaz; tutar sunucuda katalogdan hesaplanır (`totalKurus`, tamsayı kuruş).
 5. Simülasyon yalnızca production dışında ve açıkça açıldığında çalışır.
@@ -29,6 +29,7 @@ interface PaymentProvider {
 |---|---|
 | `none` | `initiate` → `awaiting_payment`; `verifyWebhook` her zaman `false` (hiçbir şey doğrulanamaz → hiçbir şey ödenmiş olmaz); `refund` → `ok:true` (hiç para toplanmadı) |
 | `simulated` | HMAC imzalı sahte olaylar. Yalnızca `isPaymentSimulationAllowed()` doğruysa: `NODE_ENV != production` **ve** `PAYMENT_SIMULATION_ENABLED=true` **ve** `PAYMENT_PROVIDER=simulated` |
+| `shopier` | Satın alma düğmesi ürünün `shopierUrl` adresine, o yoksa `SHOPIER_STORE_URL` (Jagnakis mağazası) adresine gider. Yerel checkout kapalıdır. `initiate` PAID üretmez. OSB ayrı uçtan işlenir |
 | `iyzico`, `paytr` | `StubProvider`: tüm yöntemler "ödeme altyapısı henüz yapılandırılmadı" (`PAYMENT_FAILED`) fırlatır |
 
 ## Webhook akışı (`POST /api/payments/webhook/[provider]`)
@@ -80,13 +81,32 @@ Geliştirici adımları:
 
 ## Test ve canlı ayrımı
 
-Shopier’e bağlı dijital nakış ürünleri kendi ürün sayfasından Shopier’e yönlenir. Ödeme ve ZIP teslimatı Shopier’de tamamlanır. Bu akış yerel sipariş, indirme hakkı veya sepet kampanyası oluşturmaz ve yerel `PAYMENT_PROVIDER=none` ile çalışır. Kampanyalar Shopier panelinde ayrıca yapılandırılır.
+Shopier’e bağlı dijital nakış ürünleri kendi ürün sayfasından Shopier’e yönlenir. `PAYMENT_PROVIDER=none` iken düğme yalnızca ürüne kayıtlı `shopierUrl` varsa görünür. `PAYMENT_PROVIDER=shopier` iken adresi olmayan ürünler mağaza adresine (`https://www.shopier.com/Jagnakis`) gider ve yerel sepet ödemesi açılmaz.
+
+## Shopier
+
+Mağaza: `https://www.shopier.com/Jagnakis`.
+
+Ortam: `SHOPIER_OSB_USERNAME`, `SHOPIER_OSB_KEY` (`PAYMENT_PROVIDER=shopier` iken zorunlu), `SHOPIER_PAT` (yalnızca sync), `SHOPIER_STORE_URL`, `SHOPIER_API_BASE_URL`. Hepsi `.env.production` içinden `docker-compose.prod.yml` `env_file` ile web ve tools konteynerine geçer.
+
+OSB geri çağırma adresi: `https://<APP_URL>/api/shopier/osb` (Next.js süreci; statik Cloudflare vitrini bu ucu sunmaz). Shopier paneli Ek Özellikler > Sipariş Bildirimi bölümüne bu adresi yazın. Gövde `application/x-www-form-urlencoded` alanları `res` (base64 JSON) ve `hash`. Doğrulama: `HMAC-SHA256` hex, mesaj `res + SHOPIER_OSB_USERNAME`, anahtar `SHOPIER_OSB_KEY`. JSON alanları resmi örnekteki gibidir: `email`, `orderid`, `currency` (0 TL, 1 USD, 2 EUR), `price`, `buyername`, `buyersurname`, `productcount`, `productid`, `productlist`, `chartdetails`, `customernote`, `istest`.
+
+Geçerli TRY bildirimi `Product.shopierProductId` ile ürünü bulur, siparişi ve ödemeyi PAID kaydeder, dijital dosyalar için indirme hakkı açar ve mevcut `payment_completed` / `downloads_ready` e-postalarını gönderir. Aynı `orderid` ikinci kez e-posta göndermez. Ürün numarası katalogda yoksa yanıt `retry` olur (kayıt yazılmaz, Shopier yeniden deneyebilir). Başarılı işlem gövdesi düz metin `success` döner. Checkout hâlâ PAID üretmez.
+
+Katalog eşitleme: `npm run shopier:sync` (dry-run) ve `npm run shopier:sync -- --apply`. `POST/PUT https://api.shopier.com/v1/products`, `Authorization: Bearer SHOPIER_PAT`. Gönderilen alanlar: `title`, `description`, `type` (`digital`|`physical`), `media[{type:image,url,placement}]`, `priceData` (`currency: TRY`, `price` `"249.90"`), `shippingPayer: sellerPays`, `customNote: nakis:<sku>`. Dijital nakışta `shopierUrl` ve her üründe `shopierProductId` geri yazılır.
+
+### Belirsizlikler
+
+- developer.shopier.com ürün sayfası şema gövdesini düz metin olarak vermiyor. İstek gövdesi, 15 Kasım 2026’da canlı API’ye karşı denenmiş `shopier-mcp` alanlarına dayanır. Bazı hesaplarda `POST /products` çalışırken `GET/PUT /products` 403 döner; sync bu durumda listeyi atlar, bilinen numarayı güncellemeyi dener, hata satırını basar.
+- OSB, Shopier yardımında legacy olarak geçer ve webhook önerilir. Parametre tablosu yardım sayfasında yok; imza formülü yayımlanmış PHP örneği ve açık kaynak doğrulayıcılarla aynıdır (`hash_hmac('sha256', res.username, key)`).
+- KDV gönderilmez (Shopier varsayılanı). Dijital üründe stok, API’de sınırsız alan görülmediği için oluşturmada `999` yazılır. Güncellemede stok gönderilmez.
+- Çok kalemli OSB tutarı, katalog fiyatlarının oranında tamsayı kuruşa bölünür; ödenen toplam Shopier’in bildirdiği tutardır.
 
 | Ortam | `PAYMENT_PROVIDER` | Simülasyon | Not |
 |---|---|---|---|
 | Yerel geliştirme | `none` veya `simulated` | `PAYMENT_SIMULATION_ENABLED=true` yalnızca `simulated` ile | Sahte ödeme |
 | Staging | sağlayıcının **sandbox** anahtarları | kapalı | `IYZICO_BASE_URL` sandbox |
-| Production | `iyzico` / `paytr` (canlı anahtarlar) | **kapalı (zorunlu)** | `https` zorunlu |
+| Production | `shopier`, `iyzico` veya `paytr` (canlı anahtarlar) | **kapalı (zorunlu)** | `shopier` için OSB anahtarları ve `https` zorunlu |
 
 ## Güvenlik kontrol listesi
 - Webhook imzası ham gövde üzerinden, sabit zamanlı.

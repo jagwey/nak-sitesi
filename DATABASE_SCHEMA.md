@@ -45,7 +45,7 @@ Migration'lar: `20261119201127_init` (ana şema + CHECK kısıtları + `pg_trgm`
 | `Category` | `slug` unique, `parentId` (ağaç), `seoTitle`, `seoDescription`, `sort`, `active` |
 | `Collection` / `ProductCollection` | Koleksiyon ve ürün sıralı üyelik (`@@index([collectionId, sort])`) |
 | `Tag` / `ProductTag` | Etiketler |
-| `Product` | `slug` unique, `sku` unique, `type` (DIGITAL_EMBROIDERY, PHYSICAL, PERSONALIZED, TEXTILE_PRINT, DIGITAL_PRINT, BUNDLE), `status` (DRAFT/ACTIVE/ARCHIVED; yeni ürün DRAFT), `priceKurus`, `compareAtPriceKurus?`, `shopierUrl?` (gerçek dijital nakış deseninin HTTPS ürün adresi), `isDemo` (seed demo verisi işareti), `personalizable`, `physicalInfo` (Json), `searchText` (Türkçe katlanmış arama metni), `publishedAt` |
+| `Product` | `slug` unique, `sku` unique, `type` (DIGITAL_EMBROIDERY, PHYSICAL, PERSONALIZED, TEXTILE_PRINT, DIGITAL_PRINT, BUNDLE), `status` (DRAFT/ACTIVE/ARCHIVED; yeni ürün DRAFT), `priceKurus`, `compareAtPriceKurus?`, `shopierUrl?` (gerçek dijital nakış deseninin HTTPS ürün adresi), `shopierProductId?` unique (Shopier REST ürün numarası; OSB eşlemesi), `isDemo` (seed demo verisi işareti), `personalizable`, `physicalInfo` (Json), `searchText` (Türkçe katlanmış arama metni), `publishedAt` |
 | `ProductVariant` | `sku` unique, `options` (Json), `priceKurus?` (varsa ürün fiyatını ezer) |
 | `ProductImage` | `storageKey` (public bucket anahtarı; statik `/images/*` için null), `url`, `alt`, `sort` (0 = kapak) |
 | `ProductOption` | Kişiselleştirme alanları; `@@unique([productId, key])`, `priceDeltaKurus` |

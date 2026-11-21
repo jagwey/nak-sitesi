@@ -73,6 +73,7 @@
 - [x] Türk Bayrağı ve Doğu Türkistan Bayrağı için Standart ve Mini boyları tek satın alımla teslim et ve satış ZIP'lerini hazırla.
 - [x] İki boylu bayrak ürünlerini canlıya al ve eski Mini bağlantılarının ana ürünlere yönlendiğini doğrula.
 - [x] Harfsiz nakış logosunun SVG ve kare PNG dosyalarını hazırla.
+- [x] Kasnak işareti site logosuna ve favicona eklendi. Shopier OSB geri çağırma, ürün numarası ve `shopier:sync` hazır. Canlı anahtarlar ve panel kaydı mağaza sahibinde.
 - [ ] En az üç desen Shopier’de satışa açıldığında gerçek sepet indiriminin ödeme adımında uygulandığını doğrula ve öne çıkan duyuruya ekle.
 
 ## Açık küçük kusurlar (Phase 2'den)

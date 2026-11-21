@@ -172,6 +172,11 @@
 - [x] Ana başlıkta görselden nakışa çevirme ve isteğe özel parça, Inter gövde (18px), altın satın alma düğmesi, kumaş önizlemesi ve 32 özgün önizleme deseni (A–Z + 6 motif). Dosyalar pyembroidery VP3/PES/DST/JEF. Satışa kapalı; kumaş provası yok. Canlıya deploy edilmedi.
 - [x] Aynı iyileştirmeler statik `storefront/` vitrinine taşındı. Shopier bandı site içi sepet indirimini vaat etmez. Deploy edilmedi.
 
+## 2026-11-21 — Logo ve Shopier OSB
+
+- [x] Kasnak işareti `public/logo.svg` başlığın yanında ve `src/app/icon.svg` favicon olarak kullanılıyor. Yönetici logosu varsa o öncelikli.
+- [x] `PAYMENT_PROVIDER=shopier`: satın alma düğmesi `shopierUrl` veya Jagnakis mağazasına gider; yerel checkout kapalı. `POST /api/shopier/osb` imzayı doğrular, `shopierProductId` ile siparişi PAID kaydeder, indirme e-postasını gönderir. `npm run shopier:sync` dry-run / `--apply`.
+
 ## 2026-11-21 — Logo tasarımı
 
 - [x] Kasnak, iğne, iplik ve tek yapraktan oluşan harfsiz logo hazırlandı. Düzenlenebilir SVG ve şeffaf 512 × 512 PNG `assets/brand/` klasöründe. Tasarım dosyaları teslim edildi.

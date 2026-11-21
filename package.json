@@ -19,6 +19,7 @@
     "admin:create": "tsx scripts/create-admin.ts",
     "jobs:release-reservations": "tsx scripts/release-reservations.ts",
     "search:reindex": "tsx scripts/search-reindex.ts",
+    "shopier:sync": "tsx scripts/shopier-sync.ts",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "playwright test"

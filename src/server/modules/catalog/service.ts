@@ -8,7 +8,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import type { CatalogFilterState, SearchSuggestion } from "@/lib/search";
 import { publicImageThumbnail } from "@/lib/product-image";
 import { EMBROIDERY_OFFER } from "@/lib/embroidery-offer";
-import { isStoreCheckoutOpen } from "@/server/env";
+import { getEnv, isStoreCheckoutOpen } from "@/server/env";
 import { getSearchEngine, DEFAULT_PAGE_SIZE, type Facets } from "../search";
 import { productInclude, toProductDto, type BrandsByFormat, type ProductRow } from "./dto";
 
@@ -33,10 +33,16 @@ async function brandsByFormat(): Promise<BrandsByFormat> {
   return map;
 }
 
+function shopierStoreFallback(): string | undefined {
+  const env = getEnv();
+  return env.PAYMENT_PROVIDER === "shopier" ? env.SHOPIER_STORE_URL : undefined;
+}
+
 async function hydrate(rows: ProductRow[]): Promise<Product[]> {
   if (rows.length === 0) return [];
   const brands = await brandsByFormat();
-  return rows.map((r) => toProductDto(r, brands));
+  const fallback = shopierStoreFallback();
+  return rows.map((r) => toProductDto(r, brands, fallback));
 }
 
 /** Fetch ACTIVE products by id, preserving the requested order. */
@@ -258,11 +264,40 @@ async function loadHomepageData(): Promise<HomepageData> {
   } };
 }
 
-/** Short TTL cache so anonymous home/navigation does not re-query Postgres on every click. */
-export const getHomepageData = unstable_cache(loadHomepageData, ["homepage-data-v1"], {
+const loadHomepageDataCached = unstable_cache(loadHomepageData, ["homepage-data-v1"], {
   revalidate: 60,
   tags: ["catalog"],
 });
+
+function withShopierStore(product: Product): Product {
+  if (product.isDemo || product.shopierUrl) return product;
+  const fallback = shopierStoreFallback();
+  return fallback ? { ...product, shopierUrl: fallback } : product;
+}
+
+async function readHomepage(): Promise<HomepageData> {
+  try {
+    return await loadHomepageDataCached();
+  } catch (err) {
+    // Vitest calls this outside a Next request, where unstable_cache has no incremental cache.
+    if (err instanceof Error && err.message.includes("incrementalCache")) return loadHomepageData();
+    throw err;
+  }
+}
+
+/** Short TTL cache so anonymous home/navigation does not re-query Postgres on every click. */
+export async function getHomepageData(): Promise<HomepageData> {
+  const data = await readHomepage();
+  return {
+    categories: data.categories,
+    tabs: {
+      new: data.tabs.new.map(withShopierStore),
+      digital: data.tabs.digital.map(withShopierStore),
+      physical: data.tabs.physical.map(withShopierStore),
+      personalizable: data.tabs.personalizable.map(withShopierStore),
+    },
+  };
+}
 
 export async function getSitemapEntries(): Promise<{ slug: string; updatedAt: Date }[]> {
   return db.product.findMany({ where: { status: "ACTIVE" }, select: { slug: true, updatedAt: true }, orderBy: { slug: "asc" } });

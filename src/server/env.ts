@@ -34,7 +34,7 @@ const schema = z
     SMTP_FROM: z.string().default("no-reply@localhost"),
     ADMIN_NOTIFY_EMAIL: z.union([z.literal(""), z.email()]).default(""),
 
-    PAYMENT_PROVIDER: z.enum(["none", "simulated", "iyzico", "paytr"]).default("none"),
+    PAYMENT_PROVIDER: z.enum(["none", "simulated", "iyzico", "paytr", "shopier"]).default("none"),
     PAYMENT_SIMULATION_ENABLED: bool,
     /** HMAC secret for simulated payment events. Required (>=16 chars) whenever simulation is enabled; there is no fallback. */
     PAYMENT_SIMULATION_SECRET: z.string().default(""),
@@ -44,6 +44,16 @@ const schema = z
     PAYTR_MERCHANT_ID: z.string().default(""),
     PAYTR_MERCHANT_KEY: z.string().default(""),
     PAYTR_MERCHANT_SALT: z.string().default(""),
+    /** Shopier OSB (Otomatik Sipariş Bildirimi) kullanıcı adı. PAYMENT_PROVIDER=shopier iken zorunlu. */
+    SHOPIER_OSB_USERNAME: z.string().default(""),
+    /** Shopier OSB şifresi. HMAC anahtarıdır; koda yazılmaz. */
+    SHOPIER_OSB_KEY: z.string().default(""),
+    /** Shopier kişisel erişim anahtarı. Yalnızca `npm run shopier:sync` kullanır. */
+    SHOPIER_PAT: z.string().default(""),
+    /** Ürün bağlantısı yokken satın alma düğmesinin gideceği mağaza adresi. */
+    SHOPIER_STORE_URL: z.string().default("https://www.shopier.com/Jagnakis"),
+    /** Shopier REST kökü. Sync betiği okur. */
+    SHOPIER_API_BASE_URL: z.string().default("https://api.shopier.com/v1"),
 
     DOWNLOAD_URL_TTL_SECONDS: z.coerce.number().int().positive().default(300),
     DOWNLOAD_LIMIT_DEFAULT: z.coerce.number().int().positive().default(5),
@@ -81,6 +91,18 @@ const schema = z
     }
     if (v.PAYMENT_PROVIDER === "simulated" && !v.PAYMENT_SIMULATION_ENABLED) {
       ctx.addIssue({ code: "custom", path: ["PAYMENT_SIMULATION_ENABLED"], message: "PAYMENT_PROVIDER=simulated için PAYMENT_SIMULATION_ENABLED=true gerekli" });
+    }
+    if (v.PAYMENT_PROVIDER === "shopier") {
+      if (!v.SHOPIER_OSB_USERNAME.trim()) {
+        ctx.addIssue({ code: "custom", path: ["SHOPIER_OSB_USERNAME"], message: "PAYMENT_PROVIDER=shopier için SHOPIER_OSB_USERNAME gerekli" });
+      }
+      if (!v.SHOPIER_OSB_KEY) {
+        ctx.addIssue({ code: "custom", path: ["SHOPIER_OSB_KEY"], message: "PAYMENT_PROVIDER=shopier için SHOPIER_OSB_KEY gerekli" });
+      }
+      const store = URL.parse(v.SHOPIER_STORE_URL);
+      if (!store || store.protocol !== "https:" || !["shopier.com", "www.shopier.com"].includes(store.host) || store.username || store.password || store.pathname === "/") {
+        ctx.addIssue({ code: "custom", path: ["SHOPIER_STORE_URL"], message: "SHOPIER_STORE_URL https://www.shopier.com üzerindeki mağaza adresi olmalı" });
+      }
     }
   });
 
@@ -125,5 +147,7 @@ export function isPaymentSimulationAllowed(): boolean {
 /** Visitors can browse and price their basket while production payments are offline. */
 export function isStoreCheckoutOpen(): boolean {
   const e = getEnv();
+  // Shopier tahsilatı mağaza sayfasında olur; yerel sepet checkout'u siparişi PAID yapamaz.
+  if (e.PAYMENT_PROVIDER === "shopier") return false;
   return e.NODE_ENV !== "production" || e.PAYMENT_PROVIDER !== "none";
 }

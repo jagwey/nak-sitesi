@@ -24,6 +24,9 @@ services:
         S3_PUBLIC_BASE_URL: ${S3_PUBLIC_BASE_URL:?S3_PUBLIC_BASE_URL gerekli}
     restart: unless-stopped
     env_file: .env.production
+    # Shopier değişkenleri (SHOPIER_OSB_USERNAME, SHOPIER_OSB_KEY, SHOPIER_PAT,
+    # SHOPIER_STORE_URL, SHOPIER_API_BASE_URL) .env.production üzerinden env_file
+    # ile geçer. Boş ${VAR:-} burada yazılmaz; env_file değerinin üstüne biner.
     environment:
       NODE_ENV: production
     depends_on:
@@ -38,6 +41,7 @@ services:
       context: .
       target: tools
     env_file: .env.production
+    # shopier:sync bu konteynerde SHOPIER_PAT değerini env_file üzerinden alır.
     environment:
       NODE_ENV: production
     depends_on:
