@@ -65,7 +65,7 @@ async function main() {
       hoopSizeId: hoopId.get(smallestHoop(L)) ?? null, technique: "Sıkı saten ve katmanlı dolgu", fabricRecommendations: "Orta ağırlıkta pamuk, keten veya havlu kumaşı; uygun tela ile. Fiziksel prova yapılmamıştır.",
       downloadTerms: null, usageInstructions: ["Pfaff makinelerde VP3 dosyasını doğrudan açın.", "Küçük veya büyük ölçüyü kasnağınıza göre seçin."],
     };
-    let product = await db.product.findUnique({ where: { sku: d.sku }, select: { id: true } });
+    let product: { id: string; status?: string } | null = await db.product.findUnique({ where: { sku: d.sku }, select: { id: true, status: true } });
     if (!product) {
       const created = await createProduct({
         name: d.name, slug: d.slug, sku: d.sku, type: "DIGITAL_EMBROIDERY", shortDescription: d.blurb, description, highlights: ["Pfaff VP3 formatı", "İki ölçü: küçük ve büyük", "Sıkı, katmanlı saten ve dolgu"],
@@ -77,9 +77,10 @@ async function main() {
       product = { id: created.id };
       console.log("oluşturuldu", d.sku);
     } else {
-      // Yeniden çalıştırma: açıklama ve nakış üst verisi güncel dikiş değerleriyle yenilenir (DRAFT/fiyat korunur).
-      // Servis üzerinden güncellenir: writeAudit (AuditLog) ve arama dizini yenilemesi çalışır.
-      await updateProduct(product.id, { description, shortDescription: d.blurb, embroidery }, actor);
+      // Yeniden çalıştırma: açıklama ve nakış üst verisi güncel dikiş değerleriyle yenilenir (durum/fiyat korunur).
+      // Yayındaki üründe TASLAK satırı geri eklenmez. Servis üzerinden: writeAudit ve arama dizini yenilemesi çalışır.
+      const desc = product.status === "DRAFT" ? description : description.replace(`${DRAFT_NOTE}\n\n`, "");
+      await updateProduct(product.id, { description: desc, shortDescription: d.blurb, embroidery }, actor);
       console.log("güncellendi", d.sku);
     }
     ids.push(product.id);
