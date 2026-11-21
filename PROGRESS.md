@@ -186,6 +186,8 @@
 
 - [x] Kasnak, iğne, iplik ve tek yapraktan oluşan harfsiz logo hazırlandı. Düzenlenebilir SVG ve şeffaf 512 × 512 PNG `assets/brand/` klasöründe. Tasarım dosyaları teslim edildi.
 - [x] PNG boyutu, şeffaflık ve 40 piksel önizleme kontrol edildi. Tip kontrolü geçti. Mevcut katalog testindeki `unstable_cache` hatası nedeniyle Vitest sonucu 170/171. Bu teslimde uygulama ve test koduna değişiklik girmedi.
+
 ## 2026-11-21 — Paket 01 Geleneksel Türk Motifleri
 
 - [x] 6 özgün motif (lale, karanfil, nar, hatayi köşe, lale bordür, monogram çerçeve), her biri küçük/büyük 2 ölçü, toplam 12 VP3 (Pfaff). Üretici: `scripts/pack01/`; yükleyici: `scripts/pack01-upload.ts` (idempotent). Çıktı klasörü: `Belgeler\ChatGPT\Nakış desen üretimi\Paket_01_Geleneksel\`. 6 ürün TASLAK (PK01-*), fiyat yer tutucu 149,00 TL (sahip onayı gerekir). Fiziksel dikiş provası yok. BUNDLE ürünü yapılmadı: BundleItem için admin servisi yok.
+- [x] Yerel Shopier denemesi (31da1fb) GitHub'daki Shopier OSB/webhook sürümü (#6/#7) lehine bırakıldı; paket commit'i origin/main üzerine taşındı, `pack01-upload.ts` uyarlandı. Lint ve `npm test` 186/186 yeşil.

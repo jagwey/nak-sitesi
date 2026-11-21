@@ -64,7 +64,7 @@ async function main() {
     if (!product) {
       const created = await createProduct({
         name: d.name, slug: d.slug, sku: d.sku, type: "DIGITAL_EMBROIDERY", shortDescription: d.blurb, description, highlights: ["Pfaff VP3 formatı", "İki ölçü: küçük ve büyük", "Sıkı, katmanlı saten ve dolgu"],
-        usageAreas: d.usage, priceKurus: PLACEHOLDER_PRICE_KURUS, compareAtPriceKurus: null, shopierUrl: null, shopierProductId: null, seoTitle: null, seoDescription: null,
+        usageAreas: d.usage, priceKurus: PLACEHOLDER_PRICE_KURUS, compareAtPriceKurus: null, shopierUrl: null, seoTitle: null, seoDescription: null,
         personalizable: false, isNew: true, isFeatured: false, categoryId: category.id, collectionIds: [collection.id], tagIds: [], licenseIds: license ? [license.id] : [], formatCodes: ["VP3"],
         variants: [], options: [], physicalInfo: null,
         embroidery: {
