@@ -12,8 +12,8 @@ import pyembroidery as pe
 OUT = sys.argv[1]
 ONLY = sys.argv[2].split(",") if len(sys.argv) > 2 else list(art.DESIGNS)
 MMPP = 0.07
-STYLE = dict(fill_min_w=7.0, centre_smooth=1.0, satin_max_w=6.8, satin_step=0.36, run_max_w=0.55,
-             fill_spacing=0.38, pull_fill=0.15, pull_satin=0.2)
+STYLE = dict(fill_min_w=7.0, centre_smooth=1.0, satin_max_w=6.8, satin_step=0.35, run_max_w=0.55,
+             fill_spacing=0.38, pull_fill=0.25, pull_satin=0.25)
 
 
 def norm_layers(layers, size_mm, fit):

@@ -96,11 +96,21 @@ def qa(vp3, hoops):
     n = sum(1 for s in st if s[2] == pe.STITCH)
     trims = sum(1 for s in st if s[2] == pe.TRIM); jumps = sum(1 for s in st if s[2] == pe.JUMP)
     cc = sum(1 for s in st if s[2] == pe.COLOR_CHANGE)
-    lens = []; prev = None; longj = 0; afterjump = True
-    for x, y, c in st:
+    # lock (tie-in/off) stitches: within 4 stitches of a trim/jump/colour change/end -> reported separately
+    locks = set()
+    for i, (x, y, c) in enumerate(st):
+        if c in (pe.TRIM, pe.JUMP, pe.COLOR_CHANGE, pe.END):
+            for j in range(max(0, i - 8), min(len(st), i + 9)):
+                locks.add(j)
+    lens = []; prev = None; longj = 0; afterjump = True; nlock = 0
+    for i, (x, y, c) in enumerate(st):
         if c == pe.STITCH:
             if prev is not None and not afterjump:
-                lens.append(math.hypot(x - prev[0], y - prev[1]) / 10)
+                d = math.hypot(x - prev[0], y - prev[1]) / 10
+                if i in locks and d < 0.3:
+                    nlock += 1
+                else:
+                    lens.append(d)
             afterjump = False; prev = (x, y)
         elif c == pe.JUMP:
             if prev is not None and math.hypot(x - prev[0], y - prev[1]) / 10 > 12: longj += 1
@@ -111,6 +121,6 @@ def qa(vp3, hoops):
     fits = [name for name, (hw, hh) in hoops.items() if (w <= hw - 6 and h <= hh - 6) or (h <= hw - 6 and w <= hh - 6 and False)]
     return dict(width_mm=round(w, 1), height_mm=round(h, 1), stitches=n, colors=len(p.threadlist), color_changes=cc, trims=trims, jumps=jumps,
                 long_jumps_gt12mm=longj, min_len=round(float(L.min()), 2), p1_len=round(float(np.percentile(L, 1)), 2), median_len=round(float(np.median(L)), 2),
-                max_len=round(float(L.max()), 2), n_lt03=int((L < 0.3).sum()), n_gt7=int((L > 7.0).sum()),
+                max_len=round(float(L.max()), 2), n_lock_small=nlock, n_lt03=int((L < 0.3).sum()), n_gt7=int((L > 7.0).sum()),
                 density_st_per_cm2=round(n / max(w * h / 100 * 0.5, 1), 0), hoops=fits,
                 threads=[(t.description, t.hex_color()) for t in p.threadlist])

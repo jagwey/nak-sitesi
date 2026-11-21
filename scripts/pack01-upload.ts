@@ -75,7 +75,15 @@ async function main() {
       }, actor);
       product = { id: created.id };
       console.log("oluşturuldu", d.sku);
-    } else console.log("var", d.sku);
+    } else {
+      // Yeniden çalıştırma: açıklama ve nakış üst verisi güncel dikiş değerleriyle yenilenir (DRAFT/fiyat korunur).
+      await db.product.update({ where: { sku: d.sku }, data: { description, shortDescription: d.blurb } });
+      await db.embroideryMetadata.updateMany({
+        where: { productId: product.id },
+        data: { designWidthMm: Math.round(L.width_mm), designHeightMm: Math.round(L.height_mm), stitchCount: L.stitches, colorCount: L.colors, colorChanges: L.color_changes, hoopSizeId: hoopId.get(smallestHoop(L)) ?? null },
+      });
+      console.log("güncellendi", d.sku);
+    }
     ids.push(product.id);
 
     for (const tag of ["S", "L"] as const) {
@@ -83,7 +91,12 @@ async function main() {
       const r = await uploadEmbroideryFile(product.id, new File([buf], `${d.slug.replace("-vp3", "")}-${tag === "S" ? "kucuk" : "buyuk"}.vp3`), actor, tag === "S" ? "Küçük ölçü" : "Büyük ölçü");
       console.log(" vp3", tag, r.duplicate ? "zaten yüklü" : `v${r.version}`);
     }
-    const have = new Set((await db.productImage.findMany({ where: { productId: product.id }, select: { alt: true } })).map((i) => i.alt));
+    // Eski sürüm görselleri (aynı alt) silinip yenisi eklenir; böylece çift kayıt oluşmaz.
+    const { deleteProductImage } = await import("../src/server/modules/admin-catalog/media");
+    const old = await db.productImage.findMany({ where: { productId: product.id }, select: { id: true, alt: true } });
+    const wanted = new Set<string>([`${d.name}: dikiş dosyasından üretilmiş iplik görünümlü önizleme`, `${d.name}: kumaş üzerinde dikiş simülasyonu`]);
+    const have = new Set<string>();
+    for (const o of old) if (wanted.has(o.alt)) await deleteProductImage(product.id, o.id, actor); else have.add(o.alt);
     const imgs: [string, string][] = [
       [`${d.key}_L_normal.png`, `${d.name}: dikiş dosyasından üretilmiş iplik görünümlü önizleme`],
       [`${d.key}_L_kumas.png`, `${d.name}: kumaş üzerinde dikiş simülasyonu`],

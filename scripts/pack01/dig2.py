@@ -179,6 +179,8 @@ def fill_object(poly, angle, P):
         # zigzag underlay for wider areas
         if p.buffer(-1.2).area > 0:
             runs_under += tatami_rows(p.buffer(-0.2), angle + 90, 1.8, 4.0, (0,), 0.3)
+            if p.buffer(-3).area > 4:
+                runs_under += tatami_rows(p.buffer(-0.4), angle + 45, 2.6, 4.0, (0,), 0.3)
     top = tatami_rows(poly.buffer(P["pull_fill"], join_style=1), angle, P["fill_spacing"], P["fill_len"])
     return dict(kind="fill", under=runs_under, top=top, region=poly.buffer(0.1))
 
@@ -442,7 +444,7 @@ def emit(pattern, seq, P, cx, cy):
             d = dist(last, q)
             if d < P["min_stitch"]:
                 continue
-            if d > 7.0:
+            if d > 6.8:
                 for qq in run_points([last, q], 6.0)[1:]:
                     put(pe.STITCH, qq)
             else:
@@ -502,6 +504,12 @@ def build(layers, mmpp, out_path, P=None, name="design"):
                           kinds={k: sum(o["kind"] == k for o in objs) for k in ("fill", "satin", "run")},
                           stitches=sum(1 for s in pattern.stitches[n0:] if s[2] == pe.STITCH)))
     pattern.add_command(pe.END)
+    kept = []
+    for s in pattern.stitches:
+        if s[2] == pe.STITCH and kept and kept[-1][2] == pe.STITCH and math.hypot(s[0] - kept[-1][0], s[1] - kept[-1][1]) < 3.0:
+            continue
+        kept.append(s)
+    pattern.stitches = kept
     pe.write_vp3(pattern, out_path, {"tie_on": pe.CONTINGENCY_TIE_ON_THREE_SMALL,
                                      "tie_off": pe.CONTINGENCY_TIE_OFF_THREE_SMALL})
     return pattern, stats
