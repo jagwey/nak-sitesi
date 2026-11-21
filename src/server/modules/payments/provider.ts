@@ -103,6 +103,23 @@ class SimulatedProvider implements PaymentProvider {
 }
 export const signSimulatedEvent = (rawBody: string) => SimulatedProvider.sign(rawBody);
 
+/** Shopier collects on its own storefront. This provider never marks an order paid. */
+class ShopierExternalProvider implements PaymentProvider {
+  readonly name = "shopier";
+  async initiate(): Promise<InitiateResult> {
+    return { status: "awaiting_payment", message: "Ödeme Shopier mağazasında alınır. Bildirim gelene kadar sipariş ödeme bekler." };
+  }
+  verifyWebhook() {
+    return false;
+  }
+  parseEvent(): PaymentEvent {
+    throw notConfigured("Shopier");
+  }
+  async refund() {
+    return { ok: false };
+  }
+}
+
 class StubProvider implements PaymentProvider {
   constructor(readonly name: string) {}
   async initiate(): Promise<InitiateResult> {
@@ -129,6 +146,8 @@ export function getPaymentProvider(name: string = getEnv().PAYMENT_PROVIDER): Pa
     case "iyzico":
     case "paytr":
       return new StubProvider(name);
+    case "shopier":
+      return new ShopierExternalProvider();
     default:
       throw new AppError("NOT_FOUND");
   }

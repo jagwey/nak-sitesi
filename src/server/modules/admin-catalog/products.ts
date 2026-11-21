@@ -305,7 +305,7 @@ export async function getAdminProduct(id: string) {
   const vopts = (v: { options: unknown }) => (v.options ?? {}) as Record<string, string>;
   return {
     id: p.id, slug: p.slug, sku: p.sku, type: p.type, status: p.status, name: p.name, shortDescription: p.shortDescription, description: p.description,
-    highlights: p.highlights, usageAreas: p.usageAreas, priceKurus: p.priceKurus, compareAtPriceKurus: p.compareAtPriceKurus, shopierUrl: p.shopierUrl,
+    highlights: p.highlights, usageAreas: p.usageAreas, priceKurus: p.priceKurus, compareAtPriceKurus: p.compareAtPriceKurus, shopierUrl: p.shopierUrl, shopierProductId: p.shopierProductId,
     seoTitle: p.seoTitle, seoDescription: p.seoDescription, personalizable: p.personalizable, isNew: p.isNew, isFeatured: p.isFeatured, isDemo: p.isDemo,
     physicalInfo: (p.physicalInfo ?? null) as Record<string, unknown> | null, categoryId: p.categoryId,
     collectionIds: p.collections.map((c) => c.collectionId), tagIds: p.tags.map((t) => t.tagId), licenseIds: p.licenses.map((l) => l.licenseId),

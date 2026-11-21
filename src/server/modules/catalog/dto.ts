@@ -53,7 +53,18 @@ function threadChart(v: unknown): ThreadColorStop[] {
     }));
 }
 
-export function toProductDto(row: ProductRow, brandsByFormat: BrandsByFormat): Product {
+/** Vitrin satın alma adresi: kayıtlı bağlantı, yoksa Shopier ürün numarası, o da yoksa (shopier modunda) mağaza. */
+export function publicShopierUrl(
+  row: { isDemo: boolean; shopierUrl: string | null; shopierProductId?: string | null },
+  storeFallback?: string,
+): string | undefined {
+  if (row.isDemo) return undefined;
+  if (row.shopierUrl) return row.shopierUrl;
+  if (row.shopierProductId && /^[1-9]\d{0,19}$/.test(row.shopierProductId)) return `https://www.shopier.com/${row.shopierProductId}`;
+  return storeFallback;
+}
+
+export function toProductDto(row: ProductRow, brandsByFormat: BrandsByFormat, storeFallback?: string): Product {
   const digital = DIGITAL_TYPES.has(row.type);
   const fileFormats = row.digitalFiles.map((d) => d.format);
   const verified = fileFormats.length > 0;
@@ -86,7 +97,7 @@ export function toProductDto(row: ProductRow, brandsByFormat: BrandsByFormat): P
     description: row.description ?? "",
     highlights: row.highlights,
     isDemo: row.isDemo,
-    shopierUrl: row.isDemo ? undefined : row.shopierUrl ?? undefined,
+    shopierUrl: publicShopierUrl(row, storeFallback),
   };
 
   const em = row.embroidery;

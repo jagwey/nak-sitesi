@@ -59,7 +59,7 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: site.storeName,
-    ...(site.logoUrl && { logo: siteUrl(site.logoUrl).href }),
+    logo: siteUrl(site.logoUrl || "/logo.svg").href,
     description:
       "Makine nakışı desenleri, dijital nakış dosyaları, işlemeli tekstil ürünleri ve kişiye özel nakış atölyesi.",
   };
@@ -79,7 +79,7 @@ export default async function RootLayout({
             <AnnouncementBar site={site} />
             {/* Zero-height sticky anchor: header sits below the (in-flow) announcement bar at the top of the page, then sticks to the viewport top. */}
             <div className="sticky top-0 z-40 h-0">
-              <Header storeName={site.storeName} logoUrl={site.logoUrl} />
+              <Header storeName={site.storeName} logoUrl={site.logoUrl || "/logo.svg"} />
             </div>
           </ChromeGate>
           <main id="ana-icerik">{children}</main>

@@ -187,7 +187,7 @@ export function ProductForm({ options, product, canWrite = true, canFiles = true
             <textarea id="short" rows={2} className={textareaCls} value={shortDescription} disabled={dis} onChange={(ev) => setShort(ev.target.value)} />
           </FormField>
           {isDigitalEmb && !p?.isDemo && (
-            <FormField label="Shopier ürün bağlantısı" htmlFor="shopierUrl" hint="Shopier’de listelediğiniz ürünün adresini girin. Vitrinde Shopier’den satın alma düğmesi görünür." error={errs.shopierUrl}>
+            <FormField label="Shopier ürün bağlantısı" htmlFor="shopierUrl" hint={p?.shopierProductId ? `Shopier ürün no: ${p.shopierProductId}. Adresi elle de girebilirsiniz.` : "Shopier’de listelediğiniz ürünün adresini girin. Vitrinde Shopier’den satın alma düğmesi görünür."} error={errs.shopierUrl}>
               <input id="shopierUrl" type="url" className={inputCls} value={shopierUrl} disabled={dis} onChange={(ev) => setShopierUrl(ev.target.value)} />
             </FormField>
           )}
