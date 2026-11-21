@@ -87,9 +87,11 @@ Shopier’e bağlı dijital nakış ürünleri kendi ürün sayfasından Shopier
 
 Mağaza: `https://www.shopier.com/Jagnakis`.
 
-Ortam: `SHOPIER_OSB_USERNAME`, `SHOPIER_OSB_KEY` (`PAYMENT_PROVIDER=shopier` iken zorunlu), `SHOPIER_PAT` (yalnızca sync), `SHOPIER_STORE_URL`, `SHOPIER_API_BASE_URL`. Hepsi `.env.production` içinden `docker-compose.prod.yml` `env_file` ile web ve tools konteynerine geçer.
+Ortam: `SHOPIER_OSB_USERNAME`, `SHOPIER_OSB_KEY` (`PAYMENT_PROVIDER=shopier` iken zorunlu), `SHOPIER_PAT` (sync ve webhook kaydı), `SHOPIER_WEBHOOK_SECRET`, `SHOPIER_STORE_URL`, `SHOPIER_API_BASE_URL`. Hepsi `.env.production` içinden `docker-compose.prod.yml` `env_file` ile web ve tools konteynerine geçer.
 
-OSB geri çağırma adresi: `https://<APP_URL>/api/shopier/osb` (Next.js süreci; statik Cloudflare vitrini bu ucu sunmaz). Shopier paneli Ek Özellikler > Sipariş Bildirimi bölümüne bu adresi yazın. Gövde `application/x-www-form-urlencoded` alanları `res` (base64 JSON) ve `hash`. Doğrulama: `HMAC-SHA256` hex, mesaj `res + SHOPIER_OSB_USERNAME`, anahtar `SHOPIER_OSB_KEY`. JSON alanları resmi örnekteki gibidir: `email`, `orderid`, `currency` (0 TL, 1 USD, 2 EUR), `price`, `buyername`, `buyersurname`, `productcount`, `productid`, `productlist`, `chartdetails`, `customernote`, `istest`.
+OSB geri çağırma adresi: `https://<APP_URL>/api/shopier/osb`. Shopier bu özelliği legacy sayar ve panel denemesi mevcut sipariş ister. Gövde `res` + `hash`. Doğrulama: `HMAC-SHA256` hex, mesaj `res + SHOPIER_OSB_USERNAME`, anahtar `SHOPIER_OSB_KEY`.
+
+REST webhook (tercih edilen): `POST /api/shopier/webhook`. İmza başlığı `Shopier-Signature`, ham gövde üzerinde HMAC-SHA256, anahtar `SHOPIER_WEBHOOK_SECRET` (abonelik oluşturma yanıtındaki `token`; yalnızca ilk yanıtta gelir). Olay başlığı `Shopier-Event`. `order.created`, `order.paid` ve `order.fulfilled` aynı idempotent teslimatı kullanır (`WebhookEvent` anahtarı Shopier sipariş numarasıdır; OSB ile çakışmaz). Kayıt: `npm run shopier:webhook` (`POST /v1/webhooks`, `event=order.created`, URL `https://nakis-vitrin.nakis-sitesi.workers.dev/api/shopier/webhook`). Shopier olay listesinde `order.paid` yoktur; ödenen sipariş `order.created` ile gelir.
 
 Geçerli TRY bildirimi `Product.shopierProductId` ile ürünü bulur, siparişi ve ödemeyi PAID kaydeder, dijital dosyalar için indirme hakkı açar ve mevcut `payment_completed` / `downloads_ready` e-postalarını gönderir. Aynı `orderid` ikinci kez e-posta göndermez. Ürün numarası katalogda yoksa yanıt `retry` olur (kayıt yazılmaz, Shopier yeniden deneyebilir). Başarılı işlem gövdesi düz metin `success` döner. Checkout hâlâ PAID üretmez.
 

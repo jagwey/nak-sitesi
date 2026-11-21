@@ -17,6 +17,8 @@ on:
       - "prisma/**"
       - "src/**"
       - "public/**"
+      - "scripts/**"
+      - ".dockerignore"
       - "tools/embroidery/parse.py"
       - ".github/workflows/build-images.yml"
 

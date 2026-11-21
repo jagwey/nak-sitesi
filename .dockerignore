@@ -18,6 +18,8 @@ scripts/**
 !scripts/create-admin.ts
 !scripts/release-reservations.ts
 !scripts/search-reindex.ts
+!scripts/shopier-sync.ts
+!scripts/shopier-webhook.ts
 !tools/
 tools/**
 !tools/embroidery/parse.py

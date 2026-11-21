@@ -228,11 +228,16 @@ try {
     npx wrangler@4.85.0 versions deploy "${versionId}@100%" --config deploy/cloudflare/wrangler.jsonc --yes
     if ($LASTEXITCODE -ne 0) { throw "Wrangler versions deploy başarısız" }
 
-    Start-Sleep -Seconds 3
-    $liveHealth = curl.exe -s "$PublicUrl/api/health"
-    Write-Host "Canlı mağaza sağlık yanıtı ($PublicUrl/api/health): $liveHealth"
-    if ($liveHealth -notmatch '"ok":true') {
-      throw "Canlı mağaza /api/health bekleneni dönmedi!"
+    $liveOk = $false
+    $liveHealth = ""
+    for ($i = 0; $i -lt 18; $i++) {
+      Start-Sleep -Seconds 5
+      $liveHealth = curl.exe -s --max-time 10 "$PublicUrl/api/health"
+      Write-Host "Canlı mağaza sağlık yanıtı deneme $($i + 1)/18 ($PublicUrl/api/health): $liveHealth"
+      if ($liveHealth -match '"ok":true') { $liveOk = $true; break }
+    }
+    if (-not $liveOk) {
+      throw "Canlı mağaza /api/health 90 saniye içinde bekleneni dönmedi!"
     }
   }
 

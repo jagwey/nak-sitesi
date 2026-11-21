@@ -172,6 +172,11 @@
 - [x] Ana başlıkta görselden nakışa çevirme ve isteğe özel parça, Inter gövde (18px), altın satın alma düğmesi, kumaş önizlemesi ve 32 özgün önizleme deseni (A–Z + 6 motif). Dosyalar pyembroidery VP3/PES/DST/JEF. Satışa kapalı; kumaş provası yok. Canlıya deploy edilmedi.
 - [x] Aynı iyileştirmeler statik `storefront/` vitrinine taşındı. Shopier bandı site içi sepet indirimini vaat etmez. Deploy edilmedi.
 
+## 2026-11-21 — Shopier webhook ve tools imajı
+
+- [x] Tools imajı `shopier:sync` ve `shopier:webhook` betiklerini içeriyor (`.dockerignore` izin listesi). Web sağlık beklemesi 90 saniye.
+- [x] `POST /api/shopier/webhook` `Shopier-Signature` doğrular; `order.created` OSB ile aynı idempotent teslimatı kullanır. `npm run shopier:webhook` aboneliği kaydeder, token değerini yazdırmaz.
+
 ## 2026-11-21 — Logo ve Shopier OSB
 
 - [x] Kasnak işareti `public/logo.svg` başlığın yanında ve `src/app/icon.svg` favicon olarak kullanılıyor. Yönetici logosu varsa o öncelikli.
